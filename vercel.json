@@ -6,6 +6,11 @@
       "permanent": false
     },
     {
+      "source": "/braincells",
+      "destination": "https://drive.google.com/drive/folders/1EJGa9M7EILDR1iS4DzNWGMh-3iFDknu2",
+      "permanent": false
+    },
+    {
       "source": "/x",
       "destination": "https://x.com/cytronicoder",
       "permanent": true
