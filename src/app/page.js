@@ -51,7 +51,7 @@ export default function Home() {
             <div className={styles.introText}>
               <h1 className={styles.name}>Hello! I&apos;m Peter.{" "}<ThemeProvider /></h1>
               <p className={styles.subtitle}>
-                Co'26 @ Stamford American Intl. School. It&apos;s {weather ? `${weather} over here in Singapore` : "loading.."}.
+                Co&apos;26 @ Stamford American Intl. School. It&apos;s {weather ? `${weather} over here in Singapore` : "loading.."}.
               </p>
               <div className={styles.socialMedia}>
                 <div className={styles.socialMediaIcons}>

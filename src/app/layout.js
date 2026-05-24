@@ -119,7 +119,7 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className={nunito.variable}>
+      <body className={`${nunito.className} ${nunito.variable}`}>
         {children}
       </body>
     </html>

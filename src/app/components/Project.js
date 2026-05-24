@@ -8,6 +8,7 @@ export default function Project({ project }) {
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
+            className={styles.projectLink}
         >
             <div className={styles.project}>
                 <h3 className={styles.project_title}>{project.name}</h3>

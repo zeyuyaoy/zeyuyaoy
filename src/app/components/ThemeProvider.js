@@ -1,38 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import styles from "./ThemeProvider.module.css";
 
 export default function ThemeProvider() {
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState(() => {
+        if (typeof window === "undefined") {
+            return "light";
+        }
+
+        return localStorage.getItem("theme") || "light";
+    });
+
     useEffect(() => {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        setTheme(savedTheme);
-        document.documentElement.setAttribute("data-theme", savedTheme);
-    }, []);
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+    }, [theme]);
 
     const toggleTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
         setTheme(newTheme);
-        document.documentElement.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
     };
 
     return (
         <button
+            type="button"
+            className={styles.themeToggleButton}
             onClick={toggleTheme}
-            style={{
-                border: "none",
-                background: "none",
-                color: "inherit",
-                fontSize: "1em",
-                marginLeft: "10px",
-                cursor: "pointer",
-                transition: "transform 0.2s ease",
-                display: "inline-block",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-            onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-            aria-label="Toggle Theme"
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
+            aria-pressed={theme === "dark"}
         >
             {theme === "light" ? "☀️" : "🌙"}
         </button>

@@ -1,38 +1,44 @@
 .cassette {
-  width: 50%;
+  width: 100%;
+  max-width: 500px;
   margin: 0 auto;
-  min-height: 250px;
-  background: var(--background);
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1),
-    inset 0 2px 4px rgba(255, 255, 255, 0.1),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
-  border: 3px solid var(--primary-color);
+  min-height: 260px;
+  background: var(--surface-color);
+  border-radius: var(--radius-lg);
+  padding: clamp(12px, 3vw, 16px);
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid var(--border-color);
   position: relative;
   display: flex;
   flex-direction: column;
+  transition: all 120ms ease;
+}
+
+.cassette:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
 }
 
 .cassetteTop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 6px 12px;
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  padding: 8px clamp(10px, 3vw, 16px);
+  background: var(--accent-soft);
+  border-radius: var(--radius-md);
 }
 
 .cassetteContent {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
 .reel {
-  width: 50px;
-  height: 50px;
+  width: clamp(36px, 8vw, 48px);
+  height: clamp(36px, 8vw, 48px);
   background: radial-gradient(
     circle,
     var(--primary-color) 30%,
@@ -42,14 +48,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2),
-    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-sm);
   position: relative;
 }
 
 .reelInner {
-  width: 35px;
-  height: 35px;
+  width: clamp(24px, 5.5vw, 33px);
+  height: clamp(24px, 5.5vw, 33px);
   background: repeating-conic-gradient(
     from 0deg,
     var(--text-color) 0deg 10deg,
@@ -62,8 +67,8 @@
 .reelInner::before {
   content: "";
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background: var(--background-color);
   border-radius: 50%;
   top: 50%;
@@ -86,28 +91,33 @@
 
 .tape {
   flex: 1;
-  height: 6px;
+  height: 5px;
   background: linear-gradient(
     to right,
     var(--text-color) 0%,
     var(--primary-color) 50%,
     var(--text-color) 100%
   );
-  border-radius: 3px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  border-radius: 2.5px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .songInfo {
-  background: var(--foreground);
-  border: 2px solid var(--primary-color);
-  border-radius: 8px;
-  margin-top: 8px;
-  padding: 12px;
-  min-height: 60px;
+  background: var(--accent-soft);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-sm);
+  padding: clamp(10px, 2vw, 14px);
+  min-height: 56px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
+  transition: all 120ms ease;
+}
+
+.songInfo:hover {
+  border-color: var(--primary-color);
 }
 
 .songLink,
@@ -115,13 +125,14 @@
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
+  min-height: 44px;
 }
 
 .songTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--primary-color);
+  font-size: clamp(0.92rem, 2vw, 0.98rem);
+  font-weight: 700;
+  color: var(--text-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,8 +140,8 @@
 }
 
 .artistName {
-  font-size: 0.95rem;
-  color: var(--primary-color);
+  font-size: clamp(0.86rem, 2vw, 0.9rem);
+  color: var(--muted-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,98 +150,96 @@
 
 .songLink:hover .songTitle {
   color: var(--primary-color);
-  transition: color 0.2s ease;
+  transition: color 120ms ease;
 }
 
 .buttons {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
   justify-content: center;
 }
 
 .button {
   width: 28px;
   height: 28px;
-  background: radial-gradient(
-    circle,
-    var(--foreground) 0%,
-    var(--primary-color) 100%
-  );
-  border: 2px solid var(--text-color);
+  background: var(--surface-color);
+  border: 1.5px solid var(--border-color);
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2),
-    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: all 120ms ease;
 }
 
 .button:hover {
-  transform: scale(0.95);
+  transform: scale(1.05);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
 }
 
 .footer {
-  margin-top: 4px;
+  margin-top: var(--spacing-sm);
   text-align: center;
-  padding-top: 12px;
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed var(--border-color);
 }
 
 .viewMore {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: var(--primary-color);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   text-decoration: none;
-  padding: 8px 16px;
-  border: 2px solid var(--primary-color);
-  border-radius: 20px;
-  transition: all 0.2s ease;
-  background: var(--foreground);
+  padding: 10px 14px;
+  min-height: 44px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all 120ms ease;
+  background: transparent;
 }
 
-.viewMore:hover {
-  background: var(--primary-color);
-  color: var(--background);
-  transform: scale(1.05);
+.viewMore:hover,
+.viewMore:focus-visible {
+  border-color: var(--primary-color);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
 }
 
 .loading {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
-  color: var(--primary-color);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  color: var(--muted-color);
   font-size: 0.9rem;
 }
 
 [data-theme="dark"] .cassette {
-  background: var(--background);
-  border-color: var(--primary-color);
-}
-
-[data-theme="dark"] .label {
-  background: var(--foreground);
-  border-color: var(--primary-color);
-}
-
-[data-theme="dark"] .labelText {
-  color: var(--background-color);
+  background: var(--surface-color);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .songInfo {
-  background: var(--foreground);
-  border-color: var(--primary-color);
+  background: var(--accent-soft);
+  border-color: var(--border-color);
 }
-/* 
-[data-theme="dark"] .songTitle {
-  color: var(--background-color);
-}
-
-[data-theme="dark"] .artistName {
-  color: var(--background-color);
-} */
 
 @media (max-width: 800px) {
   .cassette {
     width: 100%;
+    max-width: 100%;
   }
 }
+
+@media (max-width: 430px) {
+  .songTitle,
+  .artistName {
+    white-space: normal;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+

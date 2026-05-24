@@ -99,6 +99,7 @@ export default function OptimizedImage({
     <div className="relative">
       <Image
         {...imageProps}
+        alt={alt}
         priority={priority}
       />
       {isLoading && (

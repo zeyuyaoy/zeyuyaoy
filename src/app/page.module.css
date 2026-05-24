@@ -3,7 +3,6 @@
   min-height: 100vh;
   background-color: var(--background-color);
   color: var(--text-color);
-  font-family: var(--font-nunito), sans-serif;
   position: relative;
 }
 
@@ -12,128 +11,125 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: var(--section-padding-y) var(--section-padding-x);
 }
 
 .contentContainer {
-  max-width: 900px;
+  max-width: var(--max-content-width);
   width: 100%;
 }
 
 .intro,
 .section:not(:last-child) {
-  margin-bottom: 25px;
+  margin-bottom: var(--spacing-3xl);
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: var(--spacing-2xl);
 }
 
 .intro {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   text-align: left;
 }
 
 .profileImage {
-  border-radius: 30%;
-  border: 8px solid var(--primary-color);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1),
-    inset 0 2px 4px rgba(255, 255, 255, 0.2);
-  margin-right: 20px;
+  border-radius: var(--radius-lg);
+  border: 6px solid var(--primary-color);
+  box-shadow: var(--shadow-sm), 0 0 0 1px color-mix(in srgb, var(--primary-color) 24%, transparent);
   flex-shrink: 0;
-  transition: all 0.3s ease;
+  transform: rotate(-5deg);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease, border-color 140ms ease;
   position: relative;
-  transform: scale(1.05) rotate(10deg);
 }
 
 .profileImage:hover {
-  transform: scale(1.1) rotate(2deg);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 6px 12px rgba(0, 0, 0, 0.15),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+  transform: rotate(3deg) scale(1.03);
+  box-shadow: var(--shadow-md), 0 0 18px color-mix(in srgb, var(--primary-color) 26%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--primary-color) 38%, transparent);
+  border-color: color-mix(in srgb, var(--primary-color) 78%, white);
+  filter: brightness(1.05) saturate(1.03);
 }
 
 .introText {
-  width: calc(100% - 150px);
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-md);
 }
 
 .name {
-  font-size: 2.5em;
-  font-weight: 800;
+  font-size: 1.75rem;
+  font-weight: 700;
   margin: 0;
+  color: var(--text-color);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 .subtitle {
-  font-size: 1.2em;
-  color: var(--primary-color);
-  margin-top: 10px;
+  font-size: 0.95rem;
+  color: var(--muted-color);
+  margin: 0;
+  font-weight: 500;
 }
 
 .socialMedia {
-  margin-top: 10px;
+  margin-top: var(--spacing-lg);
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  align-items: center;
 }
 
 .socialMediaIcons {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  margin-right: 50px;
+  gap: var(--spacing-lg);
+}
+
+.socialMediaIcon {
+  transition: all 120ms ease;
 }
 
 .socialMediaIcon:hover {
   cursor: pointer;
   transform: scale(1.1);
-  transition: transform 0.2s;
+  opacity: 0.8;
 }
 
 .blogWidget {
   color: var(--primary-color);
-  width: 100%;
   text-decoration: none;
-  font-weight: 500;
-  padding: 8px 12px;
-  border: 2px solid var(--primary-color);
-  border-radius: 4px;
-  transition: all 0.2s;
+  font-weight: 600;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all 120ms ease;
   position: relative;
   overflow: hidden;
-  z-index: 1;
-}
-
-.blogWidget::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 100%;
-  background-color: var(--primary-color);
-  transition: width 0.3s ease;
-  z-index: -1;
-}
-
-.blogWidget:hover::before {
-  width: 100%;
+  font-size: 0.9rem;
 }
 
 .blogWidget:hover {
-  color: var(--background-color);
-  transform: scale(1.05);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+  background: var(--accent-soft);
 }
 
 .bio {
-  margin-bottom: 25px;
-  border-radius: 12px;
+  margin-bottom: var(--spacing-3xl);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--accent-soft) 20%, transparent);
+  border: 1px solid var(--border-color);
 }
 
 .bioText {
   color: var(--text-color);
-  font-size: 1.15em;
-  text-align: justify;
-  line-height: 1.6;
-  margin: 0 0 12px 0;
+  font-size: 1rem;
+  text-align: left;
+  line-height: 1.7;
+  margin: 0 0 var(--spacing-lg) 0;
+  font-weight: 400;
 }
 
 .bioText:last-child {
@@ -143,22 +139,120 @@
 .link {
   color: var(--primary-color);
   text-decoration: underline;
+  text-underline-offset: 3px;
   font-weight: 600;
+  transition: all 120ms ease;
 }
 
 .link:hover {
   opacity: 0.8;
 }
 
+.section {
+  margin-bottom: var(--spacing-3xl);
+}
+
 .sectionTitle {
   color: var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
-  padding-bottom: 10px;
+  padding-bottom: var(--spacing-sm);
+  font-weight: 700;
 }
 
 .text {
-  font-size: 1em;
-  line-height: 1.8;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .main {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    align-items: stretch;
+  }
+
+  .contentContainer {
+    width: 100%;
+    padding: 0;
+  }
+
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: var(--spacing-lg);
+  }
+
+  .section,
+  .section:not(:last-child) {
+    flex-direction: column;
+    margin-bottom: var(--spacing-2xl);
+  }
+
+  .profileImage {
+    width: 100px;
+    height: 100px;
+  }
+
+  .introText {
+    width: 100%;
+  }
+
+  .name {
+    font-size: 1.5rem;
+  }
+
+  .socialMedia {
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    width: 100%;
+  }
+
+  .socialMediaIcons {
+    gap: var(--spacing-lg);
+    justify-content: flex-start;
+  }
+
+  .blogWidget {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 560px) {
+  .main {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .intro {
+    gap: var(--spacing-lg);
+  }
+
+  .profileImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .name {
+    font-size: 1.35rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .bioText {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .section,
+  .section:not(:last-child) {
+    margin-bottom: var(--spacing-2xl);
+  }
+}
+
+[data-theme="dark"] .socialMedia img {
+  filter: invert(1);
 }
 
 .projectList {
@@ -193,8 +287,8 @@
 /* Responsive adjustments */
 @media (max-width: 800px) {
   .main {
-    padding: 40px;
-    align-items: flex-start;
+    padding: 28px 16px;
+    align-items: stretch;
   }
 
   .contentContainer {
@@ -202,14 +296,10 @@
     padding: 0;
   }
 
-  /* .marquee {
-    display: none;
-  } */
-
   .intro {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .section,
@@ -219,45 +309,69 @@
 
   .profileImage {
     margin-right: 0;
-    margin-bottom: 10px;
+    margin-bottom: 0;
+    width: 100px;
+    height: 100px;
   }
 
   .introText {
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .name {
-    font-size: 2em;
+    font-size: 1.6rem;
   }
 
   .socialMedia {
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 12px;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .socialMediaIcons {
     margin-right: 0;
-    flex-wrap: nowrap;
-    gap: 20px;
-    justify-content: center;
-    width: 100%;
+    gap: 10px;
+    justify-content: flex-start;
+    width: auto;
   }
 
   .blogWidget {
-    width: 100%;
-    text-align: center;
-    display: block;
+    width: auto;
+    text-align: left;
+    display: inline-block;
   }
 }
 
-/* @media (max-width: 1200px) {
-  .marquee {
-    width: 30%;
+@media (max-width: 560px) {
+  .main {
+    padding: 20px 12px;
   }
-} */
+
+  .intro {
+    gap: 16px;
+  }
+
+  .profileImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .name {
+    font-size: 1.4rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .bioText {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+}
 
 [data-theme="dark"] .socialMedia img {
   filter: invert(1);

@@ -42,7 +42,7 @@ export default function PerformanceMonitor() {
       zIndex: 9999,
       maxWidth: '300px'
     }}>
-      <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>⚡ Performance Metrics</div>
+      <div style={{ marginBottom: '8px', fontWeight: 'bold' }}>Performance Metrics</div>
       <div>DOM Content Loaded: {Math.round(metrics.domContentLoaded)}ms</div>
       <div>Load Complete: {Math.round(metrics.loadComplete)}ms</div>
       <div>First Contentful Paint: {typeof metrics.firstContentfulPaint === 'number' ? Math.round(metrics.firstContentfulPaint) + 'ms' : metrics.firstContentfulPaint}</div>

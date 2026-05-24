@@ -52,11 +52,10 @@ export default function Projects() {
                             </div>
                         ) : (
                             <>
-                                <p className={styles.projectText}>Here's something I made:</p>
+                                <p className={styles.projectText}>Here&apos;s something I made:</p>
                                 <div className={styles.projectsList}>
                                     {projects.length > 0 ? (
                                         projects
-                                            .sort(() => Math.random() - 0.5)
                                             .slice(0, 1)
                                             .map((project, index) => (
                                                 <Project

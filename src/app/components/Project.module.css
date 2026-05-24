@@ -1,12 +1,23 @@
+.projectLink {
+  display: block;
+  text-decoration: none;
+}
+
+.projectLink:focus-visible .project {
+  outline: none;
+  box-shadow: var(--shadow-sm), 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
 .project {
   background: var(--foreground);
   border: 2px solid var(--primary-color);
   border-radius: 10px;
-  padding: 14px;
+  padding: clamp(12px, 2.5vw, 16px);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  min-height: 88px;
 }
 
 .project::before {
@@ -25,6 +36,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+
 .project:hover::before {
   opacity: 1;
   transform: rotate(180deg);
@@ -32,7 +44,7 @@
 }
 
 .project_title {
-  font-size: 1rem;
+  font-size: clamp(0.98rem, 2.2vw, 1.05rem);
   font-weight: 700;
   color: var(--primary-color);
   margin: 0 0 6px 0;
@@ -44,7 +56,7 @@
 }
 
 .project_description {
-  font-size: 0.85rem;
+  font-size: clamp(0.85rem, 2vw, 0.92rem);
   color: var(--primary-color);
   margin: 0;
   line-height: 1.4;

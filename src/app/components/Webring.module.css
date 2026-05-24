@@ -1,40 +1,61 @@
 .webring {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  border: 2px solid var(--primary-color);
-  border-radius: 15px;
-  padding: 0.5rem 1rem;
+  gap: var(--spacing-lg);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: clamp(12px, 3vw, 18px) clamp(14px, 4vw, 20px);
   text-align: center;
-  background-color: var(--background);
-  margin-top: 2rem;
+  background-color: var(--surface-color);
+  margin-top: var(--spacing-2xl);
+  transition: all 120ms ease;
+  flex-wrap: wrap;
+}
+
+.webring:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .title {
-  font-weight: bold;
+  font-weight: 700;
   color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s;
+  transition: all 120ms ease;
+  font-size: 0.95rem;
 }
 
 .title:hover {
-  color: var(--text-color);
+  opacity: 0.8;
 }
 
 .link {
-  color: var(--primary-color);
+  color: var(--muted-color);
   text-decoration: none;
-  padding: 0 0.5rem;
-  transition: color 0.3s;
+  padding: 6px var(--spacing-md);
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 120ms ease;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .link:hover {
-  color: var(--text-color);
+  color: var(--primary-color);
+}
+
+.link:focus-visible,
+.title:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 999px;
 }
 
 [data-theme="dark"] .webring {
-  background-color: var(--background);
-  border-color: var(--primary-color);
+  background-color: var(--surface-color);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .title {
@@ -42,20 +63,25 @@
 }
 
 [data-theme="dark"] .title:hover {
-  color: var(--text-color);
+  opacity: 0.8;
 }
 
 [data-theme="dark"] .link {
-  color: var(--primary-color);
+  color: var(--muted-color);
 }
 
 [data-theme="dark"] .link:hover {
-  color: var(--text-color);
+  color: var(--primary-color);
 }
 
 @media (max-width: 600px) {
   .webring {
     flex-direction: column;
-    gap: 10px;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-lg);
+  }
+
+  .link {
+    padding: 0;
   }
 }
