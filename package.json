@@ -10,14 +10,14 @@
   },
   "dependencies": {
     "@octokit/core": "^7.0.6",
-    "next": "16.0.10",
-    "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "dotenv": "^17.4.2",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "16.0.10"
+    "eslint": "^10.4.0",
+    "eslint-config-next": "16.2.6"
   },
   "packageManager": "pnpm@10.12.1"
 }
