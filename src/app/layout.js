@@ -6,6 +6,23 @@ const nunito = Nunito({
   variable: "--font-nunito",
 });
 
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Zeyu Yao",
+  alternateName: "姚则禹",
+  url: "https://cytronicoder.com",
+  sameAs: [
+    "https://twitter.com/zeyuyaoy",
+    "https://www.linkedin.com/in/zeyuyaoy/",
+    "https://github.com/zeyuyaoy"
+  ],
+  jobTitle: "Student",
+  description:
+    "I build projects in @hackclub and @aimed-lab! Previously at @buildingblocs, @saishackclub, and @geekcampsg. I'm a student in Singapore passionate about innovative tech and digital design."
+};
+
+/** @type {import("next").Metadata} */
 export const metadata = {
   title: "Zeyu Yao | 姚则禹",
   description:
@@ -90,21 +107,6 @@ export const metadata = {
       "I build projects in @hackclub and @aimed-lab! Previously at @buildingblocs, @saishackclub, and @geekcampsg. I'm a student in Singapore passionate about innovative tech and digital design.",
     creator: "@zeyuyaoy",
     images: ["https://cytronicoder.com/og-image.png"],
-  },
-  alternatesJSONLD: {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Zeyu Yao",
-    alternateName: "姚则禹",
-    url: "https://cytronicoder.com",
-    sameAs: [
-      "https://twitter.com/zeyuyaoy",
-      "https://www.linkedin.com/in/zeyuyaoy/",
-      "https://github.com/zeyuyaoy"
-    ],
-    jobTitle: "Student",
-    description:
-      "I build projects in @hackclub and @aimed-lab! Previously at @buildingblocs, @saishackclub, and @geekcampsg. I'm a student in Singapore passionate about innovative tech and digital design."
   }
 };
 
@@ -115,7 +117,7 @@ export default function RootLayout({ children }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(metadata.alternatesJSONLD),
+            __html: JSON.stringify(personJsonLd),
           }}
         />
         {children}
