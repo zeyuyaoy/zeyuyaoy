@@ -12,22 +12,22 @@
     },
     {
       "source": "/x",
-      "destination": "https://x.com/cytronicoder",
+      "destination": "https://x.com/zeyuyaoy",
       "permanent": true
     },
     {
       "source": "/github",
-      "destination": "https://github.com/cytronicoder",
+      "destination": "https://github.com/zeyuyaoy",
       "permanent": true
     },
     {
       "source": "/linkedin",
-      "destination": "https://www.linkedin.com/in/cytronicoder/",
+      "destination": "https://www.linkedin.com/in/zeyuyaoy/",
       "permanent": true
     },
     {
       "source": "/instagram",
-      "destination": "https://www.instagram.com/cytronical/",
+      "destination": "https://www.instagram.com/zeyuyaoy/",
       "permanent": true
     }
   ],

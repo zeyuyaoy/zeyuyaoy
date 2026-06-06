@@ -1,5 +1,5 @@
 {
-  "name": "cytronicoder",
+  "name": "zeyuyaoy",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -19,5 +19,8 @@
     "eslint": "^10.4.0",
     "eslint-config-next": "16.2.6"
   },
-  "packageManager": "pnpm@10.12.1"
+  "packageManager": "pnpm@10.12.1",
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
 }

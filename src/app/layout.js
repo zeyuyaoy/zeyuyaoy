@@ -46,7 +46,7 @@ export const metadata = {
     "student developer Singapore",
     "startup ecosystem Singapore",
     "cytronicoder",
-    "cytronical",
+    "zeyuyaoy",
     "Zeyu Yao portfolio",
     "Zeyu Yao projects",
     "Zeyu Yao website",
@@ -88,7 +88,7 @@ export const metadata = {
     title: "Zeyu Yao | 姚则禹",
     description:
       "I build projects in @hackclub and @aimed-lab! Previously at @buildingblocs, @saishackclub, and @geekcampsg. I'm a student in Singapore passionate about innovative tech and digital design.",
-    creator: "@cytronicoder",
+    creator: "@zeyuyaoy",
     images: ["https://cytronicoder.com/og-image.png"],
   },
   alternatesJSONLD: {
@@ -98,9 +98,9 @@ export const metadata = {
     alternateName: "姚则禹",
     url: "https://cytronicoder.com",
     sameAs: [
-      "https://twitter.com/cytronicoder",
-      "https://www.linkedin.com/in/cytronicoder/",
-      "https://github.com/cytronicoder"
+      "https://twitter.com/zeyuyaoy",
+      "https://www.linkedin.com/in/zeyuyaoy/",
+      "https://github.com/zeyuyaoy"
     ],
     jobTitle: "Student",
     description:

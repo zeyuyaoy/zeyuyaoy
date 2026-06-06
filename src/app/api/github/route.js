@@ -16,7 +16,7 @@ export async function GET() {
             });
         }
 
-        const { data, status } = await octokit.request("GET /users/cytronicoder/repos", {
+        const { data, status } = await octokit.request("GET /users/zeyuyaoy/repos", {
             type: "owner",
             sort: "updated",
             per_page: 100,

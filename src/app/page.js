@@ -56,7 +56,7 @@ export default function Home() {
               <div className={styles.socialMedia}>
                 <div className={styles.socialMediaIcons}>
                   <a
-                    href="https://github.com/cytronicoder"
+                    href="https://github.com/zeyuyaoy"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -71,7 +71,7 @@ export default function Home() {
                     />
                   </a>
                   <a
-                    href="https://twitter.com/cytronicoder"
+                    href="https://twitter.com/zeyuyaoy"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -86,7 +86,7 @@ export default function Home() {
                     />
                   </a>
                   <a
-                    href="https://www.instagram.com/cytronicoder/"
+                    href="https://www.instagram.com/zeyuyaoy/"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -101,7 +101,7 @@ export default function Home() {
                     />
                   </a>
                   <a
-                    href="https://linkedin.com/in/cytronicoder"
+                    href="https://linkedin.com/in/zeyuyaoy"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

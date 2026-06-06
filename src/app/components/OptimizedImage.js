@@ -23,7 +23,7 @@ const defaultBlurDataURL = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2
 
 export default function OptimizedImage({
   src,
-  alt = "An image on cytronicoder's website",
+  alt = "An image on Peter's website",
   width,
   height,
   className,

@@ -5,10 +5,10 @@ I'm a student interested in math, CS, and bioinformatics—especially where they
 Right now, I'm working on BioRSP, a tool for gene expression heterogeneity analysis. Additionally, I am working with programmes to bring AI and bioinformatics education to underserved communities in Southeast Asia and the Middle East. I believe that access to STEM education is crucial for empowering the next generation of innovators, and I'm committed to making a difference in this area. 🔮(๑•̀ㅂ•́)و
 
 If you want to connect, find me on:
-Instagram: [@cytronical](https://www.instagram.com/cytronical/)
-Twitter: [@cytronicoder](https://twitter.com/cytronicoder)
-LinkedIn: [linkedin.com/in/cytronicoder](https://www.linkedin.com/in/cytronicoder/)
-Email: [novodoodle@gmail.com](mailto:novodoodle@gmail.com)
+Instagram: [@zeyuyaoy](https://www.instagram.com/zeyuyaoy/)
+Twitter: [@zeyuyaoy](https://twitter.com/zeyuyaoy)
+LinkedIn: [linkedin.com/in/zeyuyaoy](https://www.linkedin.com/in/zeyuyaoy/)
+Email: [cytronicoder+hi@gmail.com](mailto:cytronicoder+hi@gmail.com)
 
 > _Per aspera ad astra._ ✨(ᵔ◡ᵔ)
 

@@ -13,7 +13,7 @@ export default function Projects() {
     useEffect(() => {
         fetcher("/api/github")
             .then((data) => {
-                const filteredProjects = data.filter((project) => project.name !== "cytronicoder");
+                const filteredProjects = data.filter((project) => project.name !== "zeyuyaoy");
                 setProjects(filteredProjects);
                 setIsLoaded(true);
             })
@@ -71,7 +71,7 @@ export default function Projects() {
                                 </div>
                                 <div className={styles.footer}>
                                     <a
-                                        href="https://github.com/cytronicoder"
+                                        href="https://github.com/zeyuyaoy"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className={styles.viewMore}
