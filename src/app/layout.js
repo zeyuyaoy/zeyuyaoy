@@ -111,15 +111,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
+      <body className={`${nunito.className} ${nunito.variable}`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(metadata.alternatesJSONLD),
           }}
         />
-      </head>
-      <body className={`${nunito.className} ${nunito.variable}`}>
         {children}
       </body>
     </html>
