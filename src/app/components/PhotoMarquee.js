@@ -19,11 +19,12 @@ export default function PhotoMarquee() {
                 }
 
                 const data = await res.json();
+                const photoList = Array.isArray(data) ? data : data.photos || [];
 
-                if (Array.isArray(data) && data.length > 0) {
-                    setPhotos(data.sort(() => Math.random() - 0.5));
+                if (photoList.length > 0) {
+                    setPhotos(photoList.sort(() => Math.random() - 0.5));
                 } else {
-                    setError("No photos available");
+                    setError(data.message || "Photos are unavailable right now.");
                 }
 
                 setIsLoading(false);
@@ -42,7 +43,7 @@ export default function PhotoMarquee() {
     }
 
     if (error) {
-        return <div className={styles.marqueeContainer}>Unable to load photos: {error}</div>;
+        return <div className={styles.marqueeContainer}>{error}</div>;
     }
 
     return (

@@ -153,6 +153,11 @@
   transition: color 120ms ease;
 }
 
+.fallback .artistName {
+  white-space: normal;
+  line-height: 1.35;
+}
+
 .buttons {
   display: flex;
   gap: var(--spacing-md);
@@ -242,4 +247,3 @@
     -webkit-box-orient: vertical;
   }
 }
-

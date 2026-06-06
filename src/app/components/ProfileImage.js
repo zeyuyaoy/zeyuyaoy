@@ -19,7 +19,6 @@ const ProfileImage = ({ fallbackSrc, className, alt = "Zeyu Yao's profile pictur
 
                 const data = await response.json();
                 if (data.fallback) {
-                    console.log("API is rate limited, using fallback image");
                     setIsLoading(false);
                     return;
                 }

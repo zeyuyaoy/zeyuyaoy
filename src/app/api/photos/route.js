@@ -2,15 +2,25 @@ import fs from "fs";
 import path from "path";
 
 export async function GET() {
-    const photosSuffixes = ["jpg", "jpeg", "png", "gif"];
-    const photosDirectory = path.join(process.cwd(), "public", "photos");
+    try {
+        const photosSuffixes = ["jpg", "jpeg", "png", "gif"];
+        const photosDirectory = path.join(process.cwd(), "public", "photos");
 
-    const Files = fs.readdirSync(photosDirectory);
-    const photoFiles = Files.filter((file) =>
-        photosSuffixes.includes(file.split(".").pop())
-    );
+        const files = fs.readdirSync(photosDirectory);
+        const photoFiles = files.filter((file) =>
+            photosSuffixes.includes(file.split(".").pop())
+        );
 
-    const photos = photoFiles.map((fileName) => `/photos/${fileName}`);
+        const photos = photoFiles.map((fileName) => `/photos/${fileName}`);
 
-    return Response.json(photos);
+        return Response.json({ photos });
+    } catch (error) {
+        console.error("Error reading photos:", error);
+
+        return Response.json({
+            photos: [],
+            fallback: true,
+            message: "Photos are unavailable right now.",
+        });
+    }
 }

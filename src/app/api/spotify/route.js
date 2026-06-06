@@ -15,6 +15,19 @@ let cachedSpotifyData = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 30 * 1000;
 
+const unavailableData = {
+    isPlaying: false,
+    fallback: true,
+    reason: "unavailable",
+    title: "Spotify status unavailable",
+    message: "Music status is unavailable right now.",
+};
+
+const premiumRequiredData = {
+    ...unavailableData,
+    reason: "limited_access",
+};
+
 const getAccessToken = async () => {
     const response = await fetch(TOKEN_ENDPOINT, {
         method: "POST",
@@ -58,13 +71,39 @@ export async function GET() {
         const { access_token } = await getAccessToken();
         const response = await getNowPlaying(access_token);
 
-        if (response.status === 204 || response.status > 400) {
+        if (response.status === 204) {
             const notPlayingData = { isPlaying: false };
             cachedSpotifyData = notPlayingData;
             cacheTimestamp = now;
 
             return new Response(
                 JSON.stringify(notPlayingData),
+                {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }
+
+        if (response.status === 403) {
+            cachedSpotifyData = premiumRequiredData;
+            cacheTimestamp = now;
+
+            return new Response(
+                JSON.stringify(premiumRequiredData),
+                {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }
+
+        if (!response.ok) {
+            cachedSpotifyData = unavailableData;
+            cacheTimestamp = now;
+
+            return new Response(
+                JSON.stringify(unavailableData),
                 {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -116,8 +155,9 @@ export async function GET() {
         if (error.status === 429) {
             return new Response(
                 JSON.stringify({
-                    error: "Rate limited",
-                    message: "Spotify API rate limited, please try again later",
+                    ...unavailableData,
+                    reason: "rate_limited",
+                    message: "Music status is unavailable right now.",
                     isPlaying: false,
                     fallback: true
                 }),
@@ -129,9 +169,9 @@ export async function GET() {
         }
 
         return new Response(
-            JSON.stringify({ error: "Internal Server Error", isPlaying: false }),
+            JSON.stringify(unavailableData),
             {
-                status: 500,
+                status: 200,
                 headers: { "Content-Type": "application/json" },
             }
         );

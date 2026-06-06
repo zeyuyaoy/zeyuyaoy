@@ -13,9 +13,13 @@ export default function Projects() {
     useEffect(() => {
         fetcher("/api/github")
             .then((data) => {
-                const filteredProjects = data.filter((project) => project.name !== "zeyuyaoy");
+                const projectList = Array.isArray(data) ? data : data.projects || [];
+                const filteredProjects = projectList.filter((project) => project.name !== "zeyuyaoy");
                 setProjects(filteredProjects);
                 setIsLoaded(true);
+                if (data.fallback) {
+                    setError(new Error(data.message || "Projects are unavailable right now."));
+                }
             })
             .catch((error) => {
                 setIsLoaded(true);
@@ -36,8 +40,7 @@ export default function Projects() {
                     <div className={styles.notebookContent}>
                         {error ? (
                             <div className={styles.errorMessage}>
-                                <p>Oops! Something went wrong :(</p>
-                                <p className={styles.errorDetail}>{error.message}</p>
+                                <p>{error.message || "Projects are unavailable right now."}</p>
                                 <p className={styles.errorFooter}>
                                     Contact me through{" "}
                                     <a

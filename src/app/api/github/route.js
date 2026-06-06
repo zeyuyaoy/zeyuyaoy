@@ -6,6 +6,12 @@ let cachedGithubData = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 10 * 60 * 1000;
 
+const unavailableGithubData = {
+    projects: [],
+    fallback: true,
+    message: "Projects are unavailable right now.",
+};
+
 export async function GET() {
     try {
         const now = Date.now();
@@ -47,7 +53,10 @@ export async function GET() {
                     headers: { "Content-Type": "application/json" },
                 });
             }
-            return new Response(null, { status });
+            return new Response(JSON.stringify(unavailableGithubData), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+            });
         }
     } catch (error) {
         console.error("Error fetching GitHub data:", error);
@@ -63,9 +72,8 @@ export async function GET() {
         if (error.status === 429) {
             return new Response(
                 JSON.stringify({
-                    error: "Rate limited",
-                    message: "GitHub API rate limited, please try again later",
-                    fallback: true
+                    ...unavailableGithubData,
+                    reason: "rate_limited",
                 }),
                 {
                     status: 200,
@@ -75,8 +83,8 @@ export async function GET() {
         }
 
         return new Response(
-            JSON.stringify({ error: error.message || "Unknown error occurred" }),
-            { status: 500, headers: { "Content-Type": "application/json" } }
+            JSON.stringify(unavailableGithubData),
+            { status: 200, headers: { "Content-Type": "application/json" } }
         );
     }
 }

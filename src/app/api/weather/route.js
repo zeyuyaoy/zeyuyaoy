@@ -4,6 +4,12 @@ let cachedWeatherData = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 15 * 60 * 1000;
 
+const unavailableWeatherData = {
+    forecast: "unavailable",
+    fallback: true,
+    message: "Weather is unavailable right now.",
+};
+
 const getWeatherData = async () => {
     const response = await fetch(WEATHER_API_ENDPOINT);
 
@@ -44,7 +50,7 @@ export async function GET() {
             }
 
             return new Response(
-                JSON.stringify({ error: "No weather data available", forecast: "unavailable" }),
+                JSON.stringify(unavailableWeatherData),
                 {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -83,7 +89,7 @@ export async function GET() {
                 });
             }
             return new Response(
-                JSON.stringify({ error: "No forecast found", forecast: "unavailable" }),
+                JSON.stringify(unavailableWeatherData),
                 {
                     status: 200,
                     headers: { "Content-Type": "application/json" },
@@ -119,10 +125,8 @@ export async function GET() {
         if (error.status === 429) {
             return new Response(
                 JSON.stringify({
-                    error: "Rate limited",
-                    message: "Weather API rate limited, please try again later",
-                    forecast: "unavailable",
-                    fallback: true
+                    ...unavailableWeatherData,
+                    reason: "rate_limited",
                 }),
                 {
                     status: 200,
@@ -132,12 +136,11 @@ export async function GET() {
         }
 
         return new Response(
-            JSON.stringify({ error: "Internal Server Error", forecast: "unavailable" }),
+            JSON.stringify(unavailableWeatherData),
             {
-                status: 500,
+                status: 200,
                 headers: { "Content-Type": "application/json" },
             }
         );
     }
 }
-

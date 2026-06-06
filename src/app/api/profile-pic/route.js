@@ -2,6 +2,11 @@ let cachedProfileData = null;
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000;
 
+const unavailableProfileData = {
+    fallback: true,
+    message: "Profile image is unavailable right now.",
+};
+
 export async function GET() {
     try {
         const now = Date.now();
@@ -32,9 +37,8 @@ export async function GET() {
                 console.warn("Rate limited by external API, no cached data available");
                 return new Response(
                     JSON.stringify({
-                        error: "Rate limited",
-                        message: "External API rate limited, please try again later",
-                        fallback: true
+                        ...unavailableProfileData,
+                        reason: "rate_limited",
                     }),
                     {
                         status: 200,
@@ -71,9 +75,9 @@ export async function GET() {
         }
 
         return new Response(
-            JSON.stringify({ error: "Internal Server Error" }),
+            JSON.stringify(unavailableProfileData),
             {
-                status: 500,
+                status: 200,
                 headers: { "Content-Type": "application/json" },
             }
         );

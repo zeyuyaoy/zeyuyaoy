@@ -5,28 +5,25 @@ import { useState, useEffect } from "react";
 import styles from "./SpotifyWidget.module.css";
 
 export default function SpotifyWidget() {
-    const fetcher = (url) => fetch(url).then((r) => r.json());
     const [song, setSong] = useState({});
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         const fetchSpotifyData = async () => {
             try {
-                const data = await fetcher("/api/spotify");
-
-                if (data.fallback) {
-                    console.log("Spotify API is rate limited");
-                    if (!song.isPlaying) {
-                        setSong({ isPlaying: false });
-                    }
-                    return;
-                }
-
+                const response = await fetch("/api/spotify");
+                const data = await response.json();
                 setSong(data);
                 setIsLoaded(true);
             } catch (error) {
                 console.error("Error fetching Spotify data:", error);
-                setSong({ isPlaying: false, error: true });
+                setSong({
+                    isPlaying: false,
+                    fallback: true,
+                    reason: "network_error",
+                    title: "Spotify status unavailable",
+                    message: "Live listening status is not available right now.",
+                });
                 setIsLoaded(true);
             }
         };
@@ -35,7 +32,7 @@ export default function SpotifyWidget() {
 
         const spotifyInterval = setInterval(fetchSpotifyData, 30 * 1000);
         return () => clearInterval(spotifyInterval);
-    }, [song.isPlaying]);
+    }, []);
 
     return (
         <>
@@ -62,6 +59,11 @@ export default function SpotifyWidget() {
                                     <div className={styles.songTitle}>{song.title}</div>
                                     <div className={styles.artistName}>{song.artist}</div>
                                 </Link>
+                            ) : song.fallback ? (
+                                <div className={`${styles.notPlaying} ${styles.fallback}`}>
+                                    <div className={styles.songTitle}>{song.title || "Spotify status unavailable"}</div>
+                                    <div className={styles.artistName}>{song.message || "Live playback is not available."}</div>
+                                </div>
                             ) : (
                                 <div className={styles.notPlaying}>
                                     <div className={styles.songTitle}>...</div>
