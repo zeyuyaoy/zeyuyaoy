@@ -6,20 +6,29 @@ import OptimizedImage from "./OptimizedImage";
 const ProfileImage = ({ fallbackSrc, className, alt = "Zeyu Yao's profile picture", width, height }) => {
     const [profileImageUrl, setProfileImageUrl] = useState(fallbackSrc);
     const [retryCount, setRetryCount] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const scheduleRetry = () => {
+            if (retryCount < 3) {
+                const delay = Math.pow(2, retryCount) * 1000;
+                setTimeout(() => {
+                    setRetryCount(prev => prev + 1);
+                }, delay);
+            }
+        };
+
         const fetchProfileImage = async () => {
             try {
                 const response = await fetch("/api/profile-pic");
 
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    console.error(`Profile image request failed: HTTP ${response.status}`);
+                    scheduleRetry();
+                    return;
                 }
 
                 const data = await response.json();
                 if (data.fallback) {
-                    setIsLoading(false);
                     return;
                 }
 
@@ -27,19 +36,9 @@ const ProfileImage = ({ fallbackSrc, className, alt = "Zeyu Yao's profile pictur
                     setProfileImageUrl(data.imageUrl);
                     setRetryCount(0);
                 }
-
-                setIsLoading(false);
             } catch (error) {
                 console.error("Error fetching profile image:", error);
-                setIsLoading(false);
-
-                if (retryCount < 3) {
-                    const delay = Math.pow(2, retryCount) * 1000;
-                    setTimeout(() => {
-                        setRetryCount(prev => prev + 1);
-                        fetchProfileImage();
-                    }, delay);
-                }
+                scheduleRetry();
             }
         };
 

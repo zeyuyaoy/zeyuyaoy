@@ -47,7 +47,13 @@ export async function GET() {
                 );
             }
 
-            throw new Error(`Failed to fetch profile image: ${response.statusText}`);
+            return new Response(
+                JSON.stringify(unavailableProfileData),
+                {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
         }
 
         const imageUrl = response.url;

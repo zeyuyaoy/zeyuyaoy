@@ -49,13 +49,11 @@ const getAccessToken = async () => {
 };
 
 const getNowPlaying = async (access_token) => {
-    const response = await fetch(NOW_PLAYING_ENDPOINT, {
+    return fetch(NOW_PLAYING_ENDPOINT, {
         headers: {
             Authorization: `Bearer ${access_token}`,
         },
     });
-
-    return response;
 };
 
 export async function GET() {

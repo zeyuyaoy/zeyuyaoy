@@ -15,7 +15,9 @@ export default function PhotoMarquee() {
                 const res = await fetch("/api/photos");
 
                 if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    setError("Photos are unavailable right now.");
+                    setIsLoading(false);
+                    return;
                 }
 
                 const data = await res.json();
@@ -30,7 +32,7 @@ export default function PhotoMarquee() {
                 setIsLoading(false);
             } catch (error) {
                 console.error("Error fetching photos:", error);
-                setError(error.message);
+                setError("Photos are unavailable right now.");
                 setIsLoading(false);
             }
         };
