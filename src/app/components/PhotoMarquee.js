@@ -37,7 +37,7 @@ export default function PhotoMarquee() {
             }
         };
 
-        fetchPhotos();
+        fetchPhotos().then(r => console.log("Photos fetched:", r));
     }, []);
 
     if (isLoading) {

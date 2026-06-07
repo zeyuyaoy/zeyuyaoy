@@ -33,7 +33,7 @@ export default function Home() {
       }
     };
 
-    fetchWeatherData();
+    fetchWeatherData().then(r => console.log("Weather data fetched:", r));
   }, []);
 
   return (

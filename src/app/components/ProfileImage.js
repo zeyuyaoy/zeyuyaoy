@@ -42,10 +42,10 @@ const ProfileImage = ({ fallbackSrc, className, alt = "Zeyu Yao's profile pictur
             }
         };
 
-        fetchProfileImage();
+        fetchProfileImage().then(r => console.log("Profile image fetched:", r));
         const intervalId = setInterval(() => {
             setRetryCount(0);
-            fetchProfileImage();
+            fetchProfileImage().then(r => console.log("Profile image re-fetched:", r));
         }, 5 * 60 * 1000);
 
         return () => clearInterval(intervalId);

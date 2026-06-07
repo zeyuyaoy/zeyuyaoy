@@ -28,7 +28,7 @@ export default function SpotifyWidget() {
             }
         };
 
-        fetchSpotifyData();
+        fetchSpotifyData().then(r => console.log("Spotify data fetched:", r));
 
         const spotifyInterval = setInterval(fetchSpotifyData, 30 * 1000);
         return () => clearInterval(spotifyInterval);
