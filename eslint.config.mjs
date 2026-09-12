@@ -5,6 +5,7 @@ export default defineConfig([
   ...nextVitals,
   globalIgnores([
     ".next/**",
+    ".vercel/**",
     "next-env.d.ts",
     "out/**"
   ])
