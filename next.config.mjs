@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
+const cachedApiRoutes = [
+    '/api/github',
+    '/api/photos',
+    '/api/profile-pic',
+    '/api/weather',
+];
+
 const nextConfig = {
     reactStrictMode: true,
     images: {
@@ -46,15 +53,15 @@ const nextConfig = {
                     },
                 ],
             },
-            {
-                source: '/api/(.*)',
+            ...cachedApiRoutes.map((source) => ({
+                source,
                 headers: [
                     {
                         key: 'Cache-Control',
                         value: 'public, max-age=60, stale-while-revalidate=300',
                     },
                 ],
-            },
+            })),
         ];
     },
 };

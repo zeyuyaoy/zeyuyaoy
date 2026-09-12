@@ -1,37 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
+import {getSpotifyPollDecision} from "@/lib/spotify-polling";
 import styles from "./SpotifyWidget.module.css";
+
+const unavailableSong = {
+    isPlaying: false,
+    fallback: true,
+    reason: "network_error",
+    title: "Spotify status unavailable",
+    message: "Live listening status is not available right now.",
+};
+
+const isSpotifyResponse = (data) => (
+    data !== null
+    && typeof data === "object"
+    && typeof data.isPlaying === "boolean"
+);
 
 export default function SpotifyWidget() {
     const [song, setSong] = useState({});
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
+        let timeoutId;
+        let controller;
+        let cancelled = false;
+        let consecutiveFailures = 0;
+
+        const scheduleNextFetch = (delay) => {
+            timeoutId = window.setTimeout(fetchSpotifyData, delay);
+        };
+
         const fetchSpotifyData = async () => {
+            controller = new AbortController();
+            let nextDelay;
+            let stopPolling = false;
+
             try {
-                const response = await fetch("/api/spotify");
+                const response = await fetch("/api/spotify", {
+                    signal: controller.signal,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Spotify endpoint returned ${response.status}`);
+                }
+
                 const data = await response.json();
+
+                if (!isSpotifyResponse(data)) {
+                    throw new Error("Spotify endpoint returned an invalid response");
+                }
+
+                if (cancelled) {
+                    return;
+                }
+
                 setSong(data);
                 setIsLoaded(true);
+
+                const decision = getSpotifyPollDecision(data, consecutiveFailures);
+                consecutiveFailures = decision.consecutiveFailures;
+                nextDelay = decision.delay;
+                stopPolling = decision.stop;
             } catch (error) {
+                if (error.name === "AbortError" || cancelled) {
+                    return;
+                }
+
                 console.error("Error fetching Spotify data:", error);
-                setSong({
-                    isPlaying: false,
-                    fallback: true,
-                    reason: "network_error",
-                    title: "Spotify status unavailable",
-                    message: "Live listening status is not available right now.",
-                });
+                setSong(unavailableSong);
                 setIsLoaded(true);
+                const decision = getSpotifyPollDecision(unavailableSong, consecutiveFailures);
+                consecutiveFailures = decision.consecutiveFailures;
+                nextDelay = decision.delay;
+            } finally {
+                if (!cancelled && !stopPolling) {
+                    scheduleNextFetch(nextDelay);
+                }
             }
         };
 
-        fetchSpotifyData().then(r => console.log("Spotify data fetched:", r));
+        fetchSpotifyData();
 
-        const spotifyInterval = setInterval(fetchSpotifyData, 30 * 1000);
-        return () => clearInterval(spotifyInterval);
+        return () => {
+            cancelled = true;
+            controller?.abort();
+            window.clearTimeout(timeoutId);
+        };
     }, []);
 
     return (
@@ -62,7 +119,8 @@ export default function SpotifyWidget() {
                             ) : song.fallback ? (
                                 <div className={`${styles.notPlaying} ${styles.fallback}`}>
                                     <div className={styles.songTitle}>{song.title || "Spotify status unavailable"}</div>
-                                    <div className={styles.artistName}>{song.message || "Live playback is not available."}</div>
+                                    <div
+                                        className={styles.artistName}>{song.message || "Live playback is not available."}</div>
                                 </div>
                             ) : (
                                 <div className={styles.notPlaying}>
