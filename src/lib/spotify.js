@@ -8,6 +8,23 @@ const ACCESS_TOKEN_EXPIRY_SKEW_MS = 60 * 1000;
 const PUBLIC_CACHE_CONTROL = "public, max-age=0, s-maxage=30, stale-while-revalidate=60";
 const NO_STORE_CACHE_CONTROL = "no-store";
 
+function freezeCachedProgress(data, now) {
+    if (!data.isPlaying
+        || !Number.isFinite(data.progressMs)
+        || !Number.isFinite(data.durationMs)) {
+        return data;
+    }
+
+    const capturedAt = Number(data.progressCapturedAt);
+    const elapsed = Number.isFinite(capturedAt) ? Math.max(0, now - capturedAt) : 0;
+
+    return {
+        ...data,
+        progressCapturedAt: now,
+        progressMs: Math.min(data.progressMs + elapsed, data.durationMs),
+    };
+}
+
 const unavailableData = Object.freeze({
     isPlaying: false,
     fallback: true,
@@ -105,6 +122,14 @@ function parseTrack(body) {
         ? body.item.artists.map((artist) => artist?.name).filter(Boolean)
         : [];
     const songUrl = body.item.external_urls?.spotify;
+    const rawDurationMs = body.item.duration_ms;
+    const rawProgressMs = body.progress_ms;
+    const durationMs = Number.isFinite(rawDurationMs) && rawDurationMs > 0
+        ? Math.round(rawDurationMs)
+        : null;
+    const progressMs = Number.isFinite(rawProgressMs) && rawProgressMs >= 0
+        ? Math.min(Math.round(rawProgressMs), durationMs ?? Math.round(rawProgressMs))
+        : null;
 
     if (typeof title !== "string" || artists.length === 0 || typeof songUrl !== "string") {
         throw new SpotifyServiceError("invalid_response", {transient: true});
@@ -114,7 +139,9 @@ function parseTrack(body) {
         album: body.item.album?.name ?? "",
         albumImageUrl: body.item.album?.images?.[0]?.url ?? null,
         artist: artists.join(", ").replace(/,(?!.*,)/gim, " and"),
+        durationMs,
         isPlaying: true,
+        progressMs,
         songUrl,
         title,
     };
@@ -289,7 +316,11 @@ export class SpotifyService {
         }
 
         const body = await readJson(response);
-        return this.cachePlayback(parseTrack(body));
+        const playback = parseTrack(body);
+
+        return this.cachePlayback(playback.isPlaying
+            ? {...playback, progressCapturedAt: this.now()}
+            : playback);
     }
 
     terminalFailure(error) {
@@ -305,7 +336,7 @@ export class SpotifyService {
         const now = this.now();
         if (this.playbackCache && now - this.playbackCache.timestamp <= this.staleCacheMs) {
             return responseResult({
-                ...this.playbackCache.data,
+                ...freezeCachedProgress(this.playbackCache.data, now),
                 reason: "stale",
                 stale: true,
                 ...(error.retryAfterSeconds === null

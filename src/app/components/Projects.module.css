@@ -1,163 +1,167 @@
 .projectsContainer {
-  width: 100%;
-  max-width: 760px;
-  margin: 0 auto;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .notebook {
-  min-height: 280px;
-  background: var(--surface-color);
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 0;
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  transition: all 120ms ease;
+    flex: 1;
+    min-height: 280px;
+    background: var(--surface-color);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 0;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 120ms ease;
 }
 
 .notebook:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
 }
 
 .spiralBinding {
-  display: flex;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--accent-soft);
-  border-bottom: 1px solid var(--border-color);
-  position: relative;
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
 .spiral {
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--primary-color);
-  border-radius: 50%;
-  background: transparent;
-  transition: transform 120ms ease;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    background: transparent;
+    transition: transform 120ms ease;
 }
 
 .spiral:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .notebookContent {
-  padding: clamp(16px, 3vw, 20px);
-  background: var(--surface-color);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+    padding: clamp(16px, 3vw, 20px);
+    background: var(--surface-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .projectText {
-  margin: 0 0 var(--spacing-md) 0;
-  color: var(--text-color);
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
 .projectsList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: clamp(12px, 2vw, 16px);
-  margin-bottom: var(--spacing-lg);
-  flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(12px, 2vw, 16px);
+    margin-bottom: var(--spacing-lg);
+    flex: 1;
 }
 
 .footer {
-  text-align: center;
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color);
+    text-align: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
 }
 
 .viewMore {
-  display: inline-block;
-  color: var(--primary-color);
-  font-weight: 600;
-  font-size: 0.88rem;
-  text-decoration: none;
-  padding: 10px 14px;
-  min-height: 44px;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  transition: all 120ms ease;
-  background: transparent;
+    display: inline-block;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+    padding: 10px 14px;
+    min-height: 44px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    transition: all 120ms ease;
+    background: transparent;
 }
 
 .viewMore:hover,
 .viewMore:focus-visible {
-  border-color: var(--primary-color);
-  background: var(--accent-soft);
-  transform: translateY(-1px);
+    border-color: var(--primary-color);
+    background: var(--accent-soft);
+    transform: translateY(-1px);
 }
 
 .loading,
 .emptyState {
-  text-align: center;
-  padding: var(--spacing-2xl) var(--spacing-lg);
-  color: var(--muted-color);
-  font-size: 0.9rem;
+    text-align: center;
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    color: var(--muted-color);
+    font-size: 0.9rem;
 }
 
 .errorMessage {
-  text-align: center;
-  padding: var(--spacing-xl);
-  color: var(--text-color);
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-color);
 }
 
 .errorDetail {
-  font-size: 0.85rem;
-  color: var(--muted-color);
-  margin: var(--spacing-md) 0;
-  font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    margin: var(--spacing-md) 0;
+    font-style: italic;
 }
 
 .errorFooter {
-  font-size: 0.9rem;
-  margin-top: var(--spacing-lg);
-  color: var(--muted-color);
+    font-size: 0.9rem;
+    margin-top: var(--spacing-lg);
+    color: var(--muted-color);
 }
 
 .link {
-  color: var(--primary-color);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  font-weight: 600;
-  transition: all 120ms ease;
+    color: var(--primary-color);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 600;
+    transition: all 120ms ease;
 }
 
 .link:hover {
-  opacity: 0.8;
+    opacity: 0.8;
 }
 
 @media (max-width: 800px) {
-  .projectsContainer {
-    width: 100%;
-  }
+    .projectsContainer {
+        width: 100%;
+    }
 
-  .notebook {
-    min-height: 240px;
-  }
+    .notebook {
+        flex: none;
+        min-height: 240px;
+    }
 
-  .notebookContent {
-    padding: clamp(14px, 3vw, 18px);
-  }
+    .notebookContent {
+        padding: clamp(14px, 3vw, 18px);
+    }
 }
 
 @media (max-width: 430px) {
-  .projectsList {
-    grid-template-columns: 1fr;
-  }
+    .projectsList {
+        grid-template-columns: 1fr;
+    }
 
-  .viewMore {
-    width: 100%;
-    text-align: center;
-  }
+    .viewMore {
+        width: 100%;
+        text-align: center;
+    }
 }

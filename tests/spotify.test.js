@@ -9,10 +9,12 @@ const env = {
 
 const trackPayload = {
     is_playing: true,
+    progress_ms: 42_000,
     currently_playing_type: "track",
     item: {
         type: "track",
         name: "Test Track",
+        duration_ms: 240_000,
         artists: [{name: "First Artist"}, {name: "Second Artist"}],
         album: {
             name: "Test Album",
@@ -76,7 +78,10 @@ describe("SpotifyService", () => {
             album: "Test Album",
             albumImageUrl: "https://i.scdn.co/image/test",
             artist: "First Artist and Second Artist",
+            durationMs: 240_000,
             isPlaying: true,
+            progressCapturedAt: 0,
+            progressMs: 42_000,
             songUrl: "https://open.spotify.com/track/test",
             title: "Test Track",
         });
@@ -96,6 +101,34 @@ describe("SpotifyService", () => {
         const result = await service.getStatus(env);
 
         expect(result.data).toEqual({isPlaying: false});
+    });
+
+    it("clamps playback progress and tolerates missing timing fields", async () => {
+        const overDuration = structuredClone(trackPayload);
+        overDuration.progress_ms = 300_000;
+        const withoutTiming = structuredClone(trackPayload);
+        delete withoutTiming.progress_ms;
+        delete withoutTiming.item.duration_ms;
+        const fetches = fetchSequence(
+            jsonResponse({access_token: "access", expires_in: 3600}),
+            jsonResponse(overDuration),
+            jsonResponse(withoutTiming),
+        );
+        let now = 1_000;
+        const service = new SpotifyService({
+            fetchImpl: fetches.fetchImpl,
+            now: () => now,
+            logger: silentLogger,
+        });
+
+        const clamped = await service.getStatus(env);
+        now += 31_000;
+        const missing = await service.getStatus(env);
+
+        expect(clamped.data.progressMs).toBe(240_000);
+        expect(clamped.data.progressCapturedAt).toBe(1_000);
+        expect(missing.data.durationMs).toBeNull();
+        expect(missing.data.progressMs).toBeNull();
     });
 
     it("treats unsupported playback types as not playing", async () => {
@@ -237,6 +270,8 @@ describe("SpotifyService", () => {
 
         expect(stale.data.title).toBe("Test Track");
         expect(stale.data.stale).toBe(true);
+        expect(stale.data.progressMs).toBe(73_000);
+        expect(stale.data.progressCapturedAt).toBe(31_000);
         expect(unavailable.data.reason).toBe("playback_unavailable");
         expect(unavailable.data.stale).toBeUndefined();
     });
