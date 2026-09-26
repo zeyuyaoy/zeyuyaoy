@@ -1,6 +1,6 @@
 .projectsContainer {
     width: 100%;
-    max-width: 760px;
+    min-width: 0;
     margin: 0 auto;
     display: flex;
     flex-direction: column;

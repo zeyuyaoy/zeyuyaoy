@@ -1,12 +1,15 @@
 .player,
 .loading {
     width: 100%;
-    max-width: 500px;
+    min-width: 0;
     margin: 0 auto;
-    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
 }
 
 .cassette {
+    flex: 1;
     --cassette-shell: color-mix(in srgb, var(--primary-color) 85%, #a0ac9e);
     --cassette-shell-light: color-mix(in srgb, var(--cassette-shell) 65%, white);
     --cassette-shell-dark: color-mix(in srgb, var(--cassette-shell) 75%, #17231d);
@@ -351,6 +354,7 @@ a.trackLabel:focus-visible {
 }
 
 .footer {
+    flex: none;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;

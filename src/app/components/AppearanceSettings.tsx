@@ -28,7 +28,7 @@ export default function AppearanceSettings() {
             const rect = trigger.current?.getBoundingClientRect();
             if (!rect || !dialog.current) return;
             dialog.current.style.setProperty("--panel-right", `${Math.max(16, window.innerWidth - rect.right)}px`);
-            dialog.current.style.setProperty("--panel-bottom", `${Math.min(Math.max(16, window.innerHeight - rect.top + 12), window.innerHeight - 240)}px`);
+            dialog.current.style.setProperty("--panel-bottom", `${Math.min(Math.max(16, window.innerHeight - rect.top + 12), Math.max(16, window.innerHeight - 240))}px`);
         };
         position();
         window.addEventListener("resize", position);
