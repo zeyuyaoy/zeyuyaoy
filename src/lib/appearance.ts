@@ -7,7 +7,7 @@ export const appearanceOptions = {
     motion: ["system", "reduce"],
 } as const;
 
-export type Appearance = { version: 1 } & {
+export type Appearance = { version: 1; marqueeSpeed: number } & {
     [K in keyof typeof appearanceOptions]: (typeof appearanceOptions)[K][number];
 };
 
@@ -20,7 +20,7 @@ export const presets = [
 
 export const defaultAppearance: Appearance = {
     version: 1, preset: "sundaze", mode: "system", accent: "sage", font: "rounded",
-    size: "standard", motion: "system",
+    size: "standard", motion: "system", marqueeSpeed: 2.5,
 };
 
 export const appearanceStorageKey = "portfolio-appearance";
@@ -39,6 +39,10 @@ export function normalizeAppearance(
         if (typeof candidate === "string" && (options[key] as readonly string[]).includes(candidate)) {
             Object.assign(result, {[key]: candidate});
         }
+    }
+
+    if ("marqueeSpeed" in value && typeof value.marqueeSpeed === "number" && Number.isFinite(value.marqueeSpeed)) {
+        result.marqueeSpeed = Math.round(Math.min(25, Math.max(0.5, value.marqueeSpeed)) * 4) / 4;
     }
     return result;
 }

@@ -95,6 +95,35 @@ describe("visitor appearance", () => {
         expect(result).toEqual({...defaultAppearance, font: "serif"});
     });
 
+    test("restores, bounds, and resets photo speed while accepting older saved preferences", () => {
+        const {marqueeSpeed, ...legacyPreferences} = defaultAppearance;
+        const {store, data} = fixture({saved: JSON.stringify(legacyPreferences)});
+        expect(store.getSnapshot().marqueeSpeed).toBe(2.5);
+
+        store.update({marqueeSpeed: 1.75});
+        store.selectPreset("editorial");
+        expect(fixture({saved: data.get(appearanceStorageKey)}).store.getSnapshot().marqueeSpeed).toBe(1.75);
+
+        store.update({marqueeSpeed: 100});
+        expect(store.getSnapshot().marqueeSpeed).toBe(25);
+
+        store.update({marqueeSpeed: -1});
+        expect(store.getSnapshot().marqueeSpeed).toBe(0.5);
+
+        store.update({marqueeSpeed: 1.3});
+        expect(store.getSnapshot().marqueeSpeed).toBe(1.25);
+
+        for (const invalid of [NaN, Infinity, "fast", null]) {
+            expect(normalizeAppearance({
+                ...defaultAppearance,
+                marqueeSpeed: invalid
+            }, defaultAppearance, appearanceOptions).marqueeSpeed).toBe(marqueeSpeed);
+        }
+
+        store.reset();
+        expect(store.getSnapshot().marqueeSpeed).toBe(2.5);
+    });
+
     test.each([{readFails: true}, {writeFails: true}])("keeps changes in memory when storage fails: %j", options => {
         const {store} = fixture(options);
         store.selectPreset("goofball");
@@ -147,7 +176,8 @@ describe("visitor appearance", () => {
                     preset: preset.id,
                     accent: preset.accent,
                     font: preset.font,
-                    mode
+                    mode,
+                    marqueeSpeed: 1.75,
                 };
                 const f = fixture({saved: JSON.stringify(preferences), dark: true});
                 const root = {dataset: {}};

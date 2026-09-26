@@ -5,15 +5,15 @@ import path from "path";
 export const dynamic = "force-static";
 
 export async function GET() {
-    const photosSuffixes = ["jpg", "jpeg", "png", "gif"];
-    const photosDirectory = path.join(process.cwd(), "public", "photos");
+    const photosSuffixes = ["jpg", "jpeg", "png", "gif", "webp", "avif"];
+    const photosDirectory = path.join(process.cwd(), "public", "marquee");
 
     const files = await readdir(photosDirectory);
     const photoFiles = files.filter((file) =>
         photosSuffixes.includes(file.split(".").pop()?.toLowerCase() ?? "")
     );
 
-    const photos = photoFiles.sort().map((fileName) => `/photos/${encodeURIComponent(fileName)}`);
+    const photos = photoFiles.sort().map((fileName) => `/marquee/${encodeURIComponent(fileName)}`);
 
     return publicJson({photos});
 }

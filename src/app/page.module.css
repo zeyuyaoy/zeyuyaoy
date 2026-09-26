@@ -4,9 +4,13 @@
     background-color: var(--background-color);
     color: var(--text-color);
     position: relative;
+    isolation: isolate;
 }
 
 .main {
+    position: relative;
+    z-index: 1;
+    pointer-events: none;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -15,6 +19,7 @@
 }
 
 .contentContainer {
+    pointer-events: auto;
     max-width: var(--max-content-width);
     width: 100%;
 }
@@ -372,5 +377,8 @@
 }
 
 @media (max-width: 600px) {
-    .footer { padding: 10px; gap: 8px; }
+    .footer {
+        padding: 10px;
+        gap: 8px;
+    }
 }

@@ -50,7 +50,9 @@ for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/pho
 
         if (path === "/api/photos") {
             assert.ok(Array.isArray(data.photos) && data.photos.length > 0);
-            for (const photo of data.photos) assert.ok(photo.startsWith("/photos/"));
+            for (const photo of data.photos) {
+                assert.ok(photo.startsWith("/marquee/"));
+            }
         }
 
         results.push({

@@ -7,12 +7,14 @@ import AppearanceSettings from "./components/AppearanceSettings";
 
 import SpotifyWidget from "./components/SpotifyWidget";
 import Projects from "./components/Projects";
+import PhotoMarqueeBackground from "./components/PhotoMarqueeBackground";
 
 export const revalidate = 600;
 
 export default function Home() {
     return (
         <div className={styles.page}>
+            <PhotoMarqueeBackground/>
             <main className={styles.main}>
                 <div className={styles.contentContainer}>
                     <section className={styles.intro}>

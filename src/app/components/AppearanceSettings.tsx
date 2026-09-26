@@ -65,9 +65,9 @@ export default function AppearanceSettings() {
                     }}
                     onKeyDown={event => {
                         if (event.key !== "Tab") return;
-                        const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>("button:not([disabled])");
-                        const first = buttons[0];
-                        const last = buttons[buttons.length - 1];
+                        const controls = event.currentTarget.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled])");
+                        const first = controls[0];
+                        const last = controls[controls.length - 1];
                         if (event.shiftKey && document.activeElement === first) {
                             event.preventDefault();
                             last?.focus();
@@ -163,6 +163,21 @@ export default function AppearanceSettings() {
                                     onClick={() => update("motion", "reduce")}>Reduce
                             </button>
                         </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend><label htmlFor="marquee-speed">Photo scroll speed</label></legend>
+                        <div className={styles.speedControl}>
+                            <span aria-hidden="true">🐢</span>
+                            <input id="marquee-speed" type="range" min="1" max="50" step="0.5"
+                                   value={value.marqueeSpeed * 2}
+                                   aria-valuetext={`${value.marqueeSpeed * 2} percent of screen width per second`}
+                                   aria-describedby="marquee-speed-description"
+                                   onChange={event => update("marqueeSpeed", event.currentTarget.valueAsNumber / 2)}/>
+                            <span aria-hidden="true">🐇</span>
+                        </div>
+                        <p id="marquee-speed-description" className={styles.speedDescription}>
+                            Reduced motion pauses the photos.
+                        </p>
                     </fieldset>
                 </div>
                 <footer className={styles.panelFooter}>
