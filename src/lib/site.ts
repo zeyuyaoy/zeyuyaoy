@@ -1,5 +1,5 @@
 export const site = {
-    url: "https://www.cytronicoder.com",
+    url: "https://zeyuyaoy.com",
     title: "Zeyu (Peter) Yao | 姚则禹 — Research & Projects",
     description: "Zeyu (Peter) Yao’s portfolio: single-cell analytics, gene-expression dynamics, AI-driven discovery tools, and inclusive STEM education in Singapore.",
 };

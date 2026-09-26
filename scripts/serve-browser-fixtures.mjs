@@ -25,14 +25,9 @@ const server = createServer(async (request, response) => {
         response.setHeader("Set-Cookie", `portfolio-fixture=${selected}; Path=/; HttpOnly; SameSite=Strict`);
     }
 
-    if (url.pathname === "/api/profile-pic" || (url.pathname === "/api/spotify" && allowed.has(scenario))) {
+    if (url.pathname === "/api/spotify" && allowed.has(scenario)) {
         response.setHeader("Content-Type", "application/json");
         response.setHeader("Cache-Control", "no-store");
-        if (url.pathname === "/api/profile-pic") {
-            response.end(JSON.stringify({imageUrl: "javascript:alert(1)"}));
-            return;
-        }
-
         if (scenario === "timeout") {
             const timer = setTimeout(() => response.end(JSON.stringify({isPlaying: false})), 45_000);
             response.on("close", () => clearTimeout(timer));

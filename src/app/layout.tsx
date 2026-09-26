@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         siteName: "Zeyu Yao",
         images: [{
             url: "/og-image.png", width: 1920, height: 1080,
-            alt: "Cytronicoder emblem over a sunset landscape",
+            alt: "White geometric emblem over a sunset landscape",
         }],
     },
     twitter: {
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
         title: site.title,
         description: site.description,
         creator: "@zeyuyaoy",
-        images: [{url: "/og-image.png", alt: "Cytronicoder emblem over a sunset landscape"}],
+        images: [{url: "/og-image.png", alt: "White geometric emblem over a sunset landscape"}],
     },
 };
 

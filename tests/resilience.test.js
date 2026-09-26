@@ -1,8 +1,6 @@
 import {describe, expect, test} from "bun:test";
 import {createCachedUpstream, failureCode, trustedHttpsUrl, UpstreamError} from "../src/lib/upstream";
 import {parseWeather} from "../src/lib/weather";
-import {fetchProfileImage} from "../src/lib/profile-image";
-import {parseProfileImage} from "../src/lib/profile-contract";
 import {publicJson} from "../src/lib/api-response";
 
 function cacheFixture(load) {
@@ -121,37 +119,12 @@ describe("weather contract", () => {
     });
 });
 
-describe("profile image contract", () => {
-    test("accepts a trusted image and releases the unused body", async () => {
-        const response = new Response("image bytes", {headers: {"content-type": "image/jpeg"}});
-        Object.defineProperty(response, "url", {value: "https://slack.cytronicoder.com/photo.jpg"});
-
-        const data = await fetchProfileImage(async () => response);
-        expect(parseProfileImage(data)).toBe(response.url);
-        expect(response.bodyUsed).toBe(true);
+describe("trusted HTTPS URLs", () => {
+    test("accepts a URL on the trusted host", () => {
+        expect(trustedHttpsUrl("https://github.com/zeyuyaoy", "github.com")).toBe(true);
     });
 
-    test.each([
-        [200, "text/html", "https://slack.cytronicoder.com/login"],
-        [503, "image/jpeg", "https://slack.cytronicoder.com/photo.jpg"],
-        [200, "image/jpeg", "https://untrusted.example/photo.jpg"],
-    ])("rejects invalid upstream image response %s %s", async (status, contentType, url) => {
-        const response = new Response("untrusted", {status, headers: {"content-type": contentType}});
-        Object.defineProperty(response, "url", {value: url});
-
-        await expect(fetchProfileImage(async () => response)).rejects.toThrow();
-        expect(response.bodyUsed).toBe(true);
-    });
-
-    test("accepts a public fallback but rejects malformed data", () => {
-        expect(parseProfileImage({fallback: true})).toBeNull();
-        for (const data of [null, {}, {imageUrl: {}}]) {
-            expect(() => parseProfileImage(data)).toThrow();
-        }
-    });
-
-    test.each(["javascript:alert(1)", "http://slack.cytronicoder.com/p", "https://slack.cytronicoder.com.evil.test/p", "https://user:pass@slack.cytronicoder.com/p", "https://slack.cytronicoder.com:444/p"])("rejects unsafe URLs %s", url => {
-        expect(trustedHttpsUrl(url, "slack.cytronicoder.com")).toBe(false);
-        expect(() => parseProfileImage({imageUrl: url})).toThrow();
+    test.each(["javascript:alert(1)", "http://github.com/p", "https://github.com.evil.test/p", "https://user:pass@github.com/p", "https://github.com:444/p"])("rejects unsafe URLs %s", url => {
+        expect(trustedHttpsUrl(url, "github.com")).toBe(false);
     });
 });

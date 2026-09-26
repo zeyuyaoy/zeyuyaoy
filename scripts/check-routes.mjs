@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
 import {parseSpotifyStatus} from "../src/lib/spotify-contract.ts";
-import {parseProfileImage} from "../src/lib/profile-contract.ts";
 import {site} from "../src/lib/site.ts";
 
 const base = process.argv[2] ?? "http://127.0.0.1:3000";
 const results = [];
 
-for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/photos", "/api/profile-pic", "/api/spotify", "/api/weather", "/audit-route-that-does-not-exist"]) {
+for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/photos", "/api/spotify", "/api/weather", "/audit-route-that-does-not-exist"]) {
     const response = await fetch(new URL(path, base), {signal: AbortSignal.timeout(45_000)});
     const text = await response.text();
     assert.equal(response.status, path.includes("does-not-exist") ? 404 : 200, path);
@@ -16,8 +15,8 @@ for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/pho
     if (path === "/") {
         assert.ok(text.includes(site.description), "Current description in initial HTML");
         assert.ok(text.includes(`rel="canonical" href="${site.url}"`), "Canonical URL");
-        assert.ok(text.includes("Research &amp; community"), "Research heading in initial HTML");
-        assert.ok(text.includes("A recently updated project:"), "Project heading in initial HTML");
+        assert.ok(text.includes('id="research-heading"'), "Research heading in initial HTML");
+        assert.ok(text.includes('id="projects-heading"'), "Project heading in initial HTML");
         assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), "No blanket noindex");
 
         const csp = response.headers.get("content-security-policy");
@@ -39,10 +38,6 @@ for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/pho
 
         if (path === "/api/spotify") {
             parseSpotifyStatus(data);
-        }
-
-        if (path === "/api/profile-pic") {
-            parseProfileImage(data);
         }
 
         if (path === "/api/weather") {

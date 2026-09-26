@@ -1,5 +1,5 @@
 import styles from "./page.module.css";
-import ProfileImage from "./components/ProfileImage";
+import Image from "next/image";
 import ProfilePic from "../../public/profile.jpg";
 import ThemeProvider from "./components/ThemeProvider";
 import Webring from "./components/Webring";
@@ -16,12 +16,16 @@ export default function Home() {
             <main className={styles.main}>
                 <div className={styles.contentContainer}>
                     <section className={styles.intro}>
-                        <ProfileImage
+                        <Image
                             className={styles.profileImage}
-                            fallbackSrc={ProfilePic}
+                            src={ProfilePic}
                             alt="Zeyu Yao's profile picture"
                             width={125}
                             height={125}
+                            loading="eager"
+                            fetchPriority="high"
+                            quality={90}
+                            sizes="(max-width: 560px) 80px, (max-width: 800px) 100px, 125px"
                         />
                         <div className={styles.introText}>
                             <h1 className={styles.name}>
@@ -79,7 +83,7 @@ export default function Home() {
                                     </a>
                                 </nav>
                                 <a
-                                    href="https://research.cytronicoder.com"
+                                    href="https://research.zeyuyaoy.com"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className={styles.blogWidget}
@@ -94,11 +98,11 @@ export default function Home() {
                         <h2 id="research-heading" className={styles.bioHeading}>Hello! I&apos;m Peter.</h2>
                         <p className={styles.bioText}>
                             I love working on{" "}
-                            <a href="https://research.cytronicoder.com/orcid-162573947" className={styles.link}
+                            <a href="https://research.zeyuyaoy.com/orcid-162573947" className={styles.link}
                                target="_blank" rel="noopener noreferrer">single-cell analytics</a>,{" "}
-                            <a href="https://research.cytronicoder.com/biorsp-posters" className={styles.link}
+                            <a href="https://research.zeyuyaoy.com/biorsp-posters" className={styles.link}
                                target="_blank" rel="noopener noreferrer">gene-expression dynamics</a>, and{" "}
-                            <a href="https://research.cytronicoder.com/garcia" className={styles.link} target="_blank"
+                            <a href="https://research.zeyuyaoy.com/garcia" className={styles.link} target="_blank"
                                rel="noopener noreferrer">AI-driven discovery tools</a>{" "}
                             to understand how complex cellular systems change, adapt, and break.
                             My work has been presented at IEEE BHI, GIW Asia, and ISMB/ECCB, among

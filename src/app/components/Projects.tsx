@@ -21,13 +21,14 @@ export default async function Projects() {
                     {Array.from({length: 8}, (_, i) => <div key={i} className={styles.spiral}/>)}
                 </div>
                 <div className={styles.notebookContent}>
-                    <h2 id="projects-heading" className={styles.projectText}>Here&apos;s what I&apos;ve been working on!</h2>
+                    <h2 id="projects-heading" className={styles.projectText}>Here&apos;s what I&apos;ve been working
+                        on!</h2>
                     <div className={styles.projectsList}>
                         {unavailable ? (
                             <div className={styles.errorMessage}>
                                 <p>Projects are unavailable right now.</p>
                                 <p className={styles.errorFooter}>
-                                    Contact me through <a href="mailto:novodoodle@gmail.com"
+                                    Contact me through <a href="mailto:cytronicoder+hi@gmail.com"
                                                           className={styles.link}>Email</a>
                                 </p>
                             </div>
