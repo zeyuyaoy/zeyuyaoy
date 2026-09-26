@@ -1,15 +1,23 @@
 import type {Metadata} from "next";
 import type {ReactNode} from "react";
-import {Nunito, Comic_Neue} from "next/font/google";
+import {SpeedInsights} from "@vercel/speed-insights/next";
+import {Comic_Neue, Nunito} from "next/font/google";
 import {personJsonLd, site} from "@/lib/site";
 import "./globals.css";
 import "./appearance.css";
 import {appearanceBootstrapScript} from "@/lib/appearance";
 import AppearanceRuntime from "./components/AppearanceRuntime";
+import CmuReferralAnalytics from "./components/CmuReferralAnalytics";
 
 const nunito = Nunito({subsets: ["latin"], variable: "--font-nunito"});
 
-const comic = Comic_Neue({subsets: ["latin"], weight: ["400", "700"], variable: "--font-comic", display: "swap", preload: false});
+const comic = Comic_Neue({
+    subsets: ["latin"],
+    weight: ["400", "700"],
+    variable: "--font-comic",
+    display: "swap",
+    preload: false
+});
 
 export const metadata: Metadata = {
     metadataBase: new URL(site.url),
@@ -52,6 +60,8 @@ export default function RootLayout({children}: { children: ReactNode }) {
             __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c"),
         }}/>
         {children}
+        <CmuReferralAnalytics/>
+        <SpeedInsights/>
         </body>
         </html>
     );
