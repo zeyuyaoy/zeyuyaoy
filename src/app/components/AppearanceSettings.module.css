@@ -12,6 +12,10 @@
     cursor: pointer;
 }
 
+.trigger {
+    border: 0;
+}
+
 .trigger:hover,
 .close:hover {
     background: var(--accent-soft);
