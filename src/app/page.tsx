@@ -19,7 +19,7 @@ export default function Home() {
                         <Image
                             className={styles.profileImage}
                             src={ProfilePic}
-                            alt="Zeyu Yao's profile picture"
+                            alt="Peter's profile picture"
                             width={125}
                             height={125}
                             loading="eager"
@@ -33,7 +33,8 @@ export default function Home() {
                                 <ThemeProvider/>
                             </h1>
                             <p className={styles.subtitle}>
-                                Currently serving National Service!
+                                Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon
+                                University
                             </p>
                             <div className={styles.socialMedia}>
                                 <nav className={styles.socialMediaIcons} aria-label="Social profiles">
@@ -95,28 +96,72 @@ export default function Home() {
                     </section>
 
                     <section className={styles.bio} aria-labelledby="research-heading">
-                        <h2 id="research-heading" className={styles.bioHeading}>Hello! I&apos;m Peter.</h2>
+                        <h2 id="research-heading" className={styles.bioHeading}>
+                            Hello! I&apos;m Peter. I&apos;m interested in{" "}
+                            <a
+                                href="https://research.zeyuyaoy.com/garcia"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                using computational tools
+                            </a>
+                            {" "}(and{" "}
+                            <a
+                                href="https://research.zeyuyaoy.com/orcid-162573947"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                building new ones!
+                            </a>
+                            ) to{" "}
+                            <a
+                                href="https://research.zeyuyaoy.com/biorsp-posters"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                better understand complex biological systems
+                            </a>
+                            : how they change, adapt, and sometimes break down.
+                        </h2>
+
                         <p className={styles.bioText}>
-                            I love working on{" "}
-                            <a href="https://research.zeyuyaoy.com/orcid-162573947" className={styles.link}
-                               target="_blank" rel="noopener noreferrer">single-cell analytics</a>,{" "}
-                            <a href="https://research.zeyuyaoy.com/biorsp-posters" className={styles.link}
-                               target="_blank" rel="noopener noreferrer">gene-expression dynamics</a>, and{" "}
-                            <a href="https://research.zeyuyaoy.com/garcia" className={styles.link} target="_blank"
-                               rel="noopener noreferrer">AI-driven discovery tools</a>{" "}
-                            to understand how complex cellular systems change, adapt, and break.
-                            My work has been presented at IEEE BHI, GIW Asia, and ISMB/ECCB, among
-                            other major bioinformatics conferences. I dabble in jazz guitar playing
-                            and chess during my free time.
-                        </p>
-                        <p className={styles.bioText}>
-                            I also care deeply about inclusive STEM education. My goal is to build{" "}
-                            <a href="https://github.com/orgs/hackclub/repositories" className={styles.link}
-                               target="_blank" rel="noopener noreferrer">tools</a>{" "}
+                            Growing up in Singapore, I&apos;ve been fortunate to learn across many areas
+                            of STEM and from mentors who have shaped the way I think and work. Alongside
+                            research, I enjoy building{" "}
+                            <a
+                                href="https://hackclub.com/"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                creative tools
+                            </a>{" "}
                             and{" "}
-                            <a href="https://ijhscommunity.org" className={styles.link} target="_blank"
-                               rel="noopener noreferrer">communities</a>{" "}
-                            that make computational education more accessible, equitable, and impactful for all.
+                            <a
+                                href="https://ijhscommunity.org"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                inclusive communities
+                            </a>{" "}
+                            that help more people learn, create, and{" "}
+                            <a
+                                href="https://buildingblocs.sg"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                            find opportunities through computing.
+                            </a>
+                        </p>
+
+                        <p className={styles.bioText}>
+                            Outside of research and building things, I enjoy playing jazz guitar,
+                            running, swimming, and photography.
                         </p>
                     </section>
 
