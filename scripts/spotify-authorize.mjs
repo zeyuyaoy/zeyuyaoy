@@ -3,7 +3,7 @@ import {chmod, readFile, rename, rm, writeFile} from "node:fs/promises";
 import {createServer} from "node:http";
 import {resolve} from "node:path";
 import {fileURLToPath} from "node:url";
-import dotenv from "dotenv";
+import {loadEnvFile} from "node:process";
 
 export const SPOTIFY_REDIRECT_URI = "http://127.0.0.1:8888/callback";
 export const SPOTIFY_SCOPE = "user-read-currently-playing";
@@ -283,9 +283,19 @@ function waitForAuthorizationCode({state, authorizationUrl, timeoutMs = 5 * 60 *
     });
 }
 
+export function loadAuthorizationEnv(envPath) {
+    try {
+        loadEnvFile(envPath);
+    } catch (error) {
+        if (error.code !== "ENOENT") {
+            throw error;
+        }
+    }
+}
+
 async function main() {
     const envPath = resolve(process.cwd(), ".env.local");
-    dotenv.config({path: envPath, quiet: true});
+    loadAuthorizationEnv(envPath);
 
     const clientId = process.env.SPOTIFY_CLIENT_ID?.trim();
     const clientSecret = process.env.SPOTIFY_CLIENT_SECRET?.trim();

@@ -120,7 +120,6 @@
     transform: translateY(-1px);
 }
 
-.loading,
 .emptyState {
     text-align: center;
     padding: var(--spacing-2xl) var(--spacing-lg);
@@ -132,13 +131,6 @@
     text-align: center;
     padding: var(--spacing-xl);
     color: var(--text-color);
-}
-
-.errorDetail {
-    font-size: 0.85rem;
-    color: var(--muted-color);
-    margin: var(--spacing-md) 0;
-    font-style: italic;
 }
 
 .errorFooter {

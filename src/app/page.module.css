@@ -223,7 +223,6 @@
     .page {
         --home-gutter: clamp(24px, 4vw, 32px);
         --home-block-padding: clamp(1rem, 2.5svh, 1.5rem);
-        --home-widget-gap: 1.25rem;
     }
 
     .main {
@@ -268,9 +267,6 @@
 @media (max-width: 560px) {
     .page {
         --home-gutter: 20px;
-        --home-block-padding: clamp(1rem, 2.5svh, 1.5rem);
-        --home-section-gap: clamp(1rem, 2.5svh, 1.25rem);
-        --home-widget-gap: 1.25rem;
         --home-panel-padding: 1rem;
         --home-intro-gap: 1rem;
         --home-project-padding: 0.875rem;
@@ -301,8 +297,6 @@
         --home-block-padding: 1rem;
         --home-section-gap: 1rem;
         --home-widget-gap: 1rem;
-        --home-panel-padding: 1rem;
-        --home-paragraph-gap: 0.75rem;
         --home-project-padding: 0.75rem;
     }
 }

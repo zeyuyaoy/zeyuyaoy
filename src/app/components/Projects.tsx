@@ -1,5 +1,5 @@
 import {getGithubProjects, type Project as GithubProject} from "@/lib/github";
-import {failureCode, reportUpstream} from "@/lib/upstream";
+import {failureCode} from "@/lib/upstream";
 import styles from "./Projects.module.css";
 import Project from "./Project";
 
@@ -11,7 +11,7 @@ export default async function Projects() {
         projects = (await getGithubProjects()).filter(project => project.name !== "zeyuyaoy");
     } catch (error) {
         unavailable = true;
-        reportUpstream({service: "github", state: "degraded", reason: failureCode(error)});
+        console.warn("Portfolio upstream", {service: "github", state: "degraded", reason: failureCode(error)});
     }
 
     return (

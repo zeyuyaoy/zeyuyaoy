@@ -1,4 +1,4 @@
-export type CmuReferralDetection = "utm" | "referrer" | "utm+referrer";
+type CmuReferralDetection = "utm" | "referrer" | "utm+referrer";
 
 export function getCmuReferralDetection(search: string, referrer: string): CmuReferralDetection | null {
     const params = new URLSearchParams(search);
@@ -17,7 +17,8 @@ export function getCmuReferralDetection(search: string, referrer: string): CmuRe
         fromAndrew = (url.protocol === "https:" || url.protocol === "http:")
             && !url.username && !url.password
             && (url.hostname === "andrew.cmu.edu" || url.hostname === "www.andrew.cmu.edu");
-    } catch {}
+    } catch {
+    }
 
     if (tagged && fromAndrew) {
         return "utm+referrer";
@@ -55,7 +56,8 @@ export function createCmuReferralReporter() {
             const storage = getStorage();
             if (storage.getItem(sessionKey)) return;
             storage.setItem(sessionKey, "1");
-        } catch {}
+        } catch {
+        }
 
         report(detection);
     };

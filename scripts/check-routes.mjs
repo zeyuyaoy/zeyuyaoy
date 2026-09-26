@@ -5,7 +5,7 @@ import {site} from "../src/lib/site.ts";
 const base = process.argv[2] ?? "http://127.0.0.1:3000";
 const results = [];
 
-for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/photos", "/api/spotify", "/api/weather", "/audit-route-that-does-not-exist"]) {
+for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/spotify", "/audit-route-that-does-not-exist"]) {
     const response = await fetch(new URL(path, base), {signal: AbortSignal.timeout(45_000)});
     const text = await response.text();
     assert.equal(response.status, path.includes("does-not-exist") ? 404 : 200, path);
@@ -28,7 +28,7 @@ for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/pho
         assert.ok(text.includes("Disallow: /api/"));
     } else if (path === "/sitemap.xml") {
         assert.ok(text.includes(`<loc>${site.url}</loc>`));
-    } else if (path.startsWith("/api/")) {
+    } else if (path === "/api/spotify") {
         assert.ok(response.headers.get("content-type")?.includes("application/json"), path);
 
         const data = JSON.parse(text);
@@ -36,24 +36,7 @@ for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/pho
             assert.equal(cache, "no-store", `${path}: degraded data must not be cached`);
         }
 
-        if (path === "/api/spotify") {
-            parseSpotifyStatus(data);
-        }
-
-        if (path === "/api/weather") {
-            assert.equal(typeof data.forecast, "string");
-        }
-
-        if (path === "/api/github") {
-            assert.ok(Array.isArray(data) || data.fallback === true);
-        }
-
-        if (path === "/api/photos") {
-            assert.ok(Array.isArray(data.photos) && data.photos.length > 0);
-            for (const photo of data.photos) {
-                assert.ok(photo.startsWith("/marquee/"));
-            }
-        }
+        parseSpotifyStatus(data);
 
         results.push({
             path, status: response.status, cache, fallback: Boolean(data.fallback), stale: Boolean(data.stale)

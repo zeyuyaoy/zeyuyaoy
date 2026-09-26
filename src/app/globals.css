@@ -12,24 +12,16 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-lg: 0 8px 12px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06);
-    --code-bg: rgba(106, 142, 127, 0.06);
-    --code-color: #4a5a52;
-    --button-text: #fdfbf8;
     --radius-md: 10px;
     --radius-lg: 14px;
     --radius-xl: 18px;
     --font-mono: "Monaco", "Courier New", monospace;
-    --spacing-xs: 4px;
     --spacing-sm: 6px;
     --spacing-md: 8px;
     --spacing-lg: 10px;
     --spacing-xl: 12px;
     --spacing-2xl: 16px;
-    --spacing-3xl: 24px;
     --max-content-width: 900px;
-    --section-padding-y: clamp(28px, 5vw, 48px);
-    --section-padding-x: clamp(16px, 4vw, 32px);
-    --section-padding: var(--section-padding-y) var(--section-padding-x);
     --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary-color) 28%, transparent);
     color-scheme: light;
 }
@@ -48,9 +40,6 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
     --shadow-lg: 0 8px 12px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.4);
-    --code-bg: rgba(123, 168, 153, 0.1);
-    --code-color: #b5d4c8;
-    --button-text: #1f1d1a;
     color-scheme: dark;
 }
 

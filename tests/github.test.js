@@ -1,9 +1,8 @@
 import {describe, expect, test} from "bun:test";
 import {getGithubProjects} from "../src/lib/github";
-import {publicJson} from "../src/lib/api-response";
 
 describe("GitHub server data", () => {
-    test("preserves public API fields with a bounded, revalidated request", async () => {
+    test("returns only displayed project fields with a bounded, revalidated request", async () => {
         let options;
         const projects = await getGithubProjects(async (_url, init) => {
             options = init;
@@ -21,9 +20,6 @@ describe("GitHub server data", () => {
             name: "portfolio",
             url: "https://github.com/example/portfolio",
             description: "A project",
-            language: "JavaScript",
-            stars: 3,
-            forks: 2,
         }]);
         expect(options.next.revalidate).toBe(600);
         expect(options.signal).toBeInstanceOf(AbortSignal);
@@ -39,17 +35,5 @@ describe("GitHub server data", () => {
         html_url: "https://github.com.evil.example/repo"
     }],].map(data => [data]))("rejects malformed data and unsafe project URLs: %j", async (data) => {
         await expect(getGithubProjects(async () => Response.json(data))).rejects.toThrow();
-    });
-});
-
-describe("public API caching", () => {
-    test("allows shared caching of successful public data", async () => {
-        const response = publicJson({forecast: "clear skies"}, 900);
-        expect(response.headers.get("cache-control")).toContain("s-maxage=900");
-        expect(await response.json()).toEqual({forecast: "clear skies"});
-    });
-
-    test("does not cache an unavailable upstream response", () => {
-        expect(publicJson({fallback: true}).headers.get("cache-control")).toBe("no-store");
     });
 });

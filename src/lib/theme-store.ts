@@ -1,11 +1,15 @@
 import {
-    appearanceOptions, appearanceStorageKey, defaultAppearance, normalizeAppearance, presets,
     type Appearance,
+    appearanceOptions,
+    appearanceStorageKey,
+    defaultAppearance,
+    normalizeAppearance,
+    presets,
 } from "./appearance";
 
 type AppearanceStorage = Pick<Storage, "getItem" | "setItem">;
 type ColorScheme = Pick<MediaQueryList, "matches" | "addEventListener" | "removeEventListener">;
-export type AppearanceSnapshot = Appearance & {resolvedMode: "light" | "dark"; storageAvailable: boolean};
+type AppearanceSnapshot = Appearance & { resolvedMode: "light" | "dark"; storageAvailable: boolean };
 const serverSnapshot: AppearanceSnapshot = {...defaultAppearance, resolvedMode: "light", storageAvailable: true};
 
 export function createAppearanceStore(
@@ -41,7 +45,11 @@ export function createAppearanceStore(
             const raw = storage().getItem(appearanceStorageKey);
             if (raw !== null) {
                 let parsed: unknown;
-                try { parsed = JSON.parse(raw); } catch { parsed = null; }
+                try {
+                    parsed = JSON.parse(raw);
+                } catch {
+                    parsed = null;
+                }
                 preferences = normalizeAppearance(parsed, defaultAppearance, appearanceOptions);
             } else {
                 const legacy = storage().getItem("theme");
@@ -103,7 +111,10 @@ export function createAppearanceStore(
             }
             return () => {
                 listeners.delete(callback);
-                if (!listeners.size) { cleanup?.(); cleanup = undefined; }
+                if (!listeners.size) {
+                    cleanup?.();
+                    cleanup = undefined;
+                }
             };
         },
         update,

@@ -4,16 +4,7 @@ export interface Project {
     name: string;
     description: string | null;
     url: string;
-    language: string | null;
-    stars: number;
-    forks: number;
 }
-
-export const unavailableGithubData = {
-    projects: [],
-    fallback: true,
-    message: "Projects are unavailable right now.",
-};
 
 export async function getGithubProjects(fetchImpl = fetch): Promise<Project[]> {
     const token = process.env.GITHUB_PERSONAL_ACCESS_TOKEN;
@@ -51,9 +42,6 @@ export async function getGithubProjects(fetchImpl = fetch): Promise<Project[]> {
             name: item.name,
             url: item.html_url,
             description: "description" in item && typeof item.description === "string" ? item.description : null,
-            language: "language" in item && typeof item.language === "string" ? item.language : null,
-            stars: "stargazers_count" in item && typeof item.stargazers_count === "number" && Number.isSafeInteger(item.stargazers_count) && item.stargazers_count >= 0 ? item.stargazers_count : 0,
-            forks: "forks_count" in item && typeof item.forks_count === "number" && Number.isSafeInteger(item.forks_count) && item.forks_count >= 0 ? item.forks_count : 0,
         };
     });
 }

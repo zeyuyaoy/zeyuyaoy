@@ -41,7 +41,7 @@ const fallbackData = (reason, extra = {}) => ({
     ...extra,
 });
 
-export class SpotifyServiceError extends Error {
+class SpotifyServiceError extends Error {
     constructor(code, {status = null, retryAfterSeconds = null, transient = false} = {}) {
         super(code);
         this.name = "SpotifyServiceError";
@@ -52,7 +52,7 @@ export class SpotifyServiceError extends Error {
     }
 }
 
-export function readSpotifyConfig(env = process.env) {
+function readSpotifyConfig(env = process.env) {
     const config = {
         clientId: env.SPOTIFY_CLIENT_ID?.trim(),
         clientSecret: env.SPOTIFY_CLIENT_SECRET?.trim(),

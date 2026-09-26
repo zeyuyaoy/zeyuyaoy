@@ -21,11 +21,11 @@ export default function PhotoMarqueeRow({row, photos}: Props) {
             <div className={styles.track}>
                 {[0, 1].map(copy => (
                     <div className={styles.group} key={copy}>
-                        {photos.map((photo, index) => (
-                            <div className={styles.frame} key={`${photo.src}-${index}`}>
+                        {photos.map(photo => (
+                            <div className={styles.frame} key={photo}>
                                 <Image
                                     className={styles.image}
-                                    src={photo.src}
+                                    src={photo}
                                     alt=""
                                     width={960}
                                     height={540}
@@ -35,7 +35,6 @@ export default function PhotoMarqueeRow({row, photos}: Props) {
                                     fetchPriority="low"
                                     decoding="async"
                                     draggable={false}
-                                    style={photo.objectPosition ? {objectPosition: photo.objectPosition} : undefined}
                                 />
                             </div>
                         ))}

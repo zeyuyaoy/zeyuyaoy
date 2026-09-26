@@ -12,5 +12,5 @@ Find me on:
 - Instagram: [@zeyuyaoy](https://www.instagram.com/zeyuyaoy)
 - X: [@zeyuyaoy](https://www.x.com/zeyuyaoy)
 - LinkedIn: [linkedin.com/in/zeyuyaoy](https://www.linkedin.com/in/zeyuyaoy)
-- Email: [cytronicoder+hi@gmail.com](mailto:cytronicoder+hi@gmail.com)
+- Personal email: [cytronicoder+hi@gmail.com](mailto:cytronicoder+hi@gmail.com)
 - CMU email: [peteryao+hi@cmu.edu](mailto:peteryao+hi@cmu.edu)

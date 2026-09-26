@@ -2,14 +2,15 @@ import {afterEach, describe, expect, it} from "bun:test";
 import {mkdtemp, readFile, rm, stat, writeFile} from "node:fs/promises";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
+import {spawnSync} from "node:child_process";
 import {
-    SPOTIFY_REDIRECT_URI,
-    SPOTIFY_SCOPE,
     addCalendarMonths,
     buildAuthorizationUrl,
     completeAuthorization,
     completionMessage,
     parseAuthorizationCallback,
+    SPOTIFY_REDIRECT_URI,
+    SPOTIFY_SCOPE,
     updateEnvContent,
 } from "../scripts/spotify-authorize.mjs";
 
@@ -37,6 +38,25 @@ async function temporaryEnv(content) {
 }
 
 describe("Spotify authorization helpers", () => {
+    it("loads local env through Node, preserves process values, and tolerates only missing files", async () => {
+        const envPath = await temporaryEnv('CLEANUP_EXISTING=file\nCLEANUP_QUOTED="quoted # value"\n');
+        const moduleUrl = new URL("../scripts/spotify-authorize.mjs", import.meta.url).href;
+        const result = spawnSync("node", ["--input-type=module", "-e", `
+            import assert from "node:assert/strict";
+            import {loadAuthorizationEnv} from ${JSON.stringify(moduleUrl)};
+            loadAuthorizationEnv(process.argv[1]);
+            assert.equal(process.env.CLEANUP_EXISTING, "process");
+            assert.equal(process.env.CLEANUP_QUOTED, "quoted # value");
+            loadAuthorizationEnv(process.argv[1] + ".missing");
+            assert.equal(process.env.CLEANUP_EXISTING, "process");
+            assert.throws(() => loadAuthorizationEnv(42), {code: "ERR_INVALID_ARG_TYPE"});
+        `, envPath], {env: {PATH: process.env.PATH, CLEANUP_EXISTING: "process"}, encoding: "utf8", timeout: 10_000});
+
+        expect(result.error).toBeUndefined();
+        expect(result.stderr).toBe("");
+        expect(result.status).toBe(0);
+    });
+
     it("builds a least-privilege Authorization Code URL", () => {
         const url = new URL(buildAuthorizationUrl({clientId: "client", state: "state"}));
 
