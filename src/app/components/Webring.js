@@ -1,19 +1,20 @@
 import styles from "./Webring.module.css";
-import Link from "next/link";
 
 export default function Webring() {
-  const name = "zeyuyaoy";
-  return (
-    <div className={styles.webring}>
-      <Link href={`https://webring.bucketfish.me/redirect.html?to=prev&name=${name}`} className={styles.link}>
-        ‹ Prev
-      </Link>
-      <Link href="https://webring.bucketfish.me" className={styles.title}>
-        🐠 Bucket Webring
-      </Link>
-      <Link href={`https://webring.bucketfish.me/redirect.html?to=next&name=${name}`} className={styles.link}>
-        › Next
-      </Link>
-    </div>
-  );
+    const name = "zeyuyaoy";
+    return (
+        <nav className={styles.webring} aria-label="Bucket Webring">
+            <a href={`https://webring.bucketfish.me/redirect.html?to=prev&name=${name}`} className={styles.link}
+               aria-label="Previous site in Bucket Webring">
+                ‹ Prev
+            </a>
+            <a href="https://webring.bucketfish.me" className={styles.title}>
+                🐠 Bucket Webring
+            </a>
+            <a href={`https://webring.bucketfish.me/redirect.html?to=next&name=${name}`} className={styles.link}
+               aria-label="Next site in Bucket Webring">
+                › Next
+            </a>
+        </nav>
+    );
 }

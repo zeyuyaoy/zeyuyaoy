@@ -1,3 +1,5 @@
+import {parseSpotifyTrack} from "./spotify-contract";
+
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 
@@ -104,47 +106,11 @@ function responseResult(data, {cacheControl = PUBLIC_CACHE_CONTROL, retryAfter =
 }
 
 function parseTrack(body) {
-    if (typeof body?.is_playing !== "boolean") {
+    try {
+        return parseSpotifyTrack(body);
+    } catch {
         throw new SpotifyServiceError("invalid_response", {transient: true});
     }
-
-    if (!body.is_playing || !body.item) {
-        return {isPlaying: false};
-    }
-
-    const itemType = body.item.type ?? body.currently_playing_type;
-    if (itemType !== "track") {
-        return {isPlaying: false};
-    }
-
-    const title = body.item.name;
-    const artists = Array.isArray(body.item.artists)
-        ? body.item.artists.map((artist) => artist?.name).filter(Boolean)
-        : [];
-    const songUrl = body.item.external_urls?.spotify;
-    const rawDurationMs = body.item.duration_ms;
-    const rawProgressMs = body.progress_ms;
-    const durationMs = Number.isFinite(rawDurationMs) && rawDurationMs > 0
-        ? Math.round(rawDurationMs)
-        : null;
-    const progressMs = Number.isFinite(rawProgressMs) && rawProgressMs >= 0
-        ? Math.min(Math.round(rawProgressMs), durationMs ?? Math.round(rawProgressMs))
-        : null;
-
-    if (typeof title !== "string" || artists.length === 0 || typeof songUrl !== "string") {
-        throw new SpotifyServiceError("invalid_response", {transient: true});
-    }
-
-    return {
-        album: body.item.album?.name ?? "",
-        albumImageUrl: body.item.album?.images?.[0]?.url ?? null,
-        artist: artists.join(", ").replace(/,(?!.*,)/gim, " and"),
-        durationMs,
-        isPlaying: true,
-        progressMs,
-        songUrl,
-        title,
-    };
 }
 
 export class SpotifyService {
@@ -171,6 +137,7 @@ export class SpotifyService {
         this.playbackCache = null;
         this.terminalResult = null;
         this.loggedTerminalErrors = new Set();
+        this.lastTransientCode = null;
     }
 
     syncConfig(config) {
@@ -225,6 +192,7 @@ export class SpotifyService {
                 refresh_token: this.activeRefreshToken,
             }),
             cache: "no-store",
+            signal: AbortSignal.timeout(8000),
         });
         const body = await readJson(response);
 
@@ -255,8 +223,9 @@ export class SpotifyService {
             );
         }
 
-        const expiresInSeconds = Number(body?.expires_in);
-        if (typeof body?.access_token !== "string" || !Number.isFinite(expiresInSeconds)) {
+        const expiresInSeconds = body?.expires_in;
+        if (typeof body?.access_token !== "string" || !body.access_token.trim()
+            || typeof expiresInSeconds !== "number" || !Number.isFinite(expiresInSeconds) || expiresInSeconds <= 0) {
             throw new SpotifyServiceError("invalid_response", {transient: true});
         }
 
@@ -276,10 +245,13 @@ export class SpotifyService {
         return this.fetchImpl(NOW_PLAYING_ENDPOINT, {
             headers: {Authorization: `Bearer ${accessToken}`},
             cache: "no-store",
+            signal: AbortSignal.timeout(8000),
         });
     }
 
     cachePlayback(data) {
+        if (this.lastTransientCode) this.logger.info?.("Portfolio upstream", {service: "spotify", state: "recovered"});
+        this.lastTransientCode = null;
         this.playbackCache = {data, timestamp: this.now()};
         return responseResult(data);
     }
@@ -290,6 +262,7 @@ export class SpotifyService {
         }
 
         if (response.status === 403) {
+            this.playbackCache = null;
             return responseResult(fallbackData("limited_access"), {
                 cacheControl: NO_STORE_CACHE_CONTROL,
             });
@@ -333,6 +306,16 @@ export class SpotifyService {
     }
 
     transientFailure(error) {
+        if (this.lastTransientCode !== error.code) {
+            this.logger.warn?.("Portfolio upstream", {
+                service: "spotify",
+                state: "degraded",
+                reason: error.code,
+                status: error.status
+            });
+        }
+
+        this.lastTransientCode = error.code;
         const now = this.now();
         if (this.playbackCache && now - this.playbackCache.timestamp <= this.staleCacheMs) {
             return responseResult({
@@ -391,7 +374,8 @@ export class SpotifyService {
         } catch (error) {
             const spotifyError = error instanceof SpotifyServiceError
                 ? error
-                : new SpotifyServiceError("network_error", {transient: true});
+                : new SpotifyServiceError(error?.name === "TimeoutError" || error?.name === "AbortError"
+                    ? "timeout" : "network_error", {transient: true});
 
             if (spotifyError.code === "reauthorization_required"
                 || spotifyError.code === "configuration_error") {

@@ -44,3 +44,14 @@ describe("Spotify playback display helpers", () => {
         }, 5_000)).toBe(60_000);
     });
 });
+
+it("formats invalid times safely and never advances a future snapshot", () => {
+    expect(formatPlaybackTime(Infinity)).toBe("0:00");
+    expect(formatPlaybackTime(NaN)).toBe("0:00");
+    expect(getSpotifyPlaybackProgress({
+        isPlaying: true,
+        durationMs: 20_000,
+        progressMs: 1000,
+        progressCapturedAt: 10_000
+    }, 5000)).toBe(1000);
+});

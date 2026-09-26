@@ -30,11 +30,5 @@
       "destination": "https://www.instagram.com/zeyuyaoy/",
       "permanent": true
     }
-  ],
-  "headers": [
-    {
-      "source": "/:path*",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
-    }
   ]
 }

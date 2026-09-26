@@ -7,9 +7,9 @@
 }
 
 .cassette {
-    --cassette-shell: #76998a;
-    --cassette-shell-light: #98b2a6;
-    --cassette-shell-dark: #587469;
+    --cassette-shell: color-mix(in srgb, var(--primary-color) 85%, #a0ac9e);
+    --cassette-shell-light: color-mix(in srgb, var(--cassette-shell) 65%, white);
+    --cassette-shell-dark: color-mix(in srgb, var(--cassette-shell) 75%, #17231d);
     --cassette-paper: #f7f3e9;
     --cassette-ink: #2b2620;
     --cassette-tape: #3b342f;
@@ -167,7 +167,7 @@ a.trackLabel:focus-visible {
 }
 
 .live {
-    color: #496f61;
+    color: var(--accent-ink);
 }
 
 .live .statusDot {
@@ -229,7 +229,7 @@ a.trackLabel:focus-visible {
     top: 50%;
     width: 18.8%;
     aspect-ratio: 1;
-    background: radial-gradient(circle, #9db3a8 0 54%, #627f73 55% 72%, #33453e 73% 100%);
+    background: radial-gradient(circle, var(--cassette-shell-light) 0 54%, var(--cassette-shell) 55% 72%, var(--cassette-shell-dark) 73% 100%);
     border: 1px solid rgba(39, 52, 47, 0.72);
     border-radius: 50%;
     box-shadow: 0 1px 4px rgba(31, 27, 24, 0.42);
@@ -248,7 +248,7 @@ a.trackLabel:focus-visible {
     position: absolute;
     inset: 17%;
     background: radial-gradient(circle, var(--cassette-paper) 0 24%, transparent 25%),
-    repeating-conic-gradient(from 0deg, #eee8da 0deg 17deg, #91aa9f 17deg 30deg);
+    repeating-conic-gradient(from 0deg, #eee8da 0deg 17deg, var(--cassette-shell-light) 17deg 30deg);
     border: clamp(2px, 0.5vw, 3px) solid #e4dece;
     border-radius: 50%;
     box-shadow: inset 0 0 0 1px rgba(74, 68, 60, 0.16);
@@ -307,12 +307,12 @@ a.trackLabel:focus-visible {
 }
 
 .progress::-webkit-progress-value {
-    background: #6a8e7f;
+    background: var(--accent-ink);
     border-radius: 999px;
 }
 
 .progress::-moz-progress-bar {
-    background: #6a8e7f;
+    background: var(--accent-ink);
     border-radius: 999px;
 }
 
@@ -328,7 +328,7 @@ a.trackLabel:focus-visible {
     justify-content: center;
     gap: clamp(10px, 4.2vw, 24px);
     padding-bottom: 4.2%;
-    background: linear-gradient(180deg, #829f92, #668579);
+    background: linear-gradient(180deg, var(--cassette-shell-light), var(--cassette-shell));
     border: clamp(1px, 0.45vw, 2px) solid rgba(47, 64, 58, 0.62);
     clip-path: polygon(9% 0, 91% 0, 100% 100%, 0 100%);
     box-shadow: inset 0 2px 0 rgba(239, 246, 241, 0.22);
@@ -376,7 +376,7 @@ a.trackLabel:focus-visible {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: var(--link-color);
     font-weight: 700;
     text-decoration: none;
     border-radius: 999px;
@@ -402,9 +402,7 @@ a.trackLabel:focus-visible {
 }
 
 [data-theme="dark"] .cassette {
-    --cassette-shell: #5f7d71;
-    --cassette-shell-light: #769487;
-    --cassette-shell-dark: #40584f;
+    --cassette-shell: color-mix(in srgb, var(--primary-color) 70%, #22352c);
     filter: brightness(0.9) saturate(0.88);
     box-shadow: inset 0 0 0 clamp(2px, 0.6vw, 4px) rgba(225, 236, 229, 0.2),
     inset 0 -12px 22px rgba(21, 29, 26, 0.2),
@@ -437,4 +435,8 @@ a.trackLabel:focus-visible {
         animation: none;
         transition: none;
     }
+}
+
+.loading {
+    padding-bottom: 46px;
 }

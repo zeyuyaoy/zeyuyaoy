@@ -1,0 +1,68 @@
+import assert from "node:assert/strict";
+import {parseSpotifyStatus} from "../src/lib/spotify-contract.ts";
+import {parseProfileImage} from "../src/lib/profile-contract.ts";
+import {site} from "../src/lib/site.ts";
+
+const base = process.argv[2] ?? "http://127.0.0.1:3000";
+const results = [];
+
+for (const path of ["/", "/robots.txt", "/sitemap.xml", "/api/github", "/api/photos", "/api/profile-pic", "/api/spotify", "/api/weather", "/audit-route-that-does-not-exist"]) {
+    const response = await fetch(new URL(path, base), {signal: AbortSignal.timeout(45_000)});
+    const text = await response.text();
+    assert.equal(response.status, path.includes("does-not-exist") ? 404 : 200, path);
+
+    const cache = response.headers.get("cache-control");
+
+    if (path === "/") {
+        assert.ok(text.includes(site.description), "Current description in initial HTML");
+        assert.ok(text.includes(`rel="canonical" href="${site.url}"`), "Canonical URL");
+        assert.ok(text.includes("Research &amp; community"), "Research heading in initial HTML");
+        assert.ok(text.includes("A recently updated project:"), "Project heading in initial HTML");
+        assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), "No blanket noindex");
+
+        const csp = response.headers.get("content-security-policy");
+        for (const directive of ["base-uri 'none'", "object-src 'none'", "frame-ancestors 'none'", "script-src-attr 'none'"]) {
+            assert.ok(csp?.includes(directive), directive);
+        }
+    } else if (path === "/robots.txt") {
+        assert.ok(text.includes(`Sitemap: ${site.url}/sitemap.xml`));
+        assert.ok(text.includes("Disallow: /api/"));
+    } else if (path === "/sitemap.xml") {
+        assert.ok(text.includes(`<loc>${site.url}</loc>`));
+    } else if (path.startsWith("/api/")) {
+        assert.ok(response.headers.get("content-type")?.includes("application/json"), path);
+
+        const data = JSON.parse(text);
+        if (data.fallback || data.stale) {
+            assert.equal(cache, "no-store", `${path}: degraded data must not be cached`);
+        }
+
+        if (path === "/api/spotify") {
+            parseSpotifyStatus(data);
+        }
+
+        if (path === "/api/profile-pic") {
+            parseProfileImage(data);
+        }
+
+        if (path === "/api/weather") {
+            assert.equal(typeof data.forecast, "string");
+        }
+
+        if (path === "/api/github") {
+            assert.ok(Array.isArray(data) || data.fallback === true);
+        }
+
+        if (path === "/api/photos") {
+            assert.ok(Array.isArray(data.photos) && data.photos.length > 0);
+            for (const photo of data.photos) assert.ok(photo.startsWith("/photos/"));
+        }
+
+        results.push({
+            path, status: response.status, cache, fallback: Boolean(data.fallback), stale: Boolean(data.stale)
+        });
+        continue;
+    }
+    results.push({path, status: response.status, cache});
+}
+console.log(JSON.stringify(results, null, 2));

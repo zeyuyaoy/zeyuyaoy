@@ -1,8 +1,8 @@
 import {describe, expect, it} from "bun:test";
 import {
+    getSpotifyPollDecision,
     MAX_SPOTIFY_BACKOFF_INTERVAL,
     NORMAL_SPOTIFY_POLL_INTERVAL,
-    getSpotifyPollDecision,
 } from "@/lib/spotify-polling";
 
 describe("Spotify widget polling", () => {
@@ -44,4 +44,9 @@ describe("Spotify widget polling", () => {
             stop: false,
         });
     });
+});
+
+it("caps Retry-After at the browser timer limit instead of overflowing into rapid retries", () => {
+    const decision = getSpotifyPollDecision({fallback: true, retryAfterSeconds: Number.MAX_VALUE});
+    expect(decision.delay).toBe(2_147_483_647);
 });
