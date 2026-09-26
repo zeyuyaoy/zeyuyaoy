@@ -358,9 +358,10 @@ a.trackLabel:focus-visible {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: var(--spacing-md);
-    margin-top: 2px;
-    padding: 0 clamp(10px, 3vw, 18px);
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0 0.25rem;
     color: var(--muted-color);
     font-size: clamp(0.72rem, 2vw, 0.82rem);
 }
@@ -423,5 +424,5 @@ a.trackLabel:focus-visible {
 }
 
 .loading {
-    padding-bottom: 46px;
+    padding-bottom: calc(44px + 0.75rem);
 }

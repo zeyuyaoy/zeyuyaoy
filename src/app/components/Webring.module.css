@@ -2,7 +2,7 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: var(--spacing-lg);
+    gap: 0.5rem;
     min-width: 0;
     text-align: left;
     background-color: var(--surface-color);
@@ -11,6 +11,9 @@
 }
 
 .title {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-weight: 700;
     color: var(--link-color);
     text-decoration: none;
@@ -26,7 +29,7 @@
     color: var(--muted-color);
     text-decoration: none;
     padding: 6px var(--spacing-md);
-    min-height: 36px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     transition: all 120ms ease;
@@ -70,7 +73,7 @@
 @media (max-width: 600px) {
     .webring {
         flex-direction: column;
-        gap: var(--spacing-md);
+        gap: 0.5rem;
         align-items: flex-start;
     }
 

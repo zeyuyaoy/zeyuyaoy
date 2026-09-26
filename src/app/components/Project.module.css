@@ -13,7 +13,7 @@
     background: var(--foreground);
     border: 2px solid var(--primary-color);
     border-radius: 10px;
-    padding: clamp(12px, 2.5vw, 16px);
+    padding: var(--home-project-padding, 1rem);
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;

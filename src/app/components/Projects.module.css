@@ -51,7 +51,7 @@
 }
 
 .notebookContent {
-    padding: clamp(16px, 3vw, 20px);
+    padding: var(--home-panel-padding, 1.5rem);
     background: var(--surface-color);
     flex: 1;
     display: flex;
@@ -59,7 +59,7 @@
 }
 
 .projectText {
-    margin: 0 0 var(--spacing-md) 0;
+    margin: 0 0 0.75rem;
     color: var(--text-color);
     font-size: 0.95rem;
     font-weight: 700;
@@ -69,8 +69,8 @@
 .projectsList {
     display: flex;
     flex-direction: column;
-    gap: clamp(12px, 2vw, 16px);
-    margin-bottom: var(--spacing-lg);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
     flex: 1;
 }
 
@@ -95,7 +95,7 @@
 
 .footer {
     text-align: center;
-    padding-top: var(--spacing-md);
+    padding-top: 0.75rem;
     border-top: 1px solid var(--border-color);
 }
 
@@ -159,18 +159,10 @@
     opacity: 0.8;
 }
 
-@media (max-width: 800px) {
-    .projectsContainer {
-        width: 100%;
-    }
-
+@media (max-width: 960px) {
     .notebook {
         flex: none;
         min-height: 240px;
-    }
-
-    .notebookContent {
-        padding: clamp(14px, 3vw, 18px);
     }
 }
 
