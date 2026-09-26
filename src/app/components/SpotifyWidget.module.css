@@ -3,7 +3,7 @@
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-    align-self: flex-start;
+    align-self: flex-end;
 }
 
 .cassette {
@@ -352,7 +352,7 @@ a.trackLabel:focus-visible {
 
 .footer {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: var(--spacing-md);
     margin-top: 2px;
@@ -364,7 +364,7 @@ a.trackLabel:focus-visible {
 .viewMore {
     min-height: 44px;
     display: inline-flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     color: var(--link-color);
     font-weight: 700;
