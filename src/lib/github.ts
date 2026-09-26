@@ -4,6 +4,7 @@ export interface Project {
     name: string;
     description: string | null;
     url: string;
+    stars: number;
 }
 
 export async function getGithubProjects(fetchImpl = fetch): Promise<Project[]> {
@@ -34,6 +35,8 @@ export async function getGithubProjects(fetchImpl = fetch): Promise<Project[]> {
         if (!item || typeof item !== "object"
             || !("name" in item) || typeof item.name !== "string"
             || !("html_url" in item) || typeof item.html_url !== "string"
+            || !("stargazers_count" in item) || typeof item.stargazers_count !== "number"
+            || !Number.isSafeInteger(item.stargazers_count) || item.stargazers_count < 0
             || !item.name.trim() || !trustedHttpsUrl(item.html_url, "github.com")) {
             throw new UpstreamError("invalid_response");
         }
@@ -41,6 +44,7 @@ export async function getGithubProjects(fetchImpl = fetch): Promise<Project[]> {
         return {
             name: item.name,
             url: item.html_url,
+            stars: item.stargazers_count,
             description: "description" in item && typeof item.description === "string" ? item.description : null,
         };
     });
