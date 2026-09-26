@@ -2,6 +2,7 @@
 
 import {type ReactNode, useEffect, useRef} from "react";
 import {appearanceStore} from "@/lib/theme-store";
+import {createMarqueeDurationUpdater, marqueeDuration} from "@/lib/photo-marquee-motion";
 import styles from "./PhotoMarqueeBackground.module.css";
 
 export default function PhotoMarqueeMotion({children}: { children: ReactNode }) {
@@ -14,42 +15,60 @@ export default function PhotoMarqueeMotion({children}: { children: ReactNode }) 
         }
 
         const tracks = [...root.querySelectorAll<HTMLElement>(`.${styles.track}`)];
+        const prepareUpdate = createMarqueeDurationUpdater();
+        let scheduledFrame: number | null = null;
+        let speed = appearanceStore.getSnapshot().marqueeSpeed;
 
         const updateSpeed = () => {
-            const pixelsPerSecond = document.documentElement.clientWidth
-                * appearanceStore.getSnapshot().marqueeSpeed * 0.02;
-            tracks.forEach(track => {
+            scheduledFrame = null;
+            const viewportWidth = document.documentElement.clientWidth;
+            const updates = tracks.map(track => {
                 const sequenceWidth = track.firstElementChild?.getBoundingClientRect().width ?? 0;
-                if (!sequenceWidth) {
-                    return;
-                }
-
-                const factor = Number(getComputedStyle(track).getPropertyValue("--speed-factor")) || 1;
-                track.getAnimations().forEach(animation => {
-                    const duration = animation.effect?.getComputedTiming().duration;
-                    if (typeof duration !== "number" || !Number.isFinite(duration) || duration <= 0) {
-                        return;
-                    }
-
-                    animation.updatePlaybackRate(pixelsPerSecond * factor * duration / (1000 * sequenceWidth));
-                });
+                const style = getComputedStyle(track);
+                const duration = marqueeDuration(sequenceWidth, viewportWidth, speed,
+                    Number(style.getPropertyValue("--speed-factor")));
+                const animation = track.getAnimations().find(candidate =>
+                    candidate instanceof CSSAnimation && candidate.animationName === style.animationName
+                    && candidate.effect instanceof KeyframeEffect && candidate.effect.target === track);
+                return duration !== null && animation ? prepareUpdate(track, animation, duration) : null;
             });
+            updates.forEach(apply => apply?.());
         };
 
-        const resizeObserver = new ResizeObserver(updateSpeed);
+        const scheduleUpdate = () => {
+            if (scheduledFrame === null) scheduledFrame = requestAnimationFrame(updateSpeed);
+        };
+        const onAnimationStart = (event: AnimationEvent) => {
+            if (tracks.includes(event.target as HTMLElement)) scheduleUpdate();
+        };
+        const onVisibilityChange = () => {
+            if (document.visibilityState === "visible") scheduleUpdate();
+        };
+
+        const resizeObserver = new ResizeObserver(scheduleUpdate);
         resizeObserver.observe(root);
         tracks.forEach(track => {
             if (track.firstElementChild) resizeObserver.observe(track.firstElementChild);
         });
 
-        root.addEventListener("animationstart", updateSpeed);
-        const unsubscribe = appearanceStore.subscribe(updateSpeed);
-        updateSpeed();
+        root.addEventListener("animationstart", onAnimationStart);
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        window.addEventListener("pageshow", scheduleUpdate);
+        const unsubscribe = appearanceStore.subscribe(() => {
+            const nextSpeed = appearanceStore.getSnapshot().marqueeSpeed;
+            if (nextSpeed === speed) return;
+            speed = nextSpeed;
+            scheduleUpdate();
+        });
+        scheduleUpdate();
 
         return () => {
             unsubscribe();
             resizeObserver.disconnect();
-            root.removeEventListener("animationstart", updateSpeed);
+            root.removeEventListener("animationstart", onAnimationStart);
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+            window.removeEventListener("pageshow", scheduleUpdate);
+            if (scheduledFrame !== null) cancelAnimationFrame(scheduledFrame);
         };
     }, []);
 
