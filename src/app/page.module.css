@@ -171,7 +171,6 @@
     color: var(--link-color);
     text-decoration: underline;
     text-underline-offset: 3px;
-    font-weight: 600;
     transition: all 120ms ease;
 }
 

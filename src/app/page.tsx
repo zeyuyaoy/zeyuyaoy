@@ -34,10 +34,9 @@ export default function Home() {
                             </h1>
                             <p className={styles.subtitle}>
                                 Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon
-                                University
                             </p>
                             <div className={styles.socialMedia}>
-                                <nav className={styles.socialMediaIcons} aria-label="Social profiles">
+                                <nav className={styles.socialMediaIcons} aria-label="Peter's social media profiles">
                                     <a
                                         href="https://github.com/zeyuyaoy"
                                         target="_blank"
@@ -122,24 +121,16 @@ export default function Home() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                better understand complex biological systems
+                                better understand
                             </a>
-                            : how they change, adapt, and sometimes break down.
+                            {" "}complex biological systems—how they
+                            change, adapt, and sometimes break down.
                         </h2>
 
                         <p className={styles.bioText}>
                             Growing up in Singapore, I&apos;ve been fortunate to learn across many areas
                             of STEM and from mentors who have shaped the way I think and work. Alongside
                             research, I enjoy building{" "}
-                            <a
-                                href="https://hackclub.com/"
-                                className={styles.link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                creative tools
-                            </a>{" "}
-                            and{" "}
                             <a
                                 href="https://ijhscommunity.org"
                                 className={styles.link}
@@ -148,15 +139,34 @@ export default function Home() {
                             >
                                 inclusive communities
                             </a>{" "}
-                            that help more people learn, create, and{" "}
+                            and helping more people{" "}
                             <a
                                 href="https://buildingblocs.sg"
                                 className={styles.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                            find opportunities through computing.
+                                learn
                             </a>
+                            ,{" "}
+                            <a
+                                href="https://hackclub.com/"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                create
+                            </a>
+                            , and{" "}
+                            <a
+                                href="https://www.iscb.org/ybs2026/home"
+                                className={styles.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                find opportunities
+                            </a>
+                            {" "}through computing.
                         </p>
 
                         <p className={styles.bioText}>
