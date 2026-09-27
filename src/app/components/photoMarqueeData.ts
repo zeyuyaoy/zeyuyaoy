@@ -1,19 +1,6 @@
-export type PhotoMarqueeRowName = "top" | "middle" | "bottom";
-export type PhotoMarqueePhoto = `/marquee/${PhotoMarqueeRowName}-${string}.webp`;
+export type PhotoMarqueePhoto = `/marquee/photo-${string}.webp`;
 
-function photos(row: PhotoMarqueeRowName, count: number): readonly PhotoMarqueePhoto[] {
-  return Array.from(
-    {length: count},
-    (_, index) => `/marquee/${row}-${String(index + 1).padStart(3, "0")}.webp` as const,
-  );
-}
-
-export const topPhotos = photos("top", 33);
-export const middlePhotos = photos("middle", 32);
-export const bottomPhotos = photos("bottom", 32);
-
-export const marqueePhotos: readonly PhotoMarqueePhoto[] = [
-  ...topPhotos,
-  ...middlePhotos,
-  ...bottomPhotos,
-];
+export const marqueePhotos: readonly PhotoMarqueePhoto[] = Array.from(
+  {length: 97},
+  (_, index) => `/marquee/photo-${String(index + 1).padStart(3, "0")}.webp` as const,
+);

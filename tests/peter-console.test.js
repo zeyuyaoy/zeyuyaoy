@@ -113,9 +113,9 @@ describe("personal console content", () => {
 
     calls.length = 0;
     api.photos();
-    expect(text()).toContain("http://localhost:3456/marquee/top-001.webp");
-    expect(text()).toContain("http://localhost:3456/marquee/middle-001.webp");
-    expect(text()).toContain("http://localhost:3456/marquee/bottom-001.webp");
+    expect(text()).toContain("http://localhost:3456/marquee/photo-001.webp");
+    expect(text()).toContain("http://localhost:3456/marquee/photo-034.webp");
+    expect(text()).toContain("http://localhost:3456/marquee/photo-066.webp");
 
     api.conan();
     expect(text()).toContain("http://localhost:3456/conan.jpg");

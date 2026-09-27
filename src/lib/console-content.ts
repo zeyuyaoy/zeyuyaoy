@@ -1,4 +1,4 @@
-import {bottomPhotos, middlePhotos, topPhotos} from "@/app/components/photoMarqueeData";
+import {marqueePhotos} from "@/app/components/photoMarqueeData";
 import {personJsonLd, site} from "./site";
 
 export const consoleContent = {
@@ -34,9 +34,9 @@ export const consoleContent = {
   ],
   github: personJsonLd.sameAs[2],
   photos: [
-    ["Photo 1 from the marquee", topPhotos[0]],
-    ["Photo 34 from the marquee", middlePhotos[0]],
-    ["Photo 66 from the marquee", bottomPhotos[0]],
+    ["Photo 1 from the marquee", marqueePhotos[0]],
+    ["Photo 34 from the marquee", marqueePhotos[33]],
+    ["Photo 66 from the marquee", marqueePhotos[65]],
   ],
   conan: "   .---.\n  /     \\\n  \\     /\n   '---'\\\n         \\",
   conanMessage: "Case closed. You found Conan.",
