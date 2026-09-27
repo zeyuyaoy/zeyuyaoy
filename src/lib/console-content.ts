@@ -3,13 +3,13 @@ import { personJsonLd, site } from "./site";
 
 export const consoleContent = {
   banner: [
-    "╭──────────────────────────────────╮",
-    "│  peter@portfolio:~               │",
-    "│  A little more beneath the hood. │",
-    "╰──────────────────────────────────╯",
+    "+----------------------------------+",
+    "|  peter@portfolio:~               |",
+    "|  A little more beneath the hood. |",
+    "+----------------------------------+",
   ].join("\n"),
   welcome:
-    "Hey, I'm Peter. You found my little corner of the console.\nResearch, things I've built, and a few things off the clock.",
+    "Hey, I'm Peter. You found my little corner of the console!\nCheck out my research, some things I've built, and a few things off the clock.",
   about: [
     "Hello! I'm Zeyu (Peter) Yao 姚则禹. I grew up in Singapore.",
     "Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon.",
@@ -44,37 +44,37 @@ export const consoleContent = {
 } as const;
 
 export const commandGuide = {
-  about: ["Explore", "peter.about()", "Meet Zeyu / Peter: Singapore, research, and community."],
+  about: ["Explore", "peter.about()", "Hello! Learn more about me."],
   projects: [
     "Explore",
     'peter.projects() · peter.projects("name")',
-    "List eight projects, or look up any project by its exact name (case-insensitive).",
+    "List my projects, or look up any project by its name",
   ],
-  research: ["Explore", "peter.research()", "Research interests and links from the homepage."],
-  interests: ["Explore", "peter.interests()", "A few things off the clock."],
-  photos: ["Explore", "peter.photos()", "Three photographs from the page's photo marquee."],
-  contact: ["Explore", "peter.contact()", "Public profiles and personal email."],
-  themes: ["Make yourself at home", "peter.themes()", "Available presets and current appearance."],
+  research: ["Explore", "peter.research()", "Research interests and links from the homepage"],
+  interests: ["Explore", "peter.interests()", "A few things off the clock"],
+  photos: ["Explore", "peter.photos()", "A few photographs from the page's photo marquee"],
+  contact: ["Explore", "peter.contact()", "Public profiles and personal email"],
+  themes: ["Make yourself at home", "peter.themes()", "Available presets and current appearance"],
   theme: [
     "Make yourself at home",
     'peter.theme("editorial")',
-    "Apply an available preset; keeps text size, motion, and photo speed. Cyberpunk selects dark mode; other presets keep the current mode.",
+    "Apply an available preset theme, or set a custom theme with `peter.theme({ ... })`",
   ],
-  mode: ["Make yourself at home", 'peter.mode("dark")', "Set light, dark, or system mode."],
+  mode: ["Make yourself at home", 'peter.mode("dark")', "Set light, dark, or system mode"],
   resetAppearance: [
     "Make yourself at home",
     "peter.resetAppearance()",
-    "Reset all appearance preferences, including photo speed; keep any existing Cyberpunk unlock.",
+    "Reset all appearance preferences",
   ],
-  hint: ["Discover", "peter.hint()", "A clue to the next personal discovery."],
+  hint: ["Discover", "peter.hint()", "A clue to the next personal discovery"],
   banner: [
     "Discover",
     "peter.banner()",
-    "Redisplay the welcome card without clearing the console.",
+    "Redisplay the welcome card without clearing the console",
   ],
   help: [
     "Discover",
     'peter.help() · peter.help("projects")',
-    "Show this guide, or get help with one command.",
+    "Show this guide!",
   ],
 } as const;

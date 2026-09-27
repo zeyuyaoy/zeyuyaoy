@@ -99,7 +99,6 @@ export function createPeterConsole(
         return next("Command explained.", "peter.help()");
       }
       view.heading("Peter's personal terminal · command guide");
-      view.text("Type a command with parentheses. Your console provides history and autocomplete.");
       for (const group of ["Explore", "Make yourself at home", "Discover"]) {
         view.heading(group);
         view.table(
@@ -111,7 +110,7 @@ export function createPeterConsole(
       return next("Make yourself at home.", "peter.about()");
     },
     about() {
-      view.heading("Zeyu / Peter · 姚则禹");
+      view.heading("Zeyu (Peter) Yao · 姚则禹");
       content.about.forEach(view.text);
       return next("Nice to meet you.", "peter.research()");
     },

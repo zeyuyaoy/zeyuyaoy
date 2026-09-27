@@ -64,7 +64,7 @@ function fixture({ data, storageFails = false, saved } = {}) {
 
 describe("personal console content", () => {
   test("has a small welcome card and a frozen, getter-free command surface", () => {
-    const { api, text } = fixture();
+    const { api, text, calls } = fixture();
     expect(Object.isFrozen(api)).toBe(true);
     expect(Object.values(Object.getOwnPropertyDescriptors(api)).every((value) => !value.get)).toBe(
       true,
@@ -72,6 +72,9 @@ describe("personal console content", () => {
     expect(api.banner()).toBeTypeOf("string");
     expect(text()).toContain("Start exploring: peter.help()");
     expect(consoleContent.banner.split("\n").every((line) => line.length < 40)).toBe(true);
+    expect(new Set(consoleContent.banner.split("\n").map((line) => line.length)).size).toBe(1);
+    expect(consoleContent.banner).toMatch(/^[\x20-\x7e\n]+$/);
+    expect(calls[0].args[1]).toEndWith(";padding:0;border-radius:0");
   });
 
   test("help documents every public command and keeps discoveries out of its table", () => {
