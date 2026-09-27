@@ -1,83 +1,61 @@
 .webring {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 0;
-    text-align: left;
-    background-color: var(--surface-color);
-    transition: all 120ms ease;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  text-align: left;
+  background-color: var(--surface-color);
+  transition: all 120ms ease;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .title {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-weight: 700;
-    color: var(--link-color);
-    text-decoration: none;
-    transition: all 120ms ease;
-    font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  min-height: 44px;
+  font-weight: 700;
+  color: var(--link-color);
+  text-decoration: none;
+  transition: all 120ms ease;
+  font-size: max(var(--home-font-min, 0rem), calc(0.95rem * var(--home-font-scale, 1)));
 }
 
 .title:hover {
-    opacity: 0.8;
+  opacity: 0.8;
 }
 
 .link {
-    color: var(--muted-color);
-    text-decoration: none;
-    padding: 6px var(--spacing-md);
-    min-height: 44px;
-    display: inline-flex;
-    align-items: center;
-    transition: all 120ms ease;
-    font-weight: 600;
-    font-size: 0.9rem;
+  color: var(--muted-color);
+  text-decoration: none;
+  padding: 6px var(--spacing-md);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 120ms ease;
+  font-weight: 600;
+  font-size: max(var(--home-font-min, 0rem), calc(0.9rem * var(--home-font-scale, 1)));
 }
 
 .link:hover {
-    color: var(--link-color);
-}
-
-.link:focus-visible,
-.title:focus-visible {
-    outline: 2px solid var(--link-color);
-    outline-offset: 3px;
-    box-shadow: var(--focus-ring);
-    border-radius: 999px;
-}
-
-[data-theme="dark"] .webring {
-    background-color: var(--surface-color);
-    border-color: var(--border-color);
-}
-
-[data-theme="dark"] .title {
-    color: var(--link-color);
-}
-
-[data-theme="dark"] .title:hover {
-    opacity: 0.8;
-}
-
-[data-theme="dark"] .link {
-    color: var(--muted-color);
-}
-
-[data-theme="dark"] .link:hover {
-    color: var(--link-color);
+  color: var(--link-color);
 }
 
 @media (max-width: 600px) {
-    .webring {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: flex-start;
-    }
+  .titleText {
+    display: none;
+  }
 
-    .link {
-        padding: 0;
-    }
+  .title,
+  .link {
+    min-width: 44px;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .link {
+    padding: 0;
+  }
 }

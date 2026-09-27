@@ -1,0 +1,77 @@
+.photo {
+  --reveal-opacity: 0;
+  --frame-color: var(--primary-color);
+  --photo-transform: rotate(-5deg);
+  --photo-shadow: var(--shadow-sm), 0 0 0 1px color-mix(in srgb, var(--primary-color) 24%, transparent);
+  position: relative;
+  display: block;
+  width: 125px;
+  height: 125px;
+  padding: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  appearance: none;
+  background: var(--surface-color);
+  border: 6px solid var(--frame-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--photo-shadow);
+  transform: var(--photo-transform);
+  cursor: pointer;
+  transition: transform 140ms ease,
+  box-shadow 140ms ease,
+  border-color 140ms ease;
+}
+
+.photo[aria-pressed="true"],
+.photo:focus-visible {
+  --reveal-opacity: 1;
+  --frame-color: var(--profile-reveal-color);
+  --photo-transform: rotate(3deg) scale(1.03);
+  --photo-shadow: var(--shadow-md), 0 0 18px color-mix(in srgb, var(--profile-reveal-color) 26%, transparent),
+  0 0 0 1px color-mix(in srgb, var(--profile-reveal-color) 38%, transparent);
+}
+
+.photo:focus-visible {
+  border-radius: var(--radius-lg);
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .photo:hover {
+    --reveal-opacity: 1;
+    --frame-color: var(--profile-reveal-color);
+    --photo-transform: rotate(3deg) scale(1.03);
+    --photo-shadow: var(--shadow-md), 0 0 18px color-mix(in srgb, var(--profile-reveal-color) 26%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--profile-reveal-color) 38%, transparent);
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.conan {
+  position: absolute;
+  inset: 0;
+  opacity: var(--reveal-opacity);
+  transition: opacity 140ms ease;
+}
+
+@media (max-width: 800px) {
+  .photo {
+    width: 144px;
+    height: 144px;
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .photo {
+    width: 120px;
+    height: 120px;
+  }
+}

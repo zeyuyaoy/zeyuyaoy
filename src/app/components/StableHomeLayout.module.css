@@ -1,0 +1,35 @@
+.measurement {
+  position: fixed !important;
+  top: 0;
+  left: -100000px;
+  height: auto !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  contain: layout style;
+  font-family: var(--visitor-font), sans-serif;
+}
+
+.measurement *,
+.measurement *::before,
+.measurement *::after {
+  pointer-events: none !important;
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+.layout > [data-home-section="intro"] {
+  min-height: var(--home-intro-height, 0px);
+}
+
+.layout > [data-home-section="widgets"] {
+  min-height: var(--home-widgets-height, 0px);
+}
+
+.layout > [data-home-section="footer"] {
+  min-height: var(--home-footer-height, 0px);
+}
+
+.measurement > [data-home-section] {
+  min-height: 0 !important;
+}

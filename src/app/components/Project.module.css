@@ -1,88 +1,100 @@
 .projectLink {
-    display: block;
-    text-decoration: none;
+  display: block;
+  text-decoration: none;
 }
 
 .projectLink:focus-visible .project {
-    outline: 2px solid var(--link-color);
-    outline-offset: 3px;
-    box-shadow: var(--shadow-sm), 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-sm),
+  0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .project {
-    background: var(--foreground);
-    border: 2px solid var(--primary-color);
-    border-radius: 10px;
-    padding: var(--home-project-padding, 1rem);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    min-height: 88px;
+  background: var(--foreground);
+  border: 2px solid var(--primary-color);
+  border-radius: var(--radius-md);
+  padding: var(--home-project-padding, 1rem);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  min-height: 88px;
 }
 
 .projectHeader {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 6px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 6px;
 }
 
 .stars {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    gap: 0.3em;
-    color: var(--link-color);
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    transition: color 0.3s ease;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--link-color);
+  font-size: max(var(--home-font-min, 0rem), calc(0.85rem * var(--home-font-scale, 1)));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: color 0.3s ease;
 }
 
 .starIcon {
-    width: 1em;
-    height: 1em;
-    flex: none;
+  width: 1em;
+  height: 1em;
+  flex: none;
 }
 
 .project:hover {
-    background: var(--link-color);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--link-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-
 .project:hover .stars {
-    color: var(--background);
+  color: var(--background);
 }
 
 .project_title {
-    font-size: clamp(0.98rem, 2.2vw, 1.05rem);
-    font-weight: 700;
-    color: var(--link-color);
-    min-width: 0;
-    overflow-wrap: anywhere;
-    margin: 0;
-    transition: color 0.3s ease;
+  font-size: max(
+    var(--home-font-min, 0rem),
+    calc(clamp(0.98rem, 2.2vw, 1.05rem) * var(--home-font-scale, 1))
+  );
+  font-weight: 700;
+  color: var(--link-color);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin: 0;
+  transition: color 0.3s ease;
 }
 
 .project:hover .project_title {
-    color: var(--background);
+  color: var(--background);
 }
 
 .project_description {
-    font-size: clamp(0.85rem, 2vw, 0.92rem);
-    color: var(--link-color);
-    margin: 0;
-    line-height: 1.4;
-    transition: color 0.3s ease;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  font-size: max(
+    var(--home-font-min, 0rem),
+    calc(clamp(0.85rem, 2vw, 0.92rem) * var(--home-font-scale, 1))
+  );
+  color: var(--link-color);
+  margin: 0;
+  line-height: 1.4;
+  transition: color 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .project:hover .project_description {
-    color: var(--background);
+  color: var(--background);
+}
+
+@media (max-width: 800px) {
+  .projectHeader {
+    justify-content: center;
+  }
 }

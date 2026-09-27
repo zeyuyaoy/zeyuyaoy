@@ -1,16 +1,17 @@
 .themeToggleButton {
-    min-width: 44px;
-    min-height: 44px;
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.5em;
-    cursor: pointer;
-    z-index: 10;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.5em;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.3s ease,
+  box-shadow 0.3s ease;
 }
 
 .themeToggleButton:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }

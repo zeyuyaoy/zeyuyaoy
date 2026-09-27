@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.vercel/
+out/
+build/
+coverage/
+.yarn/
+.pnp.*
+.idea/
+.env*
+next-env.d.ts
+*.tsbuildinfo
+bun.lock
+public/

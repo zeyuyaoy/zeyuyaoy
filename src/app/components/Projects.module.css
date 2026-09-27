@@ -1,166 +1,136 @@
 .projectsContainer {
-    width: 100%;
-    min-width: 0;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .notebook {
-    flex: 1;
-    min-height: 280px;
-    background: var(--surface-color);
-    border: 1.5px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 0;
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all 120ms ease;
+  flex: 1;
+  background: var(--surface-color);
+  border: 1.5px solid var(--panel-border-color, var(--border-color));
+  border-radius: var(--radius-lg);
+  padding: 0;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 120ms ease;
 }
 
 .notebook:hover {
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary-color);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
 }
 
 .spiralBinding {
-    display: flex;
-    gap: var(--spacing-sm);
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    padding: var(--spacing-md) var(--spacing-lg);
-    background: var(--accent-soft);
-    border-bottom: 1px solid var(--border-color);
-    position: relative;
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
 }
 
 .spiral {
-    width: 10px;
-    height: 10px;
-    border: 2px solid var(--primary-color);
-    border-radius: 50%;
-    background: transparent;
-    transition: transform 120ms ease;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--cyberpunk-magenta, var(--primary-color));
+  border-radius: 50%;
+  background: transparent;
+  transition: transform 120ms ease;
 }
 
 .spiral:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .notebookContent {
-    padding: var(--home-panel-padding, 1.5rem);
-    background: var(--surface-color);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  padding: var(--home-panel-padding, 1.5rem);
+  background: var(--surface-color);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .projectText {
-    margin: 0 0 0.75rem;
-    color: var(--text-color);
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+  margin: 0 0 0.75rem;
+  color: var(--text-color);
+  font-size: max(var(--home-font-min, 0rem), calc(0.95rem * var(--home-font-scale, 1)));
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .projectsList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .projectPeek {
-    height: 64px;
-    flex: none;
-    margin-inline: 8px;
-    overflow: clip;
-    opacity: 0.48;
-    filter: saturate(0.65);
-    mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+  height: 64px;
+  flex: none;
+  margin-inline: 8px;
+  overflow: clip;
+  opacity: 0.48;
+  filter: saturate(0.65);
+  mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
 }
 
 .projectPeek:focus-within {
-    opacity: 1;
-    filter: none;
-    mask-image: none;
-    border-radius: 10px;
-    outline: 2px solid var(--link-color);
-    outline-offset: 3px;
-}
-
-.footer {
-    text-align: center;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.viewMore {
-    display: inline-block;
-    color: var(--link-color);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-    padding: 10px 14px;
-    min-height: 44px;
-    border: 1.5px solid var(--border-color);
-    border-radius: var(--radius-md);
-    transition: all 120ms ease;
-    background: transparent;
-}
-
-.viewMore:hover,
-.viewMore:focus-visible {
-    border-color: var(--primary-color);
-    background: var(--accent-soft);
-    transform: translateY(-1px);
+  opacity: 1;
+  filter: none;
+  mask-image: none;
+  border-radius: var(--radius-md);
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
 }
 
 .emptyState {
-    text-align: center;
-    padding: var(--spacing-2xl) var(--spacing-lg);
-    color: var(--muted-color);
-    font-size: 0.9rem;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  color: var(--muted-color);
+  font-size: max(var(--home-font-min, 0rem), calc(0.9rem * var(--home-font-scale, 1)));
 }
 
 .errorMessage {
-    text-align: center;
-    padding: var(--spacing-xl);
-    color: var(--text-color);
+  font-size: max(var(--home-font-min, 0rem), calc(1rem * var(--home-font-scale, 1)));
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-color);
 }
 
 .errorFooter {
-    font-size: 0.9rem;
-    margin-top: var(--spacing-lg);
-    color: var(--muted-color);
+  font-size: max(var(--home-font-min, 0rem), calc(0.9rem * var(--home-font-scale, 1)));
+  margin-top: var(--spacing-lg);
+  color: var(--muted-color);
 }
 
 .link {
-    color: var(--link-color);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    font-weight: 600;
-    transition: all 120ms ease;
+  color: var(--link-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+  transition: all 120ms ease;
 }
 
 .link:hover {
-    opacity: 0.8;
+  text-decoration-thickness: 2px;
 }
 
 @media (max-width: 960px) {
-    .notebook {
-        flex: none;
-        min-height: 240px;
-    }
+  .notebook {
+    flex: none;
+  }
 }
 
-@media (max-width: 430px) {
-    .viewMore {
-        width: 100%;
-        text-align: center;
-    }
+@media (max-width: 800px) {
+  .projectsContainer {
+    text-align: center;
+  }
 }
