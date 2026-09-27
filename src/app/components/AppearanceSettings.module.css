@@ -320,6 +320,12 @@
   text-underline-offset: 3px;
 }
 
+@media (max-width: 800px) {
+  .photoSettings {
+    display: none;
+  }
+}
+
 @media (max-width: 600px) {
   .panel {
     inset: auto 0 0;

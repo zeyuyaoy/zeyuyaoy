@@ -273,7 +273,7 @@ export default function AppearanceSettings() {
               </button>
             </div>
           </fieldset>
-          <fieldset>
+          <fieldset className={styles.photoSettings}>
             <legend>
               <label htmlFor="marquee-speed">Photo scroll speed</label>
             </legend>

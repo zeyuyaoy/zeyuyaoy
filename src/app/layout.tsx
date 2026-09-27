@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import type {ReactNode} from "react";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import {Comic_Neue, Nunito} from "next/font/google";
-import {personJsonLd, site} from "@/lib/site";
+import {personJsonLd, site, websiteJsonLd} from "@/lib/site";
 import "./globals.css";
 import "./appearance.css";
 import {appearanceBootstrapScript} from "@/lib/appearance";
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     url: site.url,
     title: site.title,
     description: site.description,
-    siteName: "Zeyu Yao",
+    siteName: site.name,
     images: [
       {
         url: "/og-image.png",
@@ -65,7 +65,7 @@ export default function RootLayout({children}: { children: ReactNode }) {
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c"),
+        __html: JSON.stringify([personJsonLd, websiteJsonLd]).replace(/</g, "\\u003c"),
       }}
     />
     {children}

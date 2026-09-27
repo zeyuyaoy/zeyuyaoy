@@ -1,16 +1,18 @@
 export const site = {
   url: "https://zeyuyaoy.com",
-  title: "Zeyu (Peter) Yao | 姚则禹 — Research & Projects",
+  name: "Peter Yao",
+  title: "Peter Yao | 姚则禹",
   description:
-    "Zeyu (Peter) Yao’s portfolio: single-cell analytics, gene-expression dynamics, AI-driven discovery tools, and inclusive STEM education in Singapore.",
+    "Hi, I'm Peter. I use and build computational tools to understand biology, and care about making science and tech more accessible and inclusive.",
 };
 
 export const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
-  name: "Zeyu Yao",
-  alternateName: ["Peter Yao", "姚则禹"],
+  name: "Peter Yao",
+  alternateName: ["Zeyu Yao", "姚则禹"],
   url: site.url,
+  image: `${site.url}/profile.jpg`,
   description: site.description,
   knowsAbout: [
     "Single-cell analytics",
@@ -22,5 +24,14 @@ export const personJsonLd = {
     "https://twitter.com/zeyuyaoy",
     "https://www.linkedin.com/in/zeyuyaoy/",
     "https://github.com/zeyuyaoy",
+    "https://www.instagram.com/zeyuyaoy/",
   ],
+};
+
+export const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  alternateName: ["Peter Yao", "姚则禹", "zeyuyaoy"],
+  url: site.url,
 };

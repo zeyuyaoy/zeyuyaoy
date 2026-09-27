@@ -268,7 +268,7 @@ export default function SpotifyWidget() {
       </span>
       {song.isPlaying && song.albumImageUrl ? (
         <span className={styles.albumArtwork} aria-hidden="true">
-          <Image src={song.albumImageUrl} alt="" fill sizes="42px"/>
+          <Image src={song.albumImageUrl} alt="" fill sizes="(max-width: 800px) 64px, 52px"/>
         </span>
       ) : null}
     </>

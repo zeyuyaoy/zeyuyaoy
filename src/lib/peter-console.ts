@@ -85,7 +85,7 @@ export function createPeterConsole(
       view.heading(content.banner);
       view.text(content.welcome);
       view.text("Start exploring: peter.help()");
-      return "Welcome to Peter’s personal terminal.";
+      return "Welcome to Peter's personal terminal.";
     },
     help(command: unknown = undefined) {
       if (command !== undefined) {
@@ -98,7 +98,7 @@ export function createPeterConsole(
         view.text(description);
         return next("Command explained.", "peter.help()");
       }
-      view.heading("Peter’s personal terminal · command guide");
+      view.heading("Peter's personal terminal · command guide");
       view.text("Type a command with parentheses. Your console provides history and autocomplete.");
       for (const group of ["Explore", "Make yourself at home", "Discover"]) {
         view.heading(group);
@@ -120,7 +120,7 @@ export function createPeterConsole(
         view.text('Use peter.projects() or peter.projects("name") with a project name.');
         return "Project names must be non-empty strings.";
       }
-      view.heading("Things I’ve been building");
+      view.heading("Things I've been building");
       if (data.status === "unavailable") {
         view.text("Projects are unavailable right now.");
         links([["Browse on GitHub", content.github]]);
@@ -138,7 +138,7 @@ export function createPeterConsole(
           const suggestions = (matches.length ? matches : data.projects).slice(0, 5);
           view.text(`No project named ${JSON.stringify(name)}. Try one of these:`);
           suggestions.forEach((item) => view.text(`peter.projects(${JSON.stringify(item.name)})`));
-          return "Use an exact project name; capitalization doesn’t matter.";
+          return "Use an exact project name; capitalization doesn't matter.";
         }
         view.heading(project.name);
         view.text(project.description || "No description provided yet.");

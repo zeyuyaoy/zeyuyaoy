@@ -10,6 +10,12 @@
   user-select: none;
 }
 
+@media (max-width: 800px) {
+  .background {
+    display: none;
+  }
+}
+
 .row {
   --edge-fade: 8%;
   --speed-factor: 0.9;

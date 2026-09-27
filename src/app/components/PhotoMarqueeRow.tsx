@@ -3,8 +3,6 @@ import type {CSSProperties} from "react";
 import type {PhotoMarqueePhoto} from "./photoMarqueeData";
 import styles from "./PhotoMarqueeBackground.module.css";
 
-const imageSizes = "auto, (max-width: 560px) 1000px, (max-width: 800px) 960px, 600px";
-
 type Props = {
   photos: readonly PhotoMarqueePhoto[];
 };
@@ -27,7 +25,7 @@ export default function PhotoMarqueeRow({photos}: Props) {
                   alt=""
                   width={960}
                   height={540}
-                  sizes={imageSizes}
+                  sizes="auto, 600px"
                   quality={75}
                   loading="lazy"
                   fetchPriority="low"

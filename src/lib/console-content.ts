@@ -9,9 +9,9 @@ export const consoleContent = {
     "╰──────────────────────────────────╯",
   ].join("\n"),
   welcome:
-    "Hey, I’m Peter. You found my little corner of the console.\nResearch, things I’ve built, and a few things off the clock.",
+    "Hey, I'm Peter. You found my little corner of the console.\nResearch, things I've built, and a few things off the clock.",
   about: [
-    "Hello! I’m Zeyu (Peter) Yao 姚则禹. I grew up in Singapore.",
+    "Hello! I'm Zeyu (Peter) Yao 姚则禹. I grew up in Singapore.",
     "Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon.",
     "I use and build computational tools to understand complex biological systems: how they change, adapt, and sometimes break down.",
     "Alongside research, I enjoy building inclusive communities and helping people learn, create, and find opportunities through computing.",
@@ -52,7 +52,7 @@ export const commandGuide = {
   ],
   research: ["Explore", "peter.research()", "Research interests and links from the homepage."],
   interests: ["Explore", "peter.interests()", "A few things off the clock."],
-  photos: ["Explore", "peter.photos()", "Three photographs from the page’s photo marquee."],
+  photos: ["Explore", "peter.photos()", "Three photographs from the page's photo marquee."],
   contact: ["Explore", "peter.contact()", "Public profiles and personal email."],
   themes: ["Make yourself at home", "peter.themes()", "Available presets and current appearance."],
   theme: [
