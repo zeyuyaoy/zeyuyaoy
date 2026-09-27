@@ -1,6 +1,6 @@
 "use client";
 
-import {useId, useState} from "react";
+import { useId, useState } from "react";
 import Image from "next/image";
 import ProfilePic from "../../../public/profile.jpg";
 import ConanPic from "../../../public/conan.jpg";

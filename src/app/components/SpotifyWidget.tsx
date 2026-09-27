@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import {type CSSProperties, useEffect, useRef, useState} from "react";
-import {formatPlaybackTime, getSpotifyPlaybackProgress} from "@/lib/spotify-playback";
-import {getSpotifyPollDecision} from "@/lib/spotify-polling";
-import {parseSpotifyStatus, type SpotifyStatus} from "@/lib/spotify-contract";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
+import { formatPlaybackTime, getSpotifyPlaybackProgress } from "@/lib/spotify-playback";
+import { getSpotifyPollDecision } from "@/lib/spotify-polling";
+import { parseSpotifyStatus, type SpotifyStatus } from "@/lib/spotify-contract";
 import styles from "./SpotifyWidget.module.css";
 
 const unavailableSong = {
@@ -47,7 +47,7 @@ function getPlaybackCopy(song: SpotifyStatus) {
   };
 }
 
-function MarqueeText({text = "", className}: { text?: string; className: string }) {
+function MarqueeText({ text = "", className }: { text?: string; className: string }) {
   const viewportRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [distance, setDistance] = useState(0);
@@ -114,38 +114,38 @@ function MarqueeText({text = "", className}: { text?: string; className: string 
   );
 }
 
-function CassetteHardware({isLive = false}) {
+function CassetteHardware({ isLive = false }) {
   const hubClassName = `${styles.reelHub} ${isLive ? styles.spinning : ""}`;
 
   return (
     <>
-      <span className={`${styles.screw} ${styles.screwTopLeft}`} aria-hidden="true"/>
-      <span className={`${styles.screw} ${styles.screwTopRight}`} aria-hidden="true"/>
-      <span className={`${styles.screw} ${styles.screwBottomLeft}`} aria-hidden="true"/>
-      <span className={`${styles.screw} ${styles.screwBottomRight}`} aria-hidden="true"/>
+      <span className={`${styles.screw} ${styles.screwTopLeft}`} aria-hidden="true" />
+      <span className={`${styles.screw} ${styles.screwTopRight}`} aria-hidden="true" />
+      <span className={`${styles.screw} ${styles.screwBottomLeft}`} aria-hidden="true" />
+      <span className={`${styles.screw} ${styles.screwBottomRight}`} aria-hidden="true" />
 
       <div className={styles.tapeWindow} aria-hidden="true">
         <span className={`${styles.reel} ${styles.reelLeft}`}>
-          <span className={hubClassName}/>
+          <span className={hubClassName} />
         </span>
         <span className={`${styles.reel} ${styles.reelRight}`}>
-          <span className={hubClassName}/>
+          <span className={hubClassName} />
         </span>
       </div>
 
       <div className={styles.lowerDeck} aria-hidden="true">
-        <span className={styles.deckHole}/>
-        <span className={styles.deckPin}/>
-        <span className={styles.deckSlot}/>
-        <span className={styles.deckPin}/>
-        <span className={styles.deckHole}/>
+        <span className={styles.deckHole} />
+        <span className={styles.deckPin} />
+        <span className={styles.deckSlot} />
+        <span className={styles.deckPin} />
+        <span className={styles.deckHole} />
       </div>
     </>
   );
 }
 
 export default function SpotifyWidget() {
-  const [song, setSong] = useState<SpotifyStatus>({isPlaying: false});
+  const [song, setSong] = useState<SpotifyStatus>({ isPlaying: false });
   const [isLoaded, setIsLoaded] = useState(false);
   const [clockMs, setClockMs] = useState(() => Date.now());
 
@@ -232,7 +232,7 @@ export default function SpotifyWidget() {
     return (
       <div className={styles.loading} role="status">
         <div className={styles.cassette}>
-          <CassetteHardware/>
+          <CassetteHardware />
           <div className={`${styles.trackLabel} ${styles.loadingLabel}`}>
             <span>Loading music player…</span>
           </div>
@@ -259,7 +259,7 @@ export default function SpotifyWidget() {
           <span className={styles.statusDot} aria-hidden="true"></span>
           {copy.status}
         </span>
-        <MarqueeText key={`title:${copy.title}`} text={copy.title} className={styles.songTitle}/>
+        <MarqueeText key={`title:${copy.title}`} text={copy.title} className={styles.songTitle} />
         <MarqueeText
           key={`artist:${copy.artist}`}
           text={copy.artist}
@@ -268,7 +268,7 @@ export default function SpotifyWidget() {
       </span>
       {song.isPlaying && song.albumImageUrl ? (
         <span className={styles.albumArtwork} aria-hidden="true">
-          <Image src={song.albumImageUrl} alt="" fill sizes="(max-width: 800px) 64px, 52px"/>
+          <Image src={song.albumImageUrl} alt="" fill sizes="(max-width: 800px) 64px, 52px" />
         </span>
       ) : null}
     </>
@@ -277,7 +277,7 @@ export default function SpotifyWidget() {
   return (
     <section className={styles.player} aria-label="Spotify now playing">
       <div className={styles.cassette}>
-        <CassetteHardware isLive={isLive}/>
+        <CassetteHardware isLive={isLive} />
 
         {song.isPlaying && song.songUrl ? (
           <a

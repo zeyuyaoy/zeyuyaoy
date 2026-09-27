@@ -1,21 +1,21 @@
-import {describe, expect, test} from "bun:test";
-import {createPeterConsole, installPeterConsole} from "../src/lib/peter-console";
-import {createAppearanceStore} from "../src/lib/theme-store";
-import {appearanceStorageKey, defaultAppearance} from "../src/lib/appearance";
-import {commandGuide, consoleContent} from "../src/lib/console-content";
+import { describe, expect, test } from "bun:test";
+import { createPeterConsole, installPeterConsole } from "../src/lib/peter-console";
+import { createAppearanceStore } from "../src/lib/theme-store";
+import { appearanceStorageKey, defaultAppearance } from "../src/lib/appearance";
+import { commandGuide, consoleContent } from "../src/lib/console-content";
 
-function fixture({data, storageFails = false, saved} = {}) {
+function fixture({ data, storageFails = false, saved } = {}) {
   const calls = [];
   const output = Object.fromEntries(
     ["log", "table", "groupCollapsed", "groupEnd"].map((method) => [
       method,
-      (...args) => calls.push({method, args}),
+      (...args) => calls.push({ method, args }),
     ]),
   );
 
   const storage = new Map(saved ? [[appearanceStorageKey, JSON.stringify(saved)]] : []);
   const events = new EventTarget();
-  const media = Object.assign(new EventTarget(), {matches: false});
+  const media = Object.assign(new EventTarget(), { matches: false });
 
   const appearance = createAppearanceStore(
     () => ({
@@ -36,7 +36,7 @@ function fixture({data, storageFails = false, saved} = {}) {
     () => media,
   );
 
-  const projects = Array.from({length: 10}, (_, index) => ({
+  const projects = Array.from({ length: 10 }, (_, index) => ({
     name: `project-${index}`,
     description: index === 1 ? null : `Project ${index}`,
     stars: index,
@@ -47,7 +47,7 @@ function fixture({data, storageFails = false, saved} = {}) {
     output,
     appearance,
     origin: "http://localhost:3456",
-    data: data ?? {status: "ready", projects},
+    data: data ?? { status: "ready", projects },
   };
 
   const api = createPeterConsole(dependencies);
@@ -59,12 +59,12 @@ function fixture({data, storageFails = false, saved} = {}) {
 
   const tables = () => calls.filter((call) => call.method === "table").map((call) => call.args[0]);
 
-  return {calls, appearance, storage, dependencies, api, text, tables};
+  return { calls, appearance, storage, dependencies, api, text, tables };
 }
 
 describe("personal console content", () => {
   test("has a small welcome card and a frozen, getter-free command surface", () => {
-    const {api, text} = fixture();
+    const { api, text } = fixture();
     expect(Object.isFrozen(api)).toBe(true);
     expect(Object.values(Object.getOwnPropertyDescriptors(api)).every((value) => !value.get)).toBe(
       true,
@@ -75,7 +75,7 @@ describe("personal console content", () => {
   });
 
   test("help documents every public command and keeps discoveries out of its table", () => {
-    const {api, tables, text, calls} = fixture();
+    const { api, tables, text, calls } = fixture();
     api.help();
     expect(tables()).toHaveLength(3);
     const helpRows = tables().flat();
@@ -96,7 +96,7 @@ describe("personal console content", () => {
   });
 
   test("content commands print public content, absolute local photo links, and a next step", () => {
-    const {api, text, calls} = fixture();
+    const { api, text, calls } = fixture();
     for (const command of [
       "about",
       "research",
@@ -122,11 +122,11 @@ describe("personal console content", () => {
   });
 
   test("lists eight projects in server order but can look up the complete list", () => {
-    const {api, text, tables, calls} = fixture();
+    const { api, text, tables, calls } = fixture();
     api.projects();
 
     expect(tables()[0].map((row) => row.Project)).toEqual(
-      Array.from({length: 8}, (_, i) => `project-${i}`),
+      Array.from({ length: 8 }, (_, i) => `project-${i}`),
     );
     expect(tables()[0][1].Description).toBe("No description provided yet.");
     expect(text()).toContain("Showing 8 of 10");
@@ -140,7 +140,7 @@ describe("personal console content", () => {
   });
 
   test("project lookup suggests available names and validates arguments", () => {
-    const {api, text, calls} = fixture();
+    const { api, text, calls } = fixture();
     api.projects("9");
     expect(text()).toContain('peter.projects("project-9")');
     calls.length = 0;
@@ -157,7 +157,7 @@ describe("personal console content", () => {
   test.each(["ready", "unavailable"])(
     "handles %s projects without disabling other commands",
     (status) => {
-      const {api, text} = fixture({data: {status, projects: []}});
+      const { api, text } = fixture({ data: { status, projects: [] } });
       api.projects();
       expect(text()).toContain(
         status === "ready" ? "No public projects" : "Projects are unavailable",
@@ -175,7 +175,7 @@ describe("personal console content", () => {
   test("external strings stay data rather than becoming formatting instructions", () => {
     const name = '%c<script>alert("hi")</script>姚';
     const description = "%s %c <img src=x onerror=alert(1)>";
-    const {api, calls, tables} = fixture({
+    const { api, calls, tables } = fixture({
       data: {
         status: "ready",
         projects: [
@@ -190,11 +190,11 @@ describe("personal console content", () => {
     });
 
     api.projects();
-    expect(tables()[0][0]).toMatchObject({Project: name, Description: description});
+    expect(tables()[0][0]).toMatchObject({ Project: name, Description: description });
     api.projects(name);
     api.projects('%c"missing');
 
-    for (const {method, args} of calls) {
+    for (const { method, args } of calls) {
       if (method === "log") {
         expect(["%s", "%c%s"]).toContain(args[0]);
       }
@@ -210,11 +210,11 @@ describe("personal console content", () => {
 
 describe("console appearance commands", () => {
   test("Cyberpunk selects dark mode while manual mode choices remain available", () => {
-    const {api, appearance, text} = fixture();
+    const { api, appearance, text } = fixture();
     appearance.unlockCyberpunk();
     api.mode("light");
     api.theme("cyberpunk");
-    expect(appearance.getSnapshot()).toMatchObject({mode: "dark", accent: "neon", font: "mono"});
+    expect(appearance.getSnapshot()).toMatchObject({ mode: "dark", accent: "neon", font: "mono" });
     api.mode("system");
     expect(appearance.getSnapshot().mode).toBe("system");
     api.help("theme");
@@ -222,8 +222,8 @@ describe("console appearance commands", () => {
   });
 
   test("applies presets and modes through the store, preserving independent preferences", () => {
-    const {api, appearance, storage, text} = fixture();
-    appearance.update({motion: "reduce", size: "larger", marqueeSpeed: 1});
+    const { api, appearance, storage, text } = fixture();
+    appearance.update({ motion: "reduce", size: "larger", marqueeSpeed: 1 });
     api.theme("editorial");
     api.mode("dark");
     expect(appearance.getSnapshot()).toMatchObject({
@@ -242,7 +242,7 @@ describe("console appearance commands", () => {
   });
 
   test("invalid and locked selections do not mutate preferences", () => {
-    const {api, appearance, storage, calls, tables} = fixture();
+    const { api, appearance, storage, calls, tables } = fixture();
     const before = appearance.getSnapshot();
     for (const value of [undefined, null, {}, 1, "", "unknown", "cyberpunk"]) {
       api.theme(value);
@@ -261,7 +261,7 @@ describe("console appearance commands", () => {
   });
 
   test("reflects existing unlocks and preserves them through reset", () => {
-    const {api, appearance, tables} = fixture();
+    const { api, appearance, tables } = fixture();
     appearance.unlockCyberpunk();
     api.themes();
     expect(tables()[0].at(-1).Preset).toBe("Cyberpunk");
@@ -276,7 +276,7 @@ describe("console appearance commands", () => {
   });
 
   test("works without storage and explains that changes last only for this visit", () => {
-    const {api, appearance, text} = fixture({storageFails: true});
+    const { api, appearance, text } = fixture({ storageFails: true });
     api.theme("goofball");
     api.mode("light");
     expect(appearance.getSnapshot()).toMatchObject({
@@ -292,7 +292,7 @@ describe("console appearance commands", () => {
 
 describe("console lifecycle and discoveries", () => {
   test("hints advance only after discoveries, including out-of-order exploration", () => {
-    const {api, calls, text} = fixture();
+    const { api, calls, text } = fixture();
     api.hint();
     api.hint();
     expect(text()).not.toContain("peter.astra()");
@@ -312,7 +312,7 @@ describe("console lifecycle and discoveries", () => {
 
   test("Strict Mode remounts register once, preserve discoveries, and allow explicit banners", () => {
     const host = {};
-    const {dependencies, calls, text} = fixture();
+    const { dependencies, calls, text } = fixture();
     const cleanup = installPeterConsole(host, dependencies);
     const welcomeCount = () =>
       calls.filter((call) => call.args.includes(consoleContent.banner)).length;
@@ -337,7 +337,7 @@ describe("console lifecycle and discoveries", () => {
 
   test("stale cleanup never removes a replacement registration or a visitor's global", () => {
     const host = {};
-    const {dependencies} = fixture();
+    const { dependencies } = fixture();
     const oldCleanup = installPeterConsole(host, dependencies);
     const oldApi = host.peter;
     const newCleanup = installPeterConsole(host, dependencies);
@@ -345,8 +345,8 @@ describe("console lifecycle and discoveries", () => {
     const newApi = host.peter;
     oldCleanup();
     expect(host.peter).toBe(newApi);
-    const visitorValue = {hello: "visitor"};
-    Object.defineProperty(host, "peter", {value: visitorValue, configurable: true});
+    const visitorValue = { hello: "visitor" };
+    Object.defineProperty(host, "peter", { value: visitorValue, configurable: true });
     newCleanup();
     expect(host.peter).toBe(visitorValue);
     installPeterConsole(host, dependencies)();
@@ -354,7 +354,7 @@ describe("console lifecycle and discoveries", () => {
   });
 
   test("does not evaluate getters or overwrite inherited globals", () => {
-    const {dependencies, calls} = fixture();
+    const { dependencies, calls } = fixture();
     let reads = 0;
     const host = {};
     Object.defineProperty(host, "peter", {
@@ -366,7 +366,7 @@ describe("console lifecycle and discoveries", () => {
     });
     installPeterConsole(host, dependencies)();
     expect(reads).toBe(0);
-    const inherited = Object.create({peter: "someone else"});
+    const inherited = Object.create({ peter: "someone else" });
     installPeterConsole(inherited, dependencies)();
     expect(Object.hasOwn(inherited, "peter")).toBe(false);
     expect(calls).toHaveLength(0);

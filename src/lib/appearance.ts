@@ -12,11 +12,11 @@ export type Appearance = { version: 1; marqueeSpeed: number; cyberpunkUnlocked: 
 };
 
 export const presets = [
-  {id: "sundaze", name: "Sundaze", accent: "sage", font: "rounded"},
-  {id: "everyday", name: "Everyday", accent: "ocean", font: "sans"},
-  {id: "editorial", name: "Editorial", accent: "terracotta", font: "serif"},
-  {id: "goofball", name: "Goofball", accent: "lavender", font: "comic"},
-  {id: "cyberpunk", name: "Cyberpunk", accent: "neon", font: "mono"},
+  { id: "sundaze", name: "Sundaze", accent: "sage", font: "rounded" },
+  { id: "everyday", name: "Everyday", accent: "ocean", font: "sans" },
+  { id: "editorial", name: "Editorial", accent: "terracotta", font: "serif" },
+  { id: "goofball", name: "Goofball", accent: "lavender", font: "comic" },
+  { id: "cyberpunk", name: "Cyberpunk", accent: "neon", font: "mono" },
 ] as const;
 
 export const defaultAppearance: Appearance = {
@@ -39,13 +39,13 @@ export function normalizeAppearance(
   options: typeof appearanceOptions,
 ): Appearance {
   if (!value || typeof value !== "object" || !("version" in value) || value.version !== 1) {
-    return {...defaults};
+    return { ...defaults };
   }
-  const result = {...defaults};
+  const result = { ...defaults };
   for (const key of Object.keys(options) as (keyof typeof options)[]) {
     const candidate = (value as Record<string, unknown>)[key];
     if (typeof candidate === "string" && (options[key] as readonly string[]).includes(candidate)) {
-      Object.assign(result, {[key]: candidate});
+      Object.assign(result, { [key]: candidate });
     }
   }
 

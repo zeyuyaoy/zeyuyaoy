@@ -6,8 +6,9 @@
 .projectLink:focus-visible .project {
   outline: 2px solid var(--link-color);
   outline-offset: 3px;
-  box-shadow: var(--shadow-sm),
-  0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+  box-shadow:
+    var(--shadow-sm),
+    0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .project {

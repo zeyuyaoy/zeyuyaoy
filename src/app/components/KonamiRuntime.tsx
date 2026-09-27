@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {createKonamiKeyboard, cyberpunkUnlockMessage} from "@/lib/konami";
-import {appearanceStore} from "@/lib/theme-store";
+import { useEffect, useState } from "react";
+import { createKonamiKeyboard, cyberpunkUnlockMessage } from "@/lib/konami";
+import { appearanceStore } from "@/lib/theme-store";
 import styles from "./SecretController.module.css";
 
 export default function KonamiRuntime() {

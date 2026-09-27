@@ -52,7 +52,8 @@
   display: flex;
   width: max-content;
   height: 100%;
-  animation: marquee-scroll var(--loop-duration, calc(var(--duration) / 2.5)) linear var(--delay) infinite var(--direction);
+  animation: marquee-scroll var(--loop-duration, calc(var(--duration) / 2.5)) linear var(--delay)
+    infinite var(--direction);
 }
 
 .group {

@@ -1,4 +1,4 @@
-import {trustedHttpsUrl, UpstreamError} from "./upstream";
+import { trustedHttpsUrl, UpstreamError } from "./upstream";
 
 export interface Project {
   name: string;
@@ -17,9 +17,9 @@ export async function getGithubProjects(fetchImpl = fetch): Promise<Project[]> {
       headers: {
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
-        ...(token ? {Authorization: `Bearer ${token}`} : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      next: {revalidate: 600},
+      next: { revalidate: 600 },
       signal: AbortSignal.timeout(8000),
     },
   );

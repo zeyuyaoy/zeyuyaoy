@@ -1,5 +1,9 @@
-import {describe, expect, test} from "bun:test";
-import {createMarqueeDurationUpdater, marqueeDuration, retimeMarquee,} from "../src/lib/photo-marquee-motion";
+import { describe, expect, test } from "bun:test";
+import {
+  createMarqueeDurationUpdater,
+  marqueeDuration,
+  retimeMarquee,
+} from "../src/lib/photo-marquee-motion";
 
 function position(time, duration, delay, reverse = false) {
   const elapsed = (time - delay) / duration;
@@ -7,12 +11,12 @@ function position(time, duration, delay, reverse = false) {
   return reverse ? 1 - phase : phase;
 }
 
-function fixture({duration = 330000, delay = 0, time = 82000} = {}) {
+function fixture({ duration = 330000, delay = 0, time = 82000 } = {}) {
   const writes = [];
   let currentTime = time;
 
   const animation = {
-    effect: {getTiming: () => ({duration, delay})},
+    effect: { getTiming: () => ({ duration, delay }) },
     get currentTime() {
       return currentTime;
     },
@@ -22,8 +26,8 @@ function fixture({duration = 330000, delay = 0, time = 82000} = {}) {
     },
   };
 
-  const track = {style: {setProperty: (name, value) => writes.push([name, value])}};
-  return {track, animation, writes};
+  const track = { style: { setProperty: (name, value) => writes.push([name, value]) } };
+  return { track, animation, writes };
 }
 
 describe("marquee timing", () => {
@@ -73,7 +77,7 @@ describe("marquee timing", () => {
 
   test("batches reads before writes and suppresses unchanged updates without seeking again", () => {
     const prepare = createMarqueeDurationUpdater();
-    const {track, animation, writes} = fixture();
+    const { track, animation, writes } = fixture();
     const apply = prepare(track, animation, 270000);
     expect(writes).toEqual([]);
     apply();
@@ -87,15 +91,15 @@ describe("marquee timing", () => {
 
   test("reconciles a replacement animation after reduced motion even at the same speed", () => {
     const prepare = createMarqueeDurationUpdater();
-    const {track, animation} = fixture();
+    const { track, animation } = fixture();
     prepare(track, animation, 270000)();
-    const replacement = fixture({time: 0, delay: -33000}).animation;
+    const replacement = fixture({ time: 0, delay: -33000 }).animation;
     expect(prepare(track, replacement, 270000)).toBeFunction();
   });
 
   test("does not cache an unresolved animation or an unapplied update", () => {
     const prepare = createMarqueeDurationUpdater();
-    const {track, animation, writes} = fixture();
+    const { track, animation, writes } = fixture();
     animation.currentTime = null;
     expect(prepare(track, animation, 270000)).toBeNull();
     animation.currentTime = 0;

@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useSyncExternalStore} from "react";
-import {applyAppearance} from "@/lib/appearance";
-import {appearanceStore} from "@/lib/theme-store";
+import { useEffect, useSyncExternalStore } from "react";
+import { applyAppearance } from "@/lib/appearance";
+import { appearanceStore } from "@/lib/theme-store";
 
 export default function AppearanceRuntime() {
   const snapshot = useSyncExternalStore(

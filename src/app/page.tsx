@@ -9,8 +9,8 @@ import SpotifyWidget from "./components/SpotifyWidget";
 import Projects from "./components/Projects";
 import PhotoMarqueeBackground from "./components/PhotoMarqueeBackground";
 import PersonalConsoleRuntime from "./components/PersonalConsoleRuntime";
-import {getGithubProjects, type ProjectData} from "@/lib/github";
-import {failureCode} from "@/lib/upstream";
+import { getGithubProjects, type ProjectData } from "@/lib/github";
+import { failureCode } from "@/lib/upstream";
 
 export const revalidate = 600;
 
@@ -22,7 +22,7 @@ export default async function Home() {
       projects: (await getGithubProjects()).filter((project) => project.name !== "zeyuyaoy"),
     };
   } catch (error) {
-    projectData = {status: "unavailable", projects: []};
+    projectData = { status: "unavailable", projects: [] };
     console.warn("Portfolio upstream", {
       service: "github",
       state: "degraded",
@@ -31,16 +31,16 @@ export default async function Home() {
   }
   return (
     <div className={styles.page}>
-      <PersonalConsoleRuntime data={projectData}/>
-      <PhotoMarqueeBackground/>
+      <PersonalConsoleRuntime data={projectData} />
+      <PhotoMarqueeBackground />
       <main className={styles.main}>
         <StableHomeLayout className={styles.contentContainer}>
           <section className={styles.intro} data-home-section="intro">
-            <ProfilePhoto/>
+            <ProfilePhoto />
             <div className={styles.introText}>
               <h1 className={styles.name}>
                 <span>Zeyu Yao 姚则禹</span>
-                <ThemeProvider/>
+                <ThemeProvider />
               </h1>
               <p className={styles.subtitle}>
                 Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon
@@ -181,13 +181,13 @@ export default async function Home() {
           </section>
 
           <section className={styles.section} data-home-section="widgets">
-            <Projects data={projectData}/>
-            <SpotifyWidget/>
+            <Projects data={projectData} />
+            <SpotifyWidget />
           </section>
 
           <footer className={styles.footer} data-home-section="footer">
-            <Webring/>
-            <AppearanceSettings/>
+            <Webring />
+            <AppearanceSettings />
           </footer>
         </StableHomeLayout>
       </main>

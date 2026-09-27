@@ -1,4 +1,4 @@
-import type {SpotifyStatus} from "./spotify-contract";
+import type { SpotifyStatus } from "./spotify-contract";
 
 export const NORMAL_SPOTIFY_POLL_INTERVAL = 30 * 1000;
 export const MAX_SPOTIFY_BACKOFF_INTERVAL = 5 * 60 * 1000;

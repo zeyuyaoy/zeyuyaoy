@@ -1,8 +1,8 @@
 "use client";
 
-import {useEffect, useRef, useState, useSyncExternalStore} from "react";
-import {type Appearance, presets} from "@/lib/appearance";
-import {appearanceStore} from "@/lib/theme-store";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { type Appearance, presets } from "@/lib/appearance";
+import { appearanceStore } from "@/lib/theme-store";
 import styles from "./AppearanceSettings.module.css";
 import SecretController from "./SecretController";
 
@@ -65,7 +65,7 @@ export default function AppearanceSettings() {
     key: K,
     setting: Appearance[K],
   ) => {
-    appearanceStore.update({[key]: setting});
+    appearanceStore.update({ [key]: setting });
   };
 
   return (
@@ -94,9 +94,8 @@ export default function AppearanceSettings() {
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          <path
-            d="m9.5 3-.6 2.2-1.8 1L5 5.6 2.5 10l1.6 1.6v.8L2.5 14 5 18.4l2.1-.6 1.8 1 .6 2.2h5l.6-2.2 1.8-1 2.1.6 2.5-4.4-1.6-1.6v-.8l1.6-1.6L19 5.6l-2.1.6-1.8-1L14.5 3z"/>
-          <circle cx="12" cy="12" r="3"/>
+          <path d="m9.5 3-.6 2.2-1.8 1L5 5.6 2.5 10l1.6 1.6v.8L2.5 14 5 18.4l2.1-.6 1.8 1 .6 2.2h5l.6-2.2 1.8-1 2.1.6 2.5-4.4-1.6-1.6v-.8l1.6-1.6L19 5.6l-2.1.6-1.8-1L14.5 3z" />
+          <circle cx="12" cy="12" r="3" />
         </svg>
       </button>
       <dialog
@@ -172,9 +171,9 @@ export default function AppearanceSettings() {
                     onClick={() => appearanceStore.selectPreset(preset.id)}
                   >
                     <span className={styles.swatches} data-theme-swatches aria-hidden="true">
-                      <i/>
-                      <i/>
-                      <i/>
+                      <i />
+                      <i />
+                      <i />
                     </span>
                     <span className={styles.presetName} data-font={preset.font}>
                       {preset.name}
@@ -297,7 +296,7 @@ export default function AppearanceSettings() {
             </p>
           </fieldset>
         </div>
-        {open && <SecretController/>}
+        {open && <SecretController />}
         <footer className={styles.panelFooter}>
           <p role="status">
             {value.storageAvailable

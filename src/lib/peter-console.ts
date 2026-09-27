@@ -1,8 +1,8 @@
-import {appearanceOptions, presets} from "./appearance";
-import {commandGuide, consoleContent as content} from "./console-content";
-import {type ConsoleOutput, createConsoleRenderer} from "./console-renderer";
-import type {ProjectData} from "./github";
-import type {appearanceStore} from "./theme-store";
+import { appearanceOptions, presets } from "./appearance";
+import { commandGuide, consoleContent as content } from "./console-content";
+import { type ConsoleOutput, createConsoleRenderer } from "./console-renderer";
+import type { ProjectData } from "./github";
+import type { appearanceStore } from "./theme-store";
 
 export interface PeterConsole {
   help(command?: string): string;
@@ -52,7 +52,7 @@ export type ConsoleDependencies = {
 type Discovery = "conan" | "astra";
 
 export function createPeterConsole(
-  {output, appearance, data, origin}: ConsoleDependencies,
+  { output, appearance, data, origin }: ConsoleDependencies,
   discoveries = new Set<Discovery>(),
 ): Readonly<PeterConsole> {
   const view = createConsoleRenderer(output);
@@ -105,7 +105,7 @@ export function createPeterConsole(
         view.table(
           Object.values(commandGuide)
             .filter(([category]) => category === group)
-            .map(([, example, description]) => ({Command: example, Description: description})),
+            .map(([, example, description]) => ({ Command: example, Description: description })),
         );
       }
       return next("Make yourself at home.", "peter.about()");
@@ -226,7 +226,7 @@ export function createPeterConsole(
         view.text('Use peter.mode("light"), peter.mode("dark"), or peter.mode("system").');
         return "Appearance unchanged.";
       }
-      appearance.update({mode});
+      appearance.update({ mode });
       return saved(`Mode set to ${mode}.`);
     },
     resetAppearance() {
@@ -290,17 +290,16 @@ export function installPeterConsole(
       !previousSession?.api ||
       existing.value !== previousSession.api)
   ) {
-    return () => {
-    };
+    return () => {};
   }
 
-  const session = previousSession ?? {bannerShown: false, discoveries: new Set<Discovery>()};
+  const session = previousSession ?? { bannerShown: false, discoveries: new Set<Discovery>() };
   if (!previousSession) {
-    Object.defineProperty(host, sessionKey, {value: session});
+    Object.defineProperty(host, sessionKey, { value: session });
   }
 
   const api = createPeterConsole(dependencies, session.discoveries);
-  Object.defineProperty(host, "peter", {value: api, configurable: true});
+  Object.defineProperty(host, "peter", { value: api, configurable: true });
   session.api = api;
   if (!session.bannerShown) {
     session.bannerShown = true;

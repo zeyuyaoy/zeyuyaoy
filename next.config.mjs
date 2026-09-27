@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   allowedDevOrigins: ["192.168.1.3"],
-  turbopack: {root: process.cwd()},
+  turbopack: { root: process.cwd() },
   outputFileTracingRoot: process.cwd(),
   images: {
     remotePatterns: [
@@ -20,7 +20,7 @@ const nextConfig = {
     return ["cytronicoder\\.com", "www\\.cytronicoder\\.com", "www\\.zeyuyaoy\\.com"].map(
       (host) => ({
         source: "/:path*",
-        has: [{type: "host", value: host}],
+        has: [{ type: "host", value: host }],
         destination: "https://zeyuyaoy.com/:path*",
         permanent: true,
       }),

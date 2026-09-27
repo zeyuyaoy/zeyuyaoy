@@ -1,6 +1,6 @@
-import {expect, test} from "bun:test";
-import {readdir} from "node:fs/promises";
-import {marqueePhotos} from "../src/app/components/photoMarqueeData";
+import { expect, test } from "bun:test";
+import { readdir } from "node:fs/promises";
+import { marqueePhotos } from "../src/app/components/photoMarqueeData";
 
 test("the single marquee queue contains all 97 sequentially numbered photos", async () => {
   expect(marqueePhotos).toHaveLength(97);

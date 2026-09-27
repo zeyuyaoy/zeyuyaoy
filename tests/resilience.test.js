@@ -1,5 +1,5 @@
-import {describe, expect, test} from "bun:test";
-import {failureCode, trustedHttpsUrl, UpstreamError} from "../src/lib/upstream";
+import { describe, expect, test } from "bun:test";
+import { failureCode, trustedHttpsUrl, UpstreamError } from "../src/lib/upstream";
 
 describe("upstream failure classification", () => {
   test.each([

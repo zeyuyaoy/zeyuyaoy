@@ -1,5 +1,5 @@
-import {describe, expect, it} from "bun:test";
-import {SpotifyService} from "@/lib/spotify";
+import { describe, expect, it } from "bun:test";
+import { SpotifyService } from "@/lib/spotify";
 
 const env = {
   SPOTIFY_CLIENT_ID: "client-id",
@@ -15,24 +15,24 @@ const trackPayload = {
     type: "track",
     name: "Test Track",
     duration_ms: 240_000,
-    artists: [{name: "First Artist"}, {name: "Second Artist"}],
+    artists: [{ name: "First Artist" }, { name: "Second Artist" }],
     album: {
       name: "Test Album",
-      images: [{url: "https://i.scdn.co/image/test"}],
+      images: [{ url: "https://i.scdn.co/image/test" }],
     },
-    external_urls: {spotify: "https://open.spotify.com/track/test"},
+    external_urls: { spotify: "https://open.spotify.com/track/test" },
   },
 };
 
 function jsonResponse(body, status = 200, headers = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {"Content-Type": "application/json", ...headers},
+    headers: { "Content-Type": "application/json", ...headers },
   });
 }
 
 function emptyResponse(status, headers = {}) {
-  return new Response(null, {status, headers});
+  return new Response(null, { status, headers });
 }
 
 function fetchSequence(...responses) {
@@ -48,19 +48,18 @@ function fetchSequence(...responses) {
     }
     return response;
   };
-  return {calls, fetchImpl};
+  return { calls, fetchImpl };
 }
 
 const silentLogger = {
-  error() {
-  },
+  error() {},
 };
 
 describe("SpotifyService", () => {
   it("returns the current track and caches the access token", async () => {
     let now = 0;
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access-1", expires_in: 3600}),
+      jsonResponse({ access_token: "access-1", expires_in: 3600 }),
       jsonResponse(trackPayload),
       jsonResponse(trackPayload),
     );
@@ -93,14 +92,14 @@ describe("SpotifyService", () => {
 
   it("maps a 204 response to not playing", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
       emptyResponse(204),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     const result = await service.getStatus(env);
 
-    expect(result.data).toEqual({isPlaying: false});
+    expect(result.data).toEqual({ isPlaying: false });
   });
 
   it("clamps playback progress and tolerates missing timing fields", async () => {
@@ -110,7 +109,7 @@ describe("SpotifyService", () => {
     delete withoutTiming.progress_ms;
     delete withoutTiming.item.duration_ms;
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
       jsonResponse(overDuration),
       jsonResponse(withoutTiming),
     );
@@ -133,17 +132,17 @@ describe("SpotifyService", () => {
 
   it("treats unsupported playback types as not playing", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
-      jsonResponse({is_playing: true, item: {type: "episode", name: "Episode"}}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
+      jsonResponse({ is_playing: true, item: { type: "episode", name: "Episode" } }),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
-    expect((await service.getStatus(env)).data).toEqual({isPlaying: false});
+    expect((await service.getStatus(env)).data).toEqual({ isPlaying: false });
   });
 
   it("makes invalid_grant terminal and does not retry it", async () => {
-    const fetches = fetchSequence(jsonResponse({error: "invalid_grant"}, 400));
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const fetches = fetchSequence(jsonResponse({ error: "invalid_grant" }, 400));
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     const first = await service.getStatus(env);
     const second = await service.getStatus(env);
@@ -156,11 +155,11 @@ describe("SpotifyService", () => {
 
   it("recovers from a terminal failure when configured credentials change", async () => {
     const fetches = fetchSequence(
-      jsonResponse({error: "invalid_grant"}, 400),
-      jsonResponse({access_token: "access", expires_in: 3600}),
+      jsonResponse({ error: "invalid_grant" }, 400),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
       emptyResponse(204),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     expect((await service.getStatus(env)).data.reason).toBe("reauthorization_required");
     expect(
@@ -170,16 +169,16 @@ describe("SpotifyService", () => {
           SPOTIFY_REFRESH_TOKEN: "replacement-token",
         })
       ).data,
-    ).toEqual({isPlaying: false});
+    ).toEqual({ isPlaying: false });
     expect(fetches.calls).toHaveLength(3);
   });
 
   it("does not leak cached playback after invalid_grant", async () => {
     let now = 0;
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 61}),
+      jsonResponse({ access_token: "access", expires_in: 61 }),
       jsonResponse(trackPayload),
-      jsonResponse({error: "invalid_grant"}, 400),
+      jsonResponse({ error: "invalid_grant" }, 400),
     );
     const service = new SpotifyService({
       fetchImpl: fetches.fetchImpl,
@@ -198,12 +197,12 @@ describe("SpotifyService", () => {
 
   it("retries playback 401 once with a new access token", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access-1", expires_in: 3600}),
+      jsonResponse({ access_token: "access-1", expires_in: 3600 }),
       emptyResponse(401),
-      jsonResponse({access_token: "access-2", expires_in: 3600}),
+      jsonResponse({ access_token: "access-2", expires_in: 3600 }),
       jsonResponse(trackPayload),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     const result = await service.getStatus(env);
 
@@ -214,23 +213,23 @@ describe("SpotifyService", () => {
 
   it("maps 403 to limited access", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
       emptyResponse(403),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     expect((await service.getStatus(env)).data.reason).toBe("limited_access");
   });
 
   it("stops retrying when the refreshed token also receives a 401", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access-1", expires_in: 3600}),
+      jsonResponse({ access_token: "access-1", expires_in: 3600 }),
       emptyResponse(401),
-      jsonResponse({access_token: "access-2", expires_in: 3600}),
+      jsonResponse({ access_token: "access-2", expires_in: 3600 }),
       emptyResponse(401),
     );
 
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     const result = await service.getStatus(env);
     expect(result.data.reason).toBe("unavailable");
@@ -240,14 +239,14 @@ describe("SpotifyService", () => {
 
   it("distinguishes quota exhaustion and preserves Retry-After", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
       jsonResponse(
-        {error: {status: 429, message: "Too many requests", reason: "QUOTA_EXCEEDED"}},
+        { error: { status: 429, message: "Too many requests", reason: "QUOTA_EXCEEDED" } },
         429,
-        {"Retry-After": "120"},
+        { "Retry-After": "120" },
       ),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     const result = await service.getStatus(env);
 
@@ -258,10 +257,10 @@ describe("SpotifyService", () => {
 
   it("maps an ordinary 429 to rate limiting", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
-      jsonResponse({error: {status: 429, message: "Slow down"}}, 429),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
+      jsonResponse({ error: { status: 429, message: "Slow down" } }, 429),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     expect((await service.getStatus(env)).data.reason).toBe("rate_limited");
   });
@@ -269,7 +268,7 @@ describe("SpotifyService", () => {
   it("serves transient stale data for no more than five minutes", async () => {
     let now = 0;
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
       jsonResponse(trackPayload),
       emptyResponse(500),
       emptyResponse(500),
@@ -305,7 +304,7 @@ describe("SpotifyService", () => {
       payload.progress_ms = progress;
       payload.item.duration_ms = duration;
       const fetches = fetchSequence(
-        jsonResponse({access_token: "access", expires_in: 3600}),
+        jsonResponse({ access_token: "access", expires_in: 3600 }),
         jsonResponse(payload),
         emptyResponse(500),
       );
@@ -327,10 +326,10 @@ describe("SpotifyService", () => {
   );
 
   it("handles missing configuration and malformed token responses", async () => {
-    const configurationService = new SpotifyService({logger: silentLogger});
+    const configurationService = new SpotifyService({ logger: silentLogger });
     expect((await configurationService.getStatus({})).data.reason).toBe("configuration_error");
 
-    const fetches = fetchSequence(jsonResponse({expires_in: 3600}));
+    const fetches = fetchSequence(jsonResponse({ expires_in: 3600 }));
     const malformedService = new SpotifyService({
       fetchImpl: fetches.fetchImpl,
       logger: silentLogger,
@@ -340,17 +339,17 @@ describe("SpotifyService", () => {
 
   it("handles malformed playback responses", async () => {
     const fetches = fetchSequence(
-      jsonResponse({access_token: "access", expires_in: 3600}),
-      jsonResponse({unexpected: true}),
+      jsonResponse({ access_token: "access", expires_in: 3600 }),
+      jsonResponse({ unexpected: true }),
     );
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     expect((await service.getStatus(env)).data.reason).toBe("invalid_response");
   });
 
   it("maps thrown fetch failures to a retryable network fallback", async () => {
     const fetches = fetchSequence(new Error("offline"));
-    const service = new SpotifyService({fetchImpl: fetches.fetchImpl, logger: silentLogger});
+    const service = new SpotifyService({ fetchImpl: fetches.fetchImpl, logger: silentLogger });
 
     expect((await service.getStatus(env)).data.reason).toBe("network_error");
   });

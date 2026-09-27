@@ -1,5 +1,5 @@
-import {describe, expect, test} from "bun:test";
-import {advanceKonami, createKonamiKeyboard, konamiSequence} from "../src/lib/konami";
+import { describe, expect, test } from "bun:test";
+import { advanceKonami, createKonamiKeyboard, konamiSequence } from "../src/lib/konami";
 
 const keyEvent = (key, overrides = {}) => ({
   key,
@@ -60,7 +60,7 @@ describe("Konami sequence", () => {
   test("held keys do not advance or interrupt a valid attempt", () => {
     const f = keyboardFixture();
     f.enter(["ArrowUp"]);
-    f.keyboard.handle(keyEvent("ArrowUp", {repeat: true}));
+    f.keyboard.handle(keyEvent("ArrowUp", { repeat: true }));
     f.enter(konamiSequence.slice(1));
     expect(f.unlocks()).toBe(1);
   });
@@ -70,7 +70,7 @@ describe("Konami sequence", () => {
     (flag) => {
       const f = keyboardFixture();
       f.enter(konamiSequence.slice(0, 9));
-      f.keyboard.handle(keyEvent("a", {[flag]: true}));
+      f.keyboard.handle(keyEvent("a", { [flag]: true }));
       f.enter(["a"]);
       expect(f.unlocks()).toBe(0);
       f.enter(konamiSequence);
@@ -81,12 +81,12 @@ describe("Konami sequence", () => {
   test("Shift allows uppercase B/A but shifted arrow selection resets progress", () => {
     const f = keyboardFixture();
     f.enter(konamiSequence.slice(0, 8));
-    f.keyboard.handle(keyEvent("Shift", {shiftKey: true}));
-    f.keyboard.handle(keyEvent("B", {shiftKey: true}));
-    f.keyboard.handle(keyEvent("A", {shiftKey: true}));
+    f.keyboard.handle(keyEvent("Shift", { shiftKey: true }));
+    f.keyboard.handle(keyEvent("B", { shiftKey: true }));
+    f.keyboard.handle(keyEvent("A", { shiftKey: true }));
     expect(f.unlocks()).toBe(1);
     f.enter(konamiSequence.slice(0, 3));
-    f.keyboard.handle(keyEvent("ArrowDown", {shiftKey: true}));
+    f.keyboard.handle(keyEvent("ArrowDown", { shiftKey: true }));
     f.enter(konamiSequence.slice(4));
     expect(f.unlocks()).toBe(1);
   });

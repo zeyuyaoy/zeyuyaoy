@@ -1,5 +1,5 @@
-import {marqueePhotos} from "@/app/components/photoMarqueeData";
-import {personJsonLd, site} from "./site";
+import { marqueePhotos } from "@/app/components/photoMarqueeData";
+import { personJsonLd, site } from "./site";
 
 export const consoleContent = {
   banner: [

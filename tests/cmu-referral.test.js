@@ -1,5 +1,5 @@
-import {describe, expect, it, mock} from "bun:test";
-import {createCmuReferralReporter, getCmuReferralDetection} from "@/lib/cmu-referral";
+import { describe, expect, it, mock } from "bun:test";
+import { createCmuReferralReporter, getCmuReferralDetection } from "@/lib/cmu-referral";
 
 const tagged = "?utm_source=cmu&utm_medium=referral&utm_campaign=andrew_userweb";
 const andrew = "https://www.andrew.cmu.edu/user/example/";
@@ -89,9 +89,9 @@ describe("CMU landing event deduplication", () => {
       failure === "access"
         ? fail
         : () => ({
-          getItem: failure === "read" ? fail : () => null,
-          setItem: fail,
-        });
+            getItem: failure === "read" ? fail : () => null,
+            setItem: fail,
+          });
 
     const report = mock();
     const reportLanding = createCmuReferralReporter();

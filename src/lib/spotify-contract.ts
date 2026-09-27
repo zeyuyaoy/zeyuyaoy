@@ -1,4 +1,4 @@
-import {isRecord, trustedHttpsUrl, UpstreamError} from "./upstream";
+import { isRecord, trustedHttpsUrl, UpstreamError } from "./upstream";
 
 export interface SpotifyStatus {
   isPlaying: boolean;
@@ -72,7 +72,7 @@ export function parseSpotifyTrack(body: unknown): SpotifyStatus {
   }
 
   if (!body.is_playing || body.item === null) {
-    return {isPlaying: false};
+    return { isPlaying: false };
   }
 
   if (!isRecord(body.item)) {
@@ -81,7 +81,7 @@ export function parseSpotifyTrack(body: unknown): SpotifyStatus {
 
   const item = body.item;
   if ((item.type ?? body.currently_playing_type) !== "track") {
-    return {isPlaying: false};
+    return { isPlaying: false };
   }
 
   if (

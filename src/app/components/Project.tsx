@@ -1,8 +1,8 @@
-import type {Project as GithubProject} from "@/lib/github";
+import type { Project as GithubProject } from "@/lib/github";
 
 import styles from "./Project.module.css";
 
-export default function Project({project}: { project: GithubProject }) {
+export default function Project({ project }: { project: GithubProject }) {
   return (
     <a href={project.url} target="_blank" rel="noopener noreferrer" className={styles.projectLink}>
       <div className={styles.project}>
@@ -23,7 +23,7 @@ export default function Project({project}: { project: GithubProject }) {
               strokeLinejoin="round"
               aria-hidden="true"
             >
-              <path d="m12 3 2.78 5.63 6.22.91-4.5 4.38 1.06 6.19L12 17.19l-5.56 2.92 1.06-6.19L3 9.54l6.22-.91L12 3Z"/>
+              <path d="m12 3 2.78 5.63 6.22.91-4.5 4.38 1.06 6.19L12 17.19l-5.56 2.92 1.06-6.19L3 9.54l6.22-.91L12 3Z" />
             </svg>
           </span>
         </div>

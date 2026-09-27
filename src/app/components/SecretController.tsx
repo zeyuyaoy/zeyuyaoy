@@ -1,8 +1,8 @@
 "use client";
 
-import {useState} from "react";
-import {advanceKonami, cyberpunkUnlockMessage, konamiSequence} from "@/lib/konami";
-import {appearanceStore} from "@/lib/theme-store";
+import { useState } from "react";
+import { advanceKonami, cyberpunkUnlockMessage, konamiSequence } from "@/lib/konami";
+import { appearanceStore } from "@/lib/theme-store";
 import styles from "./SecretController.module.css";
 
 const directions = [
@@ -65,7 +65,7 @@ export default function SecretController() {
         </div>
         <div className={styles.progress} aria-hidden="true">
           {konamiSequence.map((_, index) => (
-            <span key={index} data-complete={index < progress}/>
+            <span key={index} data-complete={index < progress} />
           ))}
         </div>
         <p role="status" aria-atomic="true">

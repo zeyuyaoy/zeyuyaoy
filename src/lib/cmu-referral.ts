@@ -22,8 +22,7 @@ export function getCmuReferralDetection(
       !url.username &&
       !url.password &&
       (url.hostname === "andrew.cmu.edu" || url.hostname === "www.andrew.cmu.edu");
-  } catch {
-  }
+  } catch {}
 
   if (tagged && fromAndrew) {
     return "utm+referrer";
@@ -63,8 +62,7 @@ export function createCmuReferralReporter() {
         return;
       }
       storage.setItem(sessionKey, "1");
-    } catch {
-    }
+    } catch {}
 
     report(detection);
   };

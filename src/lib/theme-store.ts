@@ -24,7 +24,7 @@ export function createAppearanceStore(
   events: () => EventTarget,
   colorScheme: () => ColorScheme,
 ) {
-  let preferences = {...defaultAppearance};
+  let preferences = { ...defaultAppearance };
   let snapshot = serverSnapshot;
   let initialized = false;
   let storageAvailable = true;
@@ -34,7 +34,7 @@ export function createAppearanceStore(
   function refreshSnapshot() {
     const resolvedMode =
       preferences.mode === "system" ? (colorScheme().matches ? "dark" : "light") : preferences.mode;
-    const next = {...preferences, resolvedMode, storageAvailable} as AppearanceSnapshot;
+    const next = { ...preferences, resolvedMode, storageAvailable } as AppearanceSnapshot;
     if (JSON.stringify(next) !== JSON.stringify(snapshot)) {
       snapshot = next;
     }
@@ -64,7 +64,7 @@ export function createAppearanceStore(
         preferences = normalizeAppearance(parsed, defaultAppearance, appearanceOptions);
       } else {
         const legacy = storage().getItem("theme");
-        preferences = {...defaultAppearance};
+        preferences = { ...defaultAppearance };
         if (legacy === "dark" || legacy === "light") {
           preferences.mode = legacy;
           persist();
@@ -92,7 +92,7 @@ export function createAppearanceStore(
   function update(patch: Partial<Omit<Appearance, "version">>) {
     getSnapshot();
     preferences = normalizeAppearance(
-      {...preferences, ...patch},
+      { ...preferences, ...patch },
       defaultAppearance,
       appearanceOptions,
     );
@@ -149,7 +149,7 @@ export function createAppearanceStore(
         preset: preset.id,
         accent: preset.accent,
         font: preset.font,
-        ...(id === "cyberpunk" ? {mode: "dark" as const} : {}),
+        ...(id === "cyberpunk" ? { mode: "dark" as const } : {}),
       });
     },
     unlockCyberpunk() {
@@ -172,10 +172,10 @@ export function createAppearanceStore(
       });
     },
     toggle() {
-      update({mode: getSnapshot().resolvedMode === "dark" ? "light" : "dark"});
+      update({ mode: getSnapshot().resolvedMode === "dark" ? "light" : "dark" });
     },
     reset() {
-      update({...defaultAppearance, cyberpunkUnlocked: getSnapshot().cyberpunkUnlocked});
+      update({ ...defaultAppearance, cyberpunkUnlocked: getSnapshot().cyberpunkUnlocked });
     },
   };
 }

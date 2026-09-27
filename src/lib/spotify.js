@@ -1,5 +1,5 @@
-import {parseSpotifyTrack} from "./spotify-contract";
-import {getSpotifyPlaybackProgress} from "./spotify-playback";
+import { parseSpotifyTrack } from "./spotify-contract";
+import { getSpotifyPlaybackProgress } from "./spotify-playback";
 
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
@@ -38,7 +38,7 @@ const fallbackData = (reason, extra = {}) => ({
 });
 
 class SpotifyServiceError extends Error {
-  constructor(code, {status = null, retryAfterSeconds = null, transient = false} = {}) {
+  constructor(code, { status = null, retryAfterSeconds = null, transient = false } = {}) {
     super(code);
     this.name = "SpotifyServiceError";
     this.code = code;
@@ -91,32 +91,32 @@ function spotifyErrorReason(body) {
   return null;
 }
 
-function responseResult(data, {cacheControl = PUBLIC_CACHE_CONTROL, retryAfter = null} = {}) {
-  const headers = {"Cache-Control": cacheControl};
+function responseResult(data, { cacheControl = PUBLIC_CACHE_CONTROL, retryAfter = null } = {}) {
+  const headers = { "Cache-Control": cacheControl };
 
   if (retryAfter !== null) {
     headers["Retry-After"] = String(retryAfter);
   }
 
-  return {data, headers};
+  return { data, headers };
 }
 
 function parseTrack(body) {
   try {
     return parseSpotifyTrack(body);
   } catch {
-    throw new SpotifyServiceError("invalid_response", {transient: true});
+    throw new SpotifyServiceError("invalid_response", { transient: true });
   }
 }
 
 export class SpotifyService {
   constructor({
-                fetchImpl = globalThis.fetch,
-                now = Date.now,
-                logger = console,
-                playbackCacheMs = DEFAULT_PLAYBACK_CACHE_MS,
-                staleCacheMs = DEFAULT_STALE_CACHE_MS,
-              } = {}) {
+    fetchImpl = globalThis.fetch,
+    now = Date.now,
+    logger = console,
+    playbackCacheMs = DEFAULT_PLAYBACK_CACHE_MS,
+    staleCacheMs = DEFAULT_STALE_CACHE_MS,
+  } = {}) {
     this.fetchImpl = fetchImpl;
     this.now = now;
     this.logger = logger;
@@ -166,7 +166,7 @@ export class SpotifyService {
     }
 
     this.loggedTerminalErrors.add(code);
-    this.logger.error("Spotify integration needs operator attention.", {code, status});
+    this.logger.error("Spotify integration needs operator attention.", { code, status });
   }
 
   async fetchAccessToken() {
@@ -228,7 +228,7 @@ export class SpotifyService {
       !Number.isFinite(expiresInSeconds) ||
       expiresInSeconds <= 0
     ) {
-      throw new SpotifyServiceError("invalid_response", {transient: true});
+      throw new SpotifyServiceError("invalid_response", { transient: true });
     }
 
     const lifetimeMs = Math.max(0, expiresInSeconds * 1000);
@@ -245,7 +245,7 @@ export class SpotifyService {
 
   fetchPlayback(accessToken) {
     return this.fetchImpl(NOW_PLAYING_ENDPOINT, {
-      headers: {Authorization: `Bearer ${accessToken}`},
+      headers: { Authorization: `Bearer ${accessToken}` },
       cache: "no-store",
       signal: AbortSignal.timeout(8000),
     });
@@ -253,16 +253,16 @@ export class SpotifyService {
 
   cachePlayback(data) {
     if (this.lastTransientCode) {
-      this.logger.info?.("Portfolio upstream", {service: "spotify", state: "recovered"});
+      this.logger.info?.("Portfolio upstream", { service: "spotify", state: "recovered" });
     }
     this.lastTransientCode = null;
-    this.playbackCache = {data, timestamp: this.now()};
+    this.playbackCache = { data, timestamp: this.now() };
     return responseResult(data);
   }
 
   async processPlaybackResponse(response) {
     if (response.status === 204) {
-      return this.cachePlayback({isPlaying: false});
+      return this.cachePlayback({ isPlaying: false });
     }
 
     if (response.status === 403) {
@@ -295,7 +295,7 @@ export class SpotifyService {
     const playback = parseTrack(body);
 
     return this.cachePlayback(
-      playback.isPlaying ? {...playback, progressCapturedAt: this.now()} : playback,
+      playback.isPlaying ? { ...playback, progressCapturedAt: this.now() } : playback,
     );
   }
 
@@ -328,7 +328,7 @@ export class SpotifyService {
           stale: true,
           ...(error.retryAfterSeconds === null
             ? {}
-            : {retryAfterSeconds: error.retryAfterSeconds}),
+            : { retryAfterSeconds: error.retryAfterSeconds }),
         },
         {
           cacheControl: NO_STORE_CACHE_CONTROL,
@@ -338,7 +338,7 @@ export class SpotifyService {
     }
 
     const retry =
-      error.retryAfterSeconds === null ? {} : {retryAfterSeconds: error.retryAfterSeconds};
+      error.retryAfterSeconds === null ? {} : { retryAfterSeconds: error.retryAfterSeconds };
     return responseResult(fallbackData(error.code, retry), {
       cacheControl: NO_STORE_CACHE_CONTROL,
       retryAfter: error.retryAfterSeconds,
@@ -382,11 +382,11 @@ export class SpotifyService {
         error instanceof SpotifyServiceError
           ? error
           : new SpotifyServiceError(
-            error?.name === "TimeoutError" || error?.name === "AbortError"
-              ? "timeout"
-              : "network_error",
-            {transient: true},
-          );
+              error?.name === "TimeoutError" || error?.name === "AbortError"
+                ? "timeout"
+                : "network_error",
+              { transient: true },
+            );
 
       if (
         spotifyError.code === "reauthorization_required" ||

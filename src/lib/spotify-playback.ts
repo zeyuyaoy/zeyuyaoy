@@ -1,4 +1,4 @@
-import type {SpotifyStatus} from "./spotify-contract";
+import type { SpotifyStatus } from "./spotify-contract";
 
 export function clampPlaybackProgress(
   progressMs: number | null | undefined,

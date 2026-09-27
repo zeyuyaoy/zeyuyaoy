@@ -1,4 +1,4 @@
-import {createServer} from "node:http";
+import { createServer } from "node:http";
 
 const upstream = new URL(process.argv[2] ?? "http://127.0.0.1:3004");
 if (!["127.0.0.1", "localhost", "[::1]"].includes(upstream.hostname)) {
@@ -37,7 +37,7 @@ const server = createServer(async (request, response) => {
     response.setHeader("Content-Type", "application/json");
     response.setHeader("Cache-Control", "no-store");
     if (scenario === "timeout") {
-      const timer = setTimeout(() => response.end(JSON.stringify({isPlaying: false})), 45_000);
+      const timer = setTimeout(() => response.end(JSON.stringify({ isPlaying: false })), 45_000);
       response.on("close", () => clearTimeout(timer));
       return;
     }
@@ -50,17 +50,17 @@ const server = createServer(async (request, response) => {
     response.end(
       JSON.stringify(
         scenario === "malformed"
-          ? {isPlaying: true, title: {invalid: true}}
+          ? { isPlaying: true, title: { invalid: true } }
           : {
-            ...track,
-            progressCapturedAt: Date.now(),
-            ...(scenario === "stale"
-              ? {
-                stale: true,
-                reason: "stale",
-              }
-              : {}),
-          },
+              ...track,
+              progressCapturedAt: Date.now(),
+              ...(scenario === "stale"
+                ? {
+                    stale: true,
+                    reason: "stale",
+                  }
+                : {}),
+            },
       ),
     );
     return;
@@ -68,7 +68,7 @@ const server = createServer(async (request, response) => {
 
   try {
     const target = new URL(url.pathname + url.search, upstream);
-    const result = await fetch(target, {signal: AbortSignal.timeout(10_000), redirect: "manual"});
+    const result = await fetch(target, { signal: AbortSignal.timeout(10_000), redirect: "manual" });
     response.statusCode = result.status;
     for (const name of [
       "content-type",

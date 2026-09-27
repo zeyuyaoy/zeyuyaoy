@@ -1,6 +1,6 @@
-import {describe, expect, test} from "bun:test";
-import {parseSpotifyStatus, parseSpotifyTrack} from "../src/lib/spotify-contract";
-import {SpotifyService} from "../src/lib/spotify";
+import { describe, expect, test } from "bun:test";
+import { parseSpotifyStatus, parseSpotifyTrack } from "../src/lib/spotify-contract";
+import { SpotifyService } from "../src/lib/spotify";
 
 const valid = {
   is_playing: true,
@@ -8,10 +8,10 @@ const valid = {
   item: {
     type: "track",
     name: "Track",
-    artists: [{name: "Artist"}],
+    artists: [{ name: "Artist" }],
     duration_ms: 2000,
-    album: {name: "Album", images: [{url: "https://i.scdn.co/image/cover"}]},
-    external_urls: {spotify: "https://open.spotify.com/track/1"},
+    album: { name: "Album", images: [{ url: "https://i.scdn.co/image/cover" }] },
+    external_urls: { spotify: "https://open.spotify.com/track/1" },
   },
 };
 const env = {
@@ -31,7 +31,7 @@ describe("Spotify rendering contract", () => {
       item.name = {};
     },
     (item) => {
-      item.artists = [{name: {}}];
+      item.artists = [{ name: {} }];
     },
     (item) => {
       item.album.name = {};
@@ -65,9 +65,9 @@ describe("Spotify rendering contract", () => {
     [
       null,
       [],
-      {isPlaying: "true"},
-      {isPlaying: true},
-      {isPlaying: false, message: {}},
+      { isPlaying: "true" },
+      { isPlaying: true },
+      { isPlaying: false, message: {} },
       {
         isPlaying: false,
         stale: "false",
@@ -98,14 +98,14 @@ describe("Spotify rendering contract", () => {
 
 describe("Spotify service failure boundaries", () => {
   test.each([
-    {access_token: "", expires_in: 3600},
-    {access_token: "token", expires_in: -1},
+    { access_token: "", expires_in: 3600 },
+    { access_token: "token", expires_in: -1 },
     {
       access_token: "token",
       expires_in: "3600",
     },
   ])("rejects invalid successful token responses %j", async (body) => {
-    const service = new SpotifyService({fetchImpl: async () => Response.json(body), logger: {}});
+    const service = new SpotifyService({ fetchImpl: async () => Response.json(body), logger: {} });
     const result = await service.getStatus(env);
     expect(result.data.reason).toBe("invalid_response");
     expect(result.headers["Cache-Control"]).toBe("no-store");
@@ -115,7 +115,7 @@ describe("Spotify service failure boundaries", () => {
     const events = [];
     let broken = true;
     const service = new SpotifyService({
-      logger: {warn: (...args) => events.push(args), info: (...args) => events.push(args)},
+      logger: { warn: (...args) => events.push(args), info: (...args) => events.push(args) },
       fetchImpl: async (url) => {
         if (broken) {
           throw new DOMException("token=secret", "TimeoutError");
@@ -123,9 +123,9 @@ describe("Spotify service failure boundaries", () => {
 
         return String(url).includes("/api/token")
           ? Response.json({
-            access_token: "token",
-            expires_in: 3600,
-          })
+              access_token: "token",
+              expires_in: 3600,
+            })
           : Response.json(valid);
       },
     });
@@ -145,7 +145,7 @@ describe("Spotify service failure boundaries", () => {
       logger: {},
       fetchImpl: async (url) =>
         String(url).includes("/api/token")
-          ? Response.json({access_token: "token", expires_in: 3600})
+          ? Response.json({ access_token: "token", expires_in: 3600 })
           : new Response("not JSON"),
     });
 
@@ -161,7 +161,7 @@ test("access revocation clears stale playback before a later network failure", a
     logger: {},
     fetchImpl: async (url) => {
       if (String(url).includes("/api/token")) {
-        return Response.json({access_token: "token", expires_in: 3600});
+        return Response.json({ access_token: "token", expires_in: 3600 });
       }
       playbackCalls++;
 
@@ -170,7 +170,7 @@ test("access revocation clears stale playback before a later network failure", a
       }
 
       if (playbackCalls === 2) {
-        return new Response(null, {status: 403});
+        return new Response(null, { status: 403 });
       }
 
       throw new Error("offline");

@@ -1,14 +1,14 @@
-import type {ProjectData} from "@/lib/github";
+import type { ProjectData } from "@/lib/github";
 import styles from "./Projects.module.css";
 import Project from "./Project";
 
-export default function Projects({data: {projects, status}}: { data: ProjectData }) {
+export default function Projects({ data: { projects, status } }: { data: ProjectData }) {
   return (
     <section className={styles.projectsContainer} aria-labelledby="projects-heading">
       <div className={styles.notebook}>
         <div className={styles.spiralBinding} aria-hidden="true">
-          {Array.from({length: 8}, (_, i) => (
-            <div key={i} className={styles.spiral}/>
+          {Array.from({ length: 8 }, (_, i) => (
+            <div key={i} className={styles.spiral} />
           ))}
         </div>
         <div className={styles.notebookContent}>
@@ -28,10 +28,10 @@ export default function Projects({data: {projects, status}}: { data: ProjectData
               </div>
             ) : projects.length ? (
               <>
-                <Project project={projects[0]}/>
+                <Project project={projects[0]} />
                 {projects[1] && (
                   <div className={styles.projectPeek}>
-                    <Project project={projects[1]}/>
+                    <Project project={projects[1]} />
                   </div>
                 )}
               </>

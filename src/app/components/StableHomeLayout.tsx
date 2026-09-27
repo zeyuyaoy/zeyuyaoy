@@ -1,7 +1,7 @@
 "use client";
 
-import {type ReactNode, useLayoutEffect, useRef} from "react";
-import {appearanceOptions} from "@/lib/appearance";
+import { type ReactNode, useLayoutEffect, useRef } from "react";
+import { appearanceOptions } from "@/lib/appearance";
 import styles from "./StableHomeLayout.module.css";
 
 const sectionNames = ["intro", "widgets", "footer"] as const;
@@ -57,9 +57,9 @@ function measurementCopy(source: Node): Node | null {
 }
 
 export default function StableHomeLayout({
-                                           children,
-                                           className,
-                                         }: {
+  children,
+  className,
+}: {
   children: ReactNode;
   className: string;
 }) {
@@ -157,7 +157,7 @@ export default function StableHomeLayout({
       }
     });
 
-    content.observe(root, {subtree: true, childList: true, characterData: true});
+    content.observe(root, { subtree: true, childList: true, characterData: true });
     const preferences = new MutationObserver(schedule);
     preferences.observe(document.documentElement, {
       attributes: true,

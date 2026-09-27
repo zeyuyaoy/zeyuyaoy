@@ -1,6 +1,6 @@
 import PhotoMarqueeRow from "./PhotoMarqueeRow";
 import PhotoMarqueeMotion from "./PhotoMarqueeMotion";
-import {marqueePhotos} from "./photoMarqueeData";
+import { marqueePhotos } from "./photoMarqueeData";
 
 export default function PhotoMarqueeBackground() {
   if (!marqueePhotos.length) {
@@ -9,7 +9,7 @@ export default function PhotoMarqueeBackground() {
 
   return (
     <PhotoMarqueeMotion>
-      <PhotoMarqueeRow photos={marqueePhotos}/>
+      <PhotoMarqueeRow photos={marqueePhotos} />
     </PhotoMarqueeMotion>
   );
 }

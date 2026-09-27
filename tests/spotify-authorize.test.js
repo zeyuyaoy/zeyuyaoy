@@ -1,8 +1,8 @@
-import {afterEach, describe, expect, it} from "bun:test";
-import {mkdtemp, readFile, rm, stat, writeFile} from "node:fs/promises";
-import {tmpdir} from "node:os";
-import {join} from "node:path";
-import {spawnSync} from "node:child_process";
+import { afterEach, describe, expect, it } from "bun:test";
+import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { spawnSync } from "node:child_process";
 import {
   addCalendarMonths,
   buildAuthorizationUrl,
@@ -20,14 +20,14 @@ afterEach(async () => {
   await Promise.all(
     temporaryDirectories
       .splice(0)
-      .map((directory) => rm(directory, {recursive: true, force: true})),
+      .map((directory) => rm(directory, { recursive: true, force: true })),
   );
 });
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
   });
 }
 
@@ -61,7 +61,7 @@ describe("Spotify authorization helpers", () => {
         envPath,
       ],
       {
-        env: {PATH: process.env.PATH, CLEANUP_EXISTING: "process"},
+        env: { PATH: process.env.PATH, CLEANUP_EXISTING: "process" },
         encoding: "utf8",
         timeout: 10_000,
       },
@@ -73,7 +73,7 @@ describe("Spotify authorization helpers", () => {
   });
 
   it("builds a least-privilege Authorization Code URL", () => {
-    const url = new URL(buildAuthorizationUrl({clientId: "client", state: "state"}));
+    const url = new URL(buildAuthorizationUrl({ clientId: "client", state: "state" }));
 
     expect(url.origin + url.pathname).toBe("https://accounts.spotify.com/authorize");
     expect(url.searchParams.get("client_id")).toBe("client");
@@ -117,8 +117,8 @@ describe("Spotify authorization helpers", () => {
   it("exchanges, verifies, and atomically writes credentials", async () => {
     const envPath = await temporaryEnv("UNCHANGED=value\nSPOTIFY_REFRESH_TOKEN=old\n");
     const responses = [
-      jsonResponse({access_token: "access-secret", refresh_token: "refresh-secret"}),
-      new Response(null, {status: 204}),
+      jsonResponse({ access_token: "access-secret", refresh_token: "refresh-secret" }),
+      new Response(null, { status: 204 }),
     ];
     const fetchImpl = async () => responses.shift();
     const issuedAt = new Date("2026-08-31T12:00:00.000Z");
@@ -145,8 +145,8 @@ describe("Spotify authorization helpers", () => {
     const original = "SPOTIFY_REFRESH_TOKEN=old\nUNCHANGED=value\n";
     const envPath = await temporaryEnv(original);
     const responses = [
-      jsonResponse({access_token: "access-secret", refresh_token: "refresh-secret"}),
-      new Response(null, {status: 403}),
+      jsonResponse({ access_token: "access-secret", refresh_token: "refresh-secret" }),
+      new Response(null, { status: 403 }),
     ];
     const fetchImpl = async () => responses.shift();
 
@@ -165,7 +165,7 @@ describe("Spotify authorization helpers", () => {
   it("calculates calendar-month expiry and keeps completion output secret-free", () => {
     const issuedAt = new Date("2026-08-31T12:00:00.000Z");
     const expiresAt = addCalendarMonths(issuedAt, 6);
-    const message = completionMessage({issuedAt, expiresAt, envPath: ".env.local"});
+    const message = completionMessage({ issuedAt, expiresAt, envPath: ".env.local" });
 
     expect(expiresAt.toISOString()).toBe("2027-02-28T12:00:00.000Z");
     expect(message).toContain("six calendar months");

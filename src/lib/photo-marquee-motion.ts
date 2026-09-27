@@ -69,7 +69,7 @@ export function createMarqueeDurationUpdater() {
     return () => {
       track.style.setProperty("--loop-duration", `${duration}ms`);
       animation.currentTime = time;
-      applied.set(track, {animation, duration});
+      applied.set(track, { animation, duration });
     };
   };
 }

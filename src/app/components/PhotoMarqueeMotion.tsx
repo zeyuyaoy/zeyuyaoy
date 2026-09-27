@@ -1,11 +1,11 @@
 "use client";
 
-import {type ReactNode, useEffect, useRef} from "react";
-import {appearanceStore} from "@/lib/theme-store";
-import {createMarqueeDurationUpdater, marqueeDuration} from "@/lib/photo-marquee-motion";
+import { type ReactNode, useEffect, useRef } from "react";
+import { appearanceStore } from "@/lib/theme-store";
+import { createMarqueeDurationUpdater, marqueeDuration } from "@/lib/photo-marquee-motion";
 import styles from "./PhotoMarqueeBackground.module.css";
 
-export default function PhotoMarqueeMotion({children}: { children: ReactNode }) {
+export default function PhotoMarqueeMotion({ children }: { children: ReactNode }) {
   const background = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

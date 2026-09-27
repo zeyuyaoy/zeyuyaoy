@@ -1,12 +1,12 @@
 "use client";
 
-import {useSyncExternalStore} from "react";
+import { useSyncExternalStore } from "react";
 import styles from "./ThemeProvider.module.css";
 
-import {appearanceStore} from "@/lib/theme-store";
+import { appearanceStore } from "@/lib/theme-store";
 
 export default function ThemeProvider() {
-  const {resolvedMode: theme} = useSyncExternalStore(
+  const { resolvedMode: theme } = useSyncExternalStore(
     appearanceStore.subscribe,
     appearanceStore.getSnapshot,
     appearanceStore.getServerSnapshot,

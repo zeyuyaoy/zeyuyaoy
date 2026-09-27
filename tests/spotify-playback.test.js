@@ -1,5 +1,9 @@
-import {describe, expect, it} from "bun:test";
-import {clampPlaybackProgress, formatPlaybackTime, getSpotifyPlaybackProgress,} from "@/lib/spotify-playback";
+import { describe, expect, it } from "bun:test";
+import {
+  clampPlaybackProgress,
+  formatPlaybackTime,
+  getSpotifyPlaybackProgress,
+} from "@/lib/spotify-playback";
 
 describe("Spotify playback display helpers", () => {
   it("formats short and long playback times", () => {
@@ -38,7 +42,7 @@ describe("Spotify playback display helpers", () => {
 
     expect(getSpotifyPlaybackProgress(playback, 60_000)).toBe(42_000);
     expect(
-      getSpotifyPlaybackProgress({...playback, isPlaying: false, stale: false}, 60_000),
+      getSpotifyPlaybackProgress({ ...playback, isPlaying: false, stale: false }, 60_000),
     ).toBe(42_000);
   });
 

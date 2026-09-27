@@ -1,5 +1,5 @@
-import {describe, expect, test} from "bun:test";
-import {getGithubProjects} from "../src/lib/github";
+import { describe, expect, test } from "bun:test";
+import { getGithubProjects } from "../src/lib/github";
 
 describe("GitHub server data", () => {
   test("returns only displayed project fields with a bounded, revalidated request", async () => {
@@ -32,7 +32,7 @@ describe("GitHub server data", () => {
 
   test("rejects upstream failures instead of caching them as projects", async () => {
     await expect(
-      getGithubProjects(async () => new Response("unavailable", {status: 503})),
+      getGithubProjects(async () => new Response("unavailable", { status: 503 })),
     ).rejects.toThrow("HTTP 503");
   });
 
@@ -65,9 +65,9 @@ describe("GitHub server data", () => {
 
   test.each(
     [
-      {projects: []},
+      { projects: [] },
       [null],
-      [{name: "unsafe", html_url: "javascript:alert(1)", stargazers_count: 0}],
+      [{ name: "unsafe", html_url: "javascript:alert(1)", stargazers_count: 0 }],
       [
         {
           name: "unsafe",

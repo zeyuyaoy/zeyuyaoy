@@ -1,5 +1,6 @@
 :root {
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --font-mono:
+    ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --spacing-sm: 6px;
   --spacing-md: 8px;
   --spacing-lg: 10px;

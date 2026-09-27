@@ -1,9 +1,9 @@
-import {randomBytes, timingSafeEqual} from "node:crypto";
-import {chmod, readFile, rename, rm, writeFile} from "node:fs/promises";
-import {createServer} from "node:http";
-import {resolve} from "node:path";
-import {fileURLToPath} from "node:url";
-import {loadEnvFile} from "node:process";
+import { randomBytes, timingSafeEqual } from "node:crypto";
+import { chmod, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { createServer } from "node:http";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { loadEnvFile } from "node:process";
 
 export const SPOTIFY_REDIRECT_URI = "http://127.0.0.1:8888/callback";
 export const SPOTIFY_SCOPE = "user-read-currently-playing";
@@ -26,7 +26,7 @@ async function readJson(response) {
   }
 }
 
-export function buildAuthorizationUrl({clientId, state}) {
+export function buildAuthorizationUrl({ clientId, state }) {
   const url = new URL(AUTHORIZE_ENDPOINT);
   url.search = new URLSearchParams({
     client_id: clientId,
@@ -63,11 +63,11 @@ export function parseAuthorizationCallback(requestUrl, expectedState) {
 }
 
 export async function exchangeAuthorizationCode({
-                                                  code,
-                                                  clientId,
-                                                  clientSecret,
-                                                  fetchImpl = globalThis.fetch,
-                                                }) {
+  code,
+  clientId,
+  clientSecret,
+  fetchImpl = globalThis.fetch,
+}) {
   const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
   const response = await fetchImpl(TOKEN_ENDPOINT, {
     method: "POST",
@@ -100,7 +100,7 @@ export async function exchangeAuthorizationCode({
 
 export async function verifyAccessToken(accessToken, fetchImpl = globalThis.fetch) {
   const response = await fetchImpl(NOW_PLAYING_ENDPOINT, {
-    headers: {Authorization: `Bearer ${accessToken}`},
+    headers: { Authorization: `Bearer ${accessToken}` },
   });
 
   if (response.status === 200 || response.status === 204) {
@@ -170,11 +170,11 @@ export async function updateEnvFile(envPath, updates) {
   const temporaryPath = `${envPath}.${process.pid}.${randomBytes(6).toString("hex")}.tmp`;
 
   try {
-    await writeFile(temporaryPath, updated, {encoding: "utf8", mode: 0o600, flag: "wx"});
+    await writeFile(temporaryPath, updated, { encoding: "utf8", mode: 0o600, flag: "wx" });
     await rename(temporaryPath, envPath);
     await chmod(envPath, 0o600);
   } catch (error) {
-    await rm(temporaryPath, {force: true});
+    await rm(temporaryPath, { force: true });
     throw error;
   }
 }
@@ -191,7 +191,7 @@ export function addCalendarMonths(date, months) {
   return result;
 }
 
-export function completionMessage({issuedAt, expiresAt, envPath}) {
+export function completionMessage({ issuedAt, expiresAt, envPath }) {
   return [
     `Updated ${envPath} without printing the new refresh token.`,
     `Authorized at: ${issuedAt.toISOString()}`,
@@ -201,13 +201,13 @@ export function completionMessage({issuedAt, expiresAt, envPath}) {
 }
 
 export async function completeAuthorization({
-                                              code,
-                                              clientId,
-                                              clientSecret,
-                                              envPath,
-                                              fetchImpl = globalThis.fetch,
-                                              issuedAt = new Date(),
-                                            }) {
+  code,
+  clientId,
+  clientSecret,
+  envPath,
+  fetchImpl = globalThis.fetch,
+  issuedAt = new Date(),
+}) {
   const tokens = await exchangeAuthorizationCode({
     code,
     clientId,
@@ -222,26 +222,26 @@ export async function completeAuthorization({
     SPOTIFY_REFRESH_TOKEN_ISSUED_AT: issuedAt.toISOString(),
   });
 
-  return {issuedAt, expiresAt};
+  return { issuedAt, expiresAt };
 }
 
-function waitForAuthorizationCode({state, authorizationUrl, timeoutMs = 5 * 60 * 1000}) {
+function waitForAuthorizationCode({ state, authorizationUrl, timeoutMs = 5 * 60 * 1000 }) {
   return new Promise((resolvePromise, rejectPromise) => {
     let settled = false;
     const server = createServer((request, response) => {
       if (!request.url?.startsWith("/callback")) {
-        response.writeHead(404, {"Content-Type": "text/plain; charset=utf-8"});
+        response.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
         response.end("Not found");
         return;
       }
 
       try {
         const code = parseAuthorizationCallback(request.url, state);
-        response.writeHead(200, {"Content-Type": "text/plain; charset=utf-8"});
+        response.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
         response.end("Spotify authorization received. You can return to the terminal.");
         finish(null, code);
       } catch (error) {
-        response.writeHead(400, {"Content-Type": "text/plain; charset=utf-8"});
+        response.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
         response.end("Spotify authorization failed. Return to the terminal for details.");
         finish(error);
       }
@@ -305,8 +305,8 @@ async function main() {
   }
 
   const state = randomBytes(32).toString("hex");
-  const authorizationUrl = buildAuthorizationUrl({clientId, state});
-  const code = await waitForAuthorizationCode({state, authorizationUrl});
+  const authorizationUrl = buildAuthorizationUrl({ clientId, state });
+  const code = await waitForAuthorizationCode({ state, authorizationUrl });
   const result = await completeAuthorization({
     code,
     clientId,
@@ -314,7 +314,7 @@ async function main() {
     envPath,
   });
 
-  console.log(`\n${completionMessage({...result, envPath})}`);
+  console.log(`\n${completionMessage({ ...result, envPath })}`);
 }
 
 const isEntrypoint = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
