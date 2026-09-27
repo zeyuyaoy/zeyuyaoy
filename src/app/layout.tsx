@@ -37,10 +37,10 @@ export const metadata: Metadata = {
     siteName: site.name,
     images: [
       {
-        url: "/og-image.png",
-        width: 1920,
-        height: 1080,
-        alt: "White geometric emblem over a sunset landscape",
+        url: "/og-image.jpg",
+        width: 1080,
+        height: 607,
+        alt: "Peter in Singapore",
       },
     ],
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: site.title,
     description: site.description,
     creator: "@zeyuyaoy",
-    images: [{url: "/og-image.png", alt: "White geometric emblem over a sunset landscape"}],
+    images: [{url: "/og-image.jpg", alt: "Peter in Singapore"}],
   },
 };
 

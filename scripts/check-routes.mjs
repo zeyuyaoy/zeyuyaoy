@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import sharp from "sharp";
 import { readFile } from "node:fs/promises";
 import { parseSpotifyStatus } from "../src/lib/spotify-contract.ts";
 import { personJsonLd, site, websiteJsonLd } from "../src/lib/site.ts";
@@ -42,20 +43,21 @@ assert.equal(
 
 for (const path of [
   "/",
-  "/og-image.png",
+  "/og-image.jpg",
   "/robots.txt",
   "/sitemap.xml",
   "/api/spotify",
   "/audit-route-that-does-not-exist",
 ]) {
   const response = await fetch(new URL(path, base), { signal: AbortSignal.timeout(45_000) });
-  if (path === "/og-image.png") {
+  if (path === "/og-image.jpg") {
     assert.equal(response.status, 200, path);
-    assert.ok(response.headers.get("content-type")?.includes("image/png"), path);
+    assert.ok(response.headers.get("content-type")?.includes("image/jpeg"), path);
     const image = Buffer.from(await response.arrayBuffer());
-    assert.equal(image.subarray(0, 8).toString("hex"), "89504e470d0a1a0a", "PNG signature");
-    assert.equal(image.readUInt32BE(16), 1920, "Social image width");
-    assert.equal(image.readUInt32BE(20), 1080, "Social image height");
+    const metadata = await sharp(image).metadata();
+    assert.equal(metadata.format, "jpeg", "Social image format");
+    assert.equal(metadata.width, 1080, "Social image width");
+    assert.equal(metadata.height, 607, "Social image height");
     results.push({ path, status: response.status });
     continue;
   }
@@ -74,16 +76,16 @@ for (const path of [
       "og:url": site.url,
       "og:type": "website",
       "og:site_name": site.name,
-      "og:image": `${site.url}/og-image.png`,
-      "og:image:width": "1920",
-      "og:image:height": "1080",
-      "og:image:alt": "White geometric emblem over a sunset landscape",
+      "og:image": `${site.url}/og-image.jpg`,
+      "og:image:width": "1080",
+      "og:image:height": "607",
+      "og:image:alt": "A person on a terrace overlooking the Singapore skyline",
       "twitter:card": "summary_large_image",
       "twitter:creator": "@zeyuyaoy",
       "twitter:title": site.title,
       "twitter:description": site.description,
-      "twitter:image": `${site.url}/og-image.png`,
-      "twitter:image:alt": "White geometric emblem over a sunset landscape",
+      "twitter:image": `${site.url}/og-image.jpg`,
+      "twitter:image:alt": "A person on a terrace overlooking the Singapore skyline",
     })) {
       const matches = meta.filter((tag) => (tag.name ?? tag.property) === key);
       assert.equal(matches.length, 1, `One ${key} tag`);
