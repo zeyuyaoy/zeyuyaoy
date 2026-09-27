@@ -20,7 +20,7 @@ export default function Webring() {
         className={styles.link}
         aria-label="Next site in Bucket Webring"
       >
-        › Next
+        Next ›
       </a>
     </nav>
   );

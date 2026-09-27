@@ -210,6 +210,9 @@
   .page {
     --home-gutter: clamp(24px, 4vw, 32px);
     --home-block-padding: clamp(1rem, 2.5svh, 1.5rem);
+    --home-section-gap: 1.25rem;
+    --home-widget-gap: var(--home-section-gap);
+    --home-intro-gap: var(--home-section-gap);
   }
 
   .main {
@@ -264,7 +267,6 @@
   .page {
     --home-gutter: 20px;
     --home-panel-padding: 1rem;
-    --home-intro-gap: 1rem;
     --home-project-padding: 0.875rem;
   }
 
@@ -287,7 +289,6 @@
     --home-gutter: 16px;
     --home-block-padding: 1rem;
     --home-section-gap: 1rem;
-    --home-widget-gap: 1rem;
     --home-project-padding: 0.75rem;
   }
 }
