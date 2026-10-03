@@ -4,7 +4,7 @@ import { type ConsoleOutput, createConsoleRenderer } from "./console-renderer";
 import type { ProjectData } from "./github";
 import type { appearanceStore } from "./theme-store";
 
-export interface PeterConsole {
+interface PeterConsole {
   help(command?: string): string;
 
   about(): string;
@@ -42,7 +42,7 @@ declare global {
   }
 }
 
-export type ConsoleDependencies = {
+type ConsoleDependencies = {
   output: ConsoleOutput;
   appearance: Pick<typeof appearanceStore, "getSnapshot" | "selectPreset" | "update" | "reset">;
   data: ProjectData;

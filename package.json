@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "check": "bun run format:check && bun run lint && bun run typecheck && bun test && bun run build",
+    "check:routes": "bun scripts/check-routes.mjs",
     "spotify:authorize": "node scripts/spotify-authorize.mjs"
   },
   "dependencies": {

@@ -9,7 +9,11 @@ export function createConsoleRenderer(output: ConsoleOutput) {
       output.log("%s", value);
     },
     heading(value: string) {
-      output.log("%c%s", value.includes("\n") ? `${badge};padding:0;border-radius:0` : badge, value);
+      output.log(
+        "%c%s",
+        value.includes("\n") ? `${badge};padding:0;border-radius:0` : badge,
+        value,
+      );
     },
     table(rows: Record<string, string | number>[]) {
       output.table(rows);

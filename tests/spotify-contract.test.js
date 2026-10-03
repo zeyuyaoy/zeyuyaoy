@@ -114,7 +114,9 @@ describe("Spotify service failure boundaries", () => {
   test("reports sanitized timeout once and recovery after the upstream recovers", async () => {
     const events = [];
     let broken = true;
+    let now = 0;
     const service = new SpotifyService({
+      now: () => now,
       logger: { warn: (...args) => events.push(args), info: (...args) => events.push(args) },
       fetchImpl: async (url) => {
         if (broken) {
@@ -136,6 +138,7 @@ describe("Spotify service failure boundaries", () => {
     expect(JSON.stringify(events)).not.toContain("secret");
 
     broken = false;
+    now = 60_000;
     expect((await service.getStatus(env)).data.isPlaying).toBe(true);
     expect(events.at(-1)[1].state).toBe("recovered");
   });

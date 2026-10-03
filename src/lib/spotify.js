@@ -4,9 +4,10 @@ import { getSpotifyPlaybackProgress } from "./spotify-playback";
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 
-const DEFAULT_PLAYBACK_CACHE_MS = 30 * 1000;
-const DEFAULT_STALE_CACHE_MS = 5 * 60 * 1000;
+const PLAYBACK_CACHE_MS = 30 * 1000;
+const STALE_CACHE_MS = 5 * 60 * 1000;
 const ACCESS_TOKEN_EXPIRY_SKEW_MS = 60 * 1000;
+const FAILURE_BACKOFF_MS = [60_000, 120_000, 240_000, 300_000];
 
 const PUBLIC_CACHE_CONTROL = "public, max-age=0, s-maxage=30, stale-while-revalidate=60";
 const NO_STORE_CACHE_CONTROL = "no-store";
@@ -55,11 +56,7 @@ function readSpotifyConfig(env = process.env) {
     refreshToken: env.SPOTIFY_REFRESH_TOKEN?.trim(),
   };
 
-  const missing = Object.entries(config)
-    .filter(([, value]) => !value)
-    .map(([key]) => key);
-
-  if (missing.length > 0) {
+  if (Object.values(config).some((value) => !value)) {
     throw new SpotifyServiceError("configuration_error");
   }
 
@@ -75,8 +72,11 @@ async function readJson(response) {
 }
 
 function retryAfterSeconds(response) {
-  const value = Number.parseInt(response.headers.get("retry-after") ?? "", 10);
-  return Number.isFinite(value) && value >= 0 ? value : null;
+  const raw = response.headers.get("retry-after")?.trim() ?? "";
+  const value = Number(raw);
+  return /^\d+$/.test(raw) && Number.isSafeInteger(value) && value <= Number.MAX_SAFE_INTEGER / 1000
+    ? value
+    : null;
 }
 
 function spotifyErrorReason(body) {
@@ -110,27 +110,28 @@ function parseTrack(body) {
 }
 
 export class SpotifyService {
-  constructor({
-    fetchImpl = globalThis.fetch,
-    now = Date.now,
-    logger = console,
-    playbackCacheMs = DEFAULT_PLAYBACK_CACHE_MS,
-    staleCacheMs = DEFAULT_STALE_CACHE_MS,
-  } = {}) {
+  constructor({ fetchImpl = globalThis.fetch, now = Date.now, logger = console } = {}) {
     this.fetchImpl = fetchImpl;
     this.now = now;
     this.logger = logger;
-    this.playbackCacheMs = playbackCacheMs;
-    this.staleCacheMs = staleCacheMs;
     this.reset();
   }
 
   reset() {
+    // Each configuration owns its requests. Aborting also invalidates work whose
+    // fetch implementation cannot cancel (for example, an already-resolved body).
+    this.generation?.abort();
+    this.generation = new AbortController();
+    this.inFlight = null;
     this.config = null;
     this.activeRefreshToken = null;
     this.accessToken = null;
     this.accessTokenExpiresAt = 0;
     this.playbackCache = null;
+    this.stalePlayback = null;
+    this.cooldownError = null;
+    this.retryAt = 0;
+    this.failureCount = 0;
     this.terminalResult = null;
     this.loggedTerminalErrors = new Set();
     this.lastTransientCode = null;
@@ -158,6 +159,7 @@ export class SpotifyService {
   clearAllCaches() {
     this.clearAccessToken();
     this.playbackCache = null;
+    this.stalePlayback = null;
   }
 
   logTerminal(code, status) {
@@ -166,10 +168,10 @@ export class SpotifyService {
     }
 
     this.loggedTerminalErrors.add(code);
-    this.logger.error("Spotify integration needs operator attention.", { code, status });
+    this.logger.error?.("Spotify integration needs operator attention.", { code, status });
   }
 
-  async fetchAccessToken() {
+  async fetchAccessToken(generation) {
     const now = this.now();
     if (this.accessToken && now < this.accessTokenExpiresAt) {
       return this.accessToken;
@@ -189,9 +191,10 @@ export class SpotifyService {
         refresh_token: this.activeRefreshToken,
       }),
       cache: "no-store",
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.any([generation.signal, AbortSignal.timeout(8000)]),
     });
     const body = await readJson(response);
+    generation.signal.throwIfAborted();
 
     if (!response.ok) {
       const reason = spotifyErrorReason(body);
@@ -243,11 +246,11 @@ export class SpotifyService {
     return this.accessToken;
   }
 
-  fetchPlayback(accessToken) {
+  fetchPlayback(accessToken, generation) {
     return this.fetchImpl(NOW_PLAYING_ENDPOINT, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: "no-store",
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.any([generation.signal, AbortSignal.timeout(8000)]),
     });
   }
 
@@ -256,17 +259,22 @@ export class SpotifyService {
       this.logger.info?.("Portfolio upstream", { service: "spotify", state: "recovered" });
     }
     this.lastTransientCode = null;
+    this.stalePlayback = null;
+    this.cooldownError = null;
+    this.retryAt = 0;
+    this.failureCount = 0;
     this.playbackCache = { data, timestamp: this.now() };
     return responseResult(data);
   }
 
-  async processPlaybackResponse(response) {
+  async processPlaybackResponse(response, generation) {
+    generation.signal.throwIfAborted();
     if (response.status === 204) {
       return this.cachePlayback({ isPlaying: false });
     }
 
     if (response.status === 403) {
-      this.playbackCache = null;
+      this.clearAllCaches();
       return responseResult(fallbackData("limited_access"), {
         cacheControl: NO_STORE_CACHE_CONTROL,
       });
@@ -274,6 +282,7 @@ export class SpotifyService {
 
     if (response.status === 429) {
       const body = await readJson(response);
+      generation.signal.throwIfAborted();
       const reason =
         spotifyErrorReason(body) === "QUOTA_EXCEEDED" ? "quota_exceeded" : "rate_limited";
       const retryAfter = retryAfterSeconds(response);
@@ -285,6 +294,9 @@ export class SpotifyService {
     }
 
     if (!response.ok) {
+      if (response.status === 401) {
+        this.clearAllCaches();
+      }
       throw new SpotifyServiceError("playback_unavailable", {
         status: response.status,
         transient: response.status >= 500,
@@ -292,6 +304,7 @@ export class SpotifyService {
     }
 
     const body = await readJson(response);
+    generation.signal.throwIfAborted();
     const playback = parseTrack(body);
 
     return this.cachePlayback(
@@ -320,29 +333,41 @@ export class SpotifyService {
 
     this.lastTransientCode = error.code;
     const now = this.now();
-    if (this.playbackCache && now - this.playbackCache.timestamp <= this.staleCacheMs) {
+    const backoff = FAILURE_BACKOFF_MS[Math.min(this.failureCount, FAILURE_BACKOFF_MS.length - 1)];
+    this.failureCount = Math.min(this.failureCount + 1, FAILURE_BACKOFF_MS.length);
+    this.retryAt = now + Math.max(backoff, (error.retryAfterSeconds ?? 0) * 1000);
+    this.cooldownError = error;
+    if (this.playbackCache && !this.stalePlayback) {
+      this.stalePlayback = freezeCachedProgress(this.playbackCache.data, now);
+    }
+    return this.cooldownResult();
+  }
+
+  cooldownResult() {
+    const now = this.now();
+    const retryAfter = Math.max(0, Math.ceil((this.retryAt - now) / 1000));
+    if (this.playbackCache && now - this.playbackCache.timestamp < STALE_CACHE_MS) {
       return responseResult(
         {
-          ...freezeCachedProgress(this.playbackCache.data, now),
+          ...this.stalePlayback,
           reason: "stale",
           stale: true,
-          ...(error.retryAfterSeconds === null
-            ? {}
-            : { retryAfterSeconds: error.retryAfterSeconds }),
+          retryAfterSeconds: retryAfter,
         },
         {
           cacheControl: NO_STORE_CACHE_CONTROL,
-          retryAfter: error.retryAfterSeconds,
+          retryAfter,
         },
       );
     }
 
-    const retry =
-      error.retryAfterSeconds === null ? {} : { retryAfterSeconds: error.retryAfterSeconds };
-    return responseResult(fallbackData(error.code, retry), {
-      cacheControl: NO_STORE_CACHE_CONTROL,
-      retryAfter: error.retryAfterSeconds,
-    });
+    return responseResult(
+      fallbackData(this.cooldownError.code, { retryAfterSeconds: retryAfter }),
+      {
+        cacheControl: NO_STORE_CACHE_CONTROL,
+        retryAfter,
+      },
+    );
   }
 
   async getStatus(env = process.env) {
@@ -350,6 +375,11 @@ export class SpotifyService {
       const config = readSpotifyConfig(env);
       this.syncConfig(config);
     } catch (error) {
+      // Forget the last valid identity so restoring the same credentials retries.
+      // Repeated missing-config calls still share one terminal result/log entry.
+      if (this.config) {
+        this.reset();
+      }
       const spotifyError =
         error instanceof SpotifyServiceError
           ? error
@@ -362,22 +392,45 @@ export class SpotifyService {
     }
 
     const now = this.now();
-    if (this.playbackCache && now - this.playbackCache.timestamp < this.playbackCacheMs) {
+    if (this.cooldownError && now < this.retryAt) {
+      return this.cooldownResult();
+    }
+    if (this.playbackCache && now - this.playbackCache.timestamp < PLAYBACK_CACHE_MS) {
       return responseResult(this.playbackCache.data);
     }
 
+    if (!this.inFlight) {
+      const pending = this.refreshStatus(this.generation).finally(() => {
+        if (this.inFlight === pending) {
+          this.inFlight = null;
+        }
+      });
+      this.inFlight = pending;
+    }
+    return this.inFlight;
+  }
+
+  async refreshStatus(generation) {
     try {
-      let accessToken = await this.fetchAccessToken();
-      let response = await this.fetchPlayback(accessToken);
+      let accessToken = await this.fetchAccessToken(generation);
+      generation.signal.throwIfAborted();
+      let response = await this.fetchPlayback(accessToken, generation);
+      generation.signal.throwIfAborted();
 
       if (response.status === 401) {
-        this.clearAccessToken();
-        accessToken = await this.fetchAccessToken();
-        response = await this.fetchPlayback(accessToken);
+        this.clearAllCaches();
+        accessToken = await this.fetchAccessToken(generation);
+        generation.signal.throwIfAborted();
+        response = await this.fetchPlayback(accessToken, generation);
       }
 
-      return await this.processPlaybackResponse(response);
+      return await this.processPlaybackResponse(response, generation);
     } catch (error) {
+      if (generation.signal.aborted) {
+        return responseResult(fallbackData("unavailable"), {
+          cacheControl: NO_STORE_CACHE_CONTROL,
+        });
+      }
       const spotifyError =
         error instanceof SpotifyServiceError
           ? error

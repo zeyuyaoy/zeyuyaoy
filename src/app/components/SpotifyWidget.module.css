@@ -230,8 +230,6 @@ a.trackLabel:focus-visible {
 :global([data-motion="reduce"]) .marqueeActive {
   display: block;
   width: auto;
-  animation: none;
-  transform: none;
 }
 
 :global([data-motion="reduce"]) .marqueeRepeat {
@@ -451,15 +449,9 @@ a.trackLabel:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spinning {
-    animation: none;
-  }
-
   .marqueeActive {
     display: block;
     width: auto;
-    animation: none;
-    transform: none;
   }
 
   .marqueeRepeat {

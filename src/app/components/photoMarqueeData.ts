@@ -1,4 +1,4 @@
-export type PhotoMarqueePhoto = `/marquee/photo-${string}.webp`;
+type PhotoMarqueePhoto = `/marquee/photo-${string}.webp`;
 
 export const marqueePhotos: readonly PhotoMarqueePhoto[] = Array.from(
   { length: 97 },

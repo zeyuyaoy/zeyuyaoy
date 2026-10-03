@@ -31,7 +31,7 @@ assert.equal(decodeHtml("&amp;&lt;&gt;&quot;&apos;&#39;&#x27;"), "&<>\"'''");
 const cmu = await readFile(new URL("../cmu.html", import.meta.url), "utf8");
 assert.equal(
   tags(cmu, "meta").find((tag) => tag.name === "description")?.content,
-  "Hi, I'm Peter. I’m interested in computational biology and making science and tech more accessible. Visit my personal website to explore my research and projects.",
+  "Hi, I'm Peter. I'm interested in computational biology and making science and tech more accessible. Visit my personal website to explore my research and projects.",
   "CMU description",
 );
 assert.equal(tags(cmu, "link").find((tag) => tag.rel === "canonical")?.href, site.url);
@@ -79,13 +79,13 @@ for (const path of [
       "og:image": `${site.url}/og-image.jpg`,
       "og:image:width": "1080",
       "og:image:height": "607",
-      "og:image:alt": "A person on a terrace overlooking the Singapore skyline",
+      "og:image:alt": "Peter in Singapore",
       "twitter:card": "summary_large_image",
       "twitter:creator": "@zeyuyaoy",
       "twitter:title": site.title,
       "twitter:description": site.description,
       "twitter:image": `${site.url}/og-image.jpg`,
-      "twitter:image:alt": "A person on a terrace overlooking the Singapore skyline",
+      "twitter:image:alt": "Peter in Singapore",
     })) {
       const matches = meta.filter((tag) => (tag.name ?? tag.property) === key);
       assert.equal(matches.length, 1, `One ${key} tag`);

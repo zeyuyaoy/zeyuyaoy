@@ -82,7 +82,10 @@
   mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
 }
 
-.projectPeek:focus-within {
+.projectPeek:focus-within,
+.projectPeek[data-expanded="true"] {
+  height: auto;
+  overflow: visible;
   opacity: 1;
   filter: none;
   mask-image: none;

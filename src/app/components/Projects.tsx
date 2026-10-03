@@ -1,6 +1,7 @@
 import type { ProjectData } from "@/lib/github";
 import styles from "./Projects.module.css";
 import Project from "./Project";
+import ProjectPreview from "./ProjectPreview";
 
 export default function Projects({ data: { projects, status } }: { data: ProjectData }) {
   return (
@@ -30,9 +31,9 @@ export default function Projects({ data: { projects, status } }: { data: Project
               <>
                 <Project project={projects[0]} />
                 {projects[1] && (
-                  <div className={styles.projectPeek}>
+                  <ProjectPreview>
                     <Project project={projects[1]} />
-                  </div>
+                  </ProjectPreview>
                 )}
               </>
             ) : (

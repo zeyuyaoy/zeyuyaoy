@@ -104,21 +104,11 @@
   }
 }
 
-:global([data-motion="reduce"]) .track {
-  animation: none;
-  transform: none;
-}
-
 :global([data-motion="reduce"]) .group + .group {
   display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .track {
-    animation: none;
-    transform: none;
-  }
-
   .group + .group {
     display: none;
   }

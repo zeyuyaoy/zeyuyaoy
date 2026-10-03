@@ -3,7 +3,7 @@ import { chmod, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadEnvFile } from "node:process";
+import process from "node:process";
 
 export const SPOTIFY_REDIRECT_URI = "http://127.0.0.1:8888/callback";
 export const SPOTIFY_SCOPE = "user-read-currently-playing";
@@ -21,7 +21,10 @@ function safeEqual(left, right) {
 async function readJson(response) {
   try {
     return await response.json();
-  } catch {
+  } catch (error) {
+    if (error?.name === "AbortError" || error?.name === "TimeoutError") {
+      throw error;
+    }
     return null;
   }
 }
@@ -62,7 +65,7 @@ export function parseAuthorizationCallback(requestUrl, expectedState) {
   return code;
 }
 
-export async function exchangeAuthorizationCode({
+async function exchangeAuthorizationCode({
   code,
   clientId,
   clientSecret,
@@ -80,6 +83,7 @@ export async function exchangeAuthorizationCode({
       redirect_uri: SPOTIFY_REDIRECT_URI,
       grant_type: "authorization_code",
     }),
+    signal: AbortSignal.timeout(8000),
   });
   const body = await readJson(response);
 
@@ -88,7 +92,12 @@ export async function exchangeAuthorizationCode({
     throw new Error(`Spotify token exchange failed (${response.status}: ${reason}).`);
   }
 
-  if (typeof body?.access_token !== "string" || typeof body?.refresh_token !== "string") {
+  if (
+    typeof body?.access_token !== "string" ||
+    !body.access_token.trim() ||
+    typeof body?.refresh_token !== "string" ||
+    !body.refresh_token.trim()
+  ) {
     throw new Error("Spotify token exchange returned incomplete credentials.");
   }
 
@@ -98,9 +107,10 @@ export async function exchangeAuthorizationCode({
   };
 }
 
-export async function verifyAccessToken(accessToken, fetchImpl = globalThis.fetch) {
+async function verifyAccessToken(accessToken, fetchImpl = globalThis.fetch) {
   const response = await fetchImpl(NOW_PLAYING_ENDPOINT, {
     headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(8000),
   });
 
   if (response.status === 200 || response.status === 204) {
@@ -156,7 +166,7 @@ export function updateEnvContent(content, updates) {
   return `${updatedLines.join(newline)}${newline}`;
 }
 
-export async function updateEnvFile(envPath, updates) {
+async function updateEnvFile(envPath, updates) {
   let current = "";
   try {
     current = await readFile(envPath, "utf8");
@@ -286,7 +296,7 @@ function waitForAuthorizationCode({ state, authorizationUrl, timeoutMs = 5 * 60 
 
 export function loadAuthorizationEnv(envPath) {
   try {
-    loadEnvFile(envPath);
+    process.loadEnvFile(envPath);
   } catch (error) {
     if (error.code !== "ENOENT") {
       throw error;

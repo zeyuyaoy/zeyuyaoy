@@ -58,23 +58,15 @@ export const commandGuide = {
   theme: [
     "Make yourself at home",
     'peter.theme("editorial")',
-    "Apply an available preset theme, or set a custom theme with `peter.theme({ ... })`",
+    "Apply an available preset. Cyberpunk selects dark mode; use peter.mode() to change mode afterwards.",
   ],
   mode: ["Make yourself at home", 'peter.mode("dark")', "Set light, dark, or system mode"],
   resetAppearance: [
     "Make yourself at home",
     "peter.resetAppearance()",
-    "Reset all appearance preferences",
+    "Reset appearance preferences, including photo speed, while keeping existing theme unlocks",
   ],
   hint: ["Discover", "peter.hint()", "A clue to the next personal discovery"],
-  banner: [
-    "Discover",
-    "peter.banner()",
-    "Redisplay the welcome card without clearing the console",
-  ],
-  help: [
-    "Discover",
-    'peter.help() · peter.help("projects")',
-    "Show this guide!",
-  ],
+  banner: ["Discover", "peter.banner()", "Redisplay the welcome card without clearing the console"],
+  help: ["Discover", 'peter.help() · peter.help("projects")', "Show this guide!"],
 } as const;

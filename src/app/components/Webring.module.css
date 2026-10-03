@@ -106,13 +106,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .webring,
-  .icon,
-  .link,
-  .link svg {
-    transition: none;
-  }
-
   .webring[data-open="true"] .icon {
     left: 44px;
   }

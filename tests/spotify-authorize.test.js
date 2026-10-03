@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "bun:test";
+import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -171,4 +171,84 @@ describe("Spotify authorization helpers", () => {
     expect(message).toContain("six calendar months");
     expect(message).not.toContain("refresh-secret");
   });
+
+  it.each([
+    { access_token: "", refresh_token: "refresh" },
+    { access_token: " \t", refresh_token: "refresh" },
+    { access_token: "access", refresh_token: "" },
+    { access_token: "access", refresh_token: " \n" },
+  ])("rejects empty credentials before verification or persistence: %j", async (body) => {
+    const original = "SPOTIFY_REFRESH_TOKEN=old\nUNCHANGED=value\n";
+    const envPath = await temporaryEnv(original);
+    let calls = 0;
+    await expect(
+      completeAuthorization({
+        code: "fixture",
+        clientId: "fixture",
+        clientSecret: "fixture",
+        envPath,
+        fetchImpl: async () => {
+          calls++;
+          return jsonResponse(body);
+        },
+      }),
+    ).rejects.toThrow("incomplete credentials");
+    expect(calls).toBe(1);
+    expect(await readFile(envPath, "utf8")).toBe(original);
+  });
+
+  it.each(["exchange request", "exchange body", "verification request"])(
+    "bounds the %s with an eight-second deadline and preserves the environment file",
+    async (stage) => {
+      const original = "SPOTIFY_REFRESH_TOKEN=old\nUNCHANGED=value\n";
+      const envPath = await temporaryEnv(original);
+      const deadline = new AbortController();
+      const timeout = spyOn(AbortSignal, "timeout").mockReturnValue(deadline.signal);
+      let reached;
+      const started = new Promise((resolve) => {
+        reached = resolve;
+      });
+      const waitForAbort = (signal) =>
+        new Promise((_, reject) => {
+          signal.addEventListener("abort", () => reject(signal.reason), { once: true });
+          reached();
+        });
+      try {
+        const pending = completeAuthorization({
+          code: "fixture",
+          clientId: "fixture",
+          clientSecret: "fixture",
+          envPath,
+          fetchImpl: async (url, { signal }) => {
+            expect(signal).toBe(deadline.signal);
+            if (url.includes("/api/token")) {
+              if (stage === "exchange request") {
+                return waitForAbort(signal);
+              }
+              if (stage === "exchange body") {
+                return { ok: true, json: () => waitForAbort(signal) };
+              }
+              return jsonResponse({
+                access_token: "fixture-access",
+                refresh_token: "fixture-refresh",
+              });
+            }
+            return waitForAbort(signal);
+          },
+        });
+        const outcome = pending.then(
+          () => null,
+          (error) => error,
+        );
+        await started;
+        expect(timeout).toHaveBeenCalledWith(8000);
+        expect(timeout).toHaveBeenCalledTimes(stage === "verification request" ? 2 : 1);
+        deadline.abort(new DOMException("Timed out", "TimeoutError"));
+        expect(await outcome).toMatchObject({ name: "TimeoutError", message: "Timed out" });
+        expect(await readFile(envPath, "utf8")).toBe(original);
+      } finally {
+        timeout.mockRestore();
+      }
+    },
+  );
 });
