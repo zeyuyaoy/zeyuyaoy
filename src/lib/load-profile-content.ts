@@ -1,6 +1,7 @@
 import "server-only";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
+import about from "@/content/profile/about.md";
+import experience from "@/content/profile/experience.md";
+import education from "@/content/profile/education.md";
 import {
   parseAbout,
   parseEducation,
@@ -9,12 +10,6 @@ import {
 } from "./profile-content";
 
 export async function loadProfileContent(): Promise<ProfileContent> {
-  const directory = path.join(process.cwd(), "src/content/profile");
-  const [about, experience, education] = await Promise.all(
-    ["about.md", "experience.md", "education.md"].map((file) =>
-      readFile(path.join(directory, file), "utf8"),
-    ),
-  );
   return {
     about: parseAbout(about),
     experience: parseExperience(experience),
