@@ -52,7 +52,9 @@ export default function ProfileScroll({
         aria-label={label}
         onScroll={measure}
       >
-        <div ref={content}>{children}</div>
+        <div ref={content} className={styles.scrollContent}>
+          {children}
+        </div>
       </div>
     </div>
   );
