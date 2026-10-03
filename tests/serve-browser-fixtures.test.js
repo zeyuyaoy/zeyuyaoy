@@ -321,6 +321,29 @@ if (process.versions.bun) {
   });
 
   describe("Spotify fixtures", () => {
+    for (const path of ["/api/%73potify", "/%61pi/sp%6Ftify", "/%61%70%69/%73%70%6f%74%69%66%79"]) {
+      it(`serves query and cookie fixtures for encoded route ${path}`, async () => {
+        const upstreamCount = upstreamRequests.length;
+        const fromQuery = await send(`${path}?fixture=playing`);
+        assert.equal(upstreamRequests.length, upstreamCount);
+        assert.equal(fromQuery.status, 200);
+        assert.equal(fromQuery.headers["cache-control"], "no-store");
+        assert.equal(JSON.parse(fromQuery.body).title, "Browser fixture track");
+        assert.deepEqual(fromQuery.headers["set-cookie"], [
+          "portfolio-fixture=playing; Path=/; HttpOnly; SameSite=Strict",
+        ]);
+
+        const fromCookie = await send(path, {
+          headers: { cookie: "portfolio-fixture=stale" },
+        });
+        assert.equal(upstreamRequests.length, upstreamCount);
+        assert.equal(fromCookie.status, 200);
+        assert.equal(fromCookie.headers["cache-control"], "no-store");
+        assert.equal(fromCookie.headers["set-cookie"], undefined);
+        assert.equal(JSON.parse(fromCookie.body).stale, true);
+      });
+    }
+
     for (const scenario of ["playing", "long-title", "stale", "malformed", "unavailable"]) {
       it(`preserves ${scenario}`, async () => {
         const upstreamCount = upstreamRequests.length;

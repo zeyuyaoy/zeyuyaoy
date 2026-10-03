@@ -73,7 +73,7 @@ export function createBrowserFixtureServer(upstreamAddress = "http://127.0.0.1:3
       );
     }
 
-    if (url.pathname === "/api/spotify" && allowed.has(scenario)) {
+    if (pathname === "/api/spotify" && allowed.has(scenario)) {
       response.setHeader("Content-Type", "application/json");
       response.setHeader("Cache-Control", "no-store");
       if (scenario === "timeout") {
