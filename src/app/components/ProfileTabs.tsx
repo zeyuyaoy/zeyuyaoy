@@ -61,6 +61,11 @@ export default function ProfileTabs({ panels }: { panels: Record<ProfileTab, Rea
   return (
     <section className={styles.profile} aria-label="Profile" data-home-section="bio">
       <div className={styles.header}>
+        <div className={styles.windowDots} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <div ref={list} className={styles.tabs} role="tablist" aria-label="Profile sections">
           {tabs.map((tab, index) => (
             <button
