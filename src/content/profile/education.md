@@ -2,62 +2,62 @@
 
 ### Carnegie Mellon University
 
-> Incoming · Class of 2032
+> Incoming · August 2028
 
-Currently serving National Service before joining Carnegie Mellon University’s Class of 2032.
+Currently serving National Service in Singapore before joining Carnegie Mellon University's Class of 2032.
 
-### Stamford American International School
+### Stamford American International School, Singapore
 
-> August 2022–June 2026
->
-> High School Diploma · Singapore
+> August 2022 - June 2026 
+> 
+> High School Diploma
 
-**Valedictorian, Class of 2026.** Unweighted GPA: 4.0/4.0.
+**Valedictorian, Class of 2026.**
 
-I received the Octavio Fernandes Legacy Award, a graduating-class award recognizing long-term school impact.
+Reached USACO Platinum in Grade 9.
 
-I reached USACO Platinum in Grade 9 and qualified for USAMO in Grades 9–10. My mathematics results include AIME 14/15 (1st in Southeast Asia), AMC 12 141/150, and a perfect 150/150 on AMC 10.
+Qualified for USAMO twice.
 
-At school, I was involved in the Student Leadership Team, Mu Alpha Theta / Math Honor Society, TEDxSAIS Youth, SAIS Hack Club, Jazz Band, and Orchestra.
+Earned 14/15 on AIME (1st in Southeast Asia), 141/150 on AMC 12, and 150/150 on AMC 10.
 
 ## Summer experiences & programs
 
 ### [Garcia Research Scholar Program](https://research.zeyuyaoy.com/projects/garcia)
 
-> June–August 2024
->
+> June - August 2024
+> 
 > Stony Brook University
 
-I conducted AI-driven computational biology research under Prof. Yuefan Deng, developing ProLiDE for multi-source biological data integration and exploring computational approaches to potential eIF4E inhibitors.
+Conducted AI-driven computational biology research under Prof. Yuefan Deng. Developed a multi-source framework for drug-candidate evaluation and investigated computational approaches to eIF4E inhibitors for drug-resistant ER+ breast cancer.
 
 ### LaunchX Innovation Program
 
-> July–August 2023
->
+> July - August 2023
+> 
 > University of Michigan, Ann Arbor
 
-I collaborated with Human Element, an e-commerce consultancy, to develop a sales strategy presentation integrating business strategy and data analytics. Proposed design elements were implemented in the company’s new website.
+Collaborated with Human Element on an e-commerce growth strategy combining business analysis and data, with proposed design elements subsequently implemented on the [company's website.](https://www.human-element.com)
 
 ### [Stanford AI4ALL](https://research.zeyuyaoy.com/projects/ai4all)
 
-> June–July 2023
->
+> June – July 2023
+> 
 > Stanford University
 
-I explored autonomous aircraft taxiing in X-Plane 11 alongside Stanford postdoctoral researchers. I designed a three-module autonomy stack using camera images, a five-layer neural network, and PID control for runway alignment.
+Conducted autonomous-systems research with Stanford postdoctoral researchers, building a [three-module aircraft taxiing stack](https://github.com/zeyuyaoy/ai4all-robotics) in X-Plane 11 using computer vision, a five-layer neural network, and PID control for runway alignment.
 
 ### [Mathematics & Computational Research in Biological Sciences](https://research.zeyuyaoy.com/projects/uchicago-bios10007)
 
 > June 2023
->
+> 
 > University of Chicago
 
-I explored computational analysis of macromolecules, exome sequencing, and variant analysis with 1000 Genomes Project data, using high-performance computing resources at the university’s Research Computing Center.
+Used the university's HPC resources to [analyze 1000 Genomes Project exome data,](https://github.com/zeyuyaoy/bios10007-final-project) leading a team that identified 189,000+ disease- and drug-associated genetic variants.
 
 ### Fundamentals of Computer Science
 
-> July–August 2022
->
-> Johns Hopkins CTY · Hosted at Loyola Marymount University
+> July - August 2022
+> 
+> Johns Hopkins CTY
 
-I studied algorithms, theory of computation, computer architecture, and software systems. I developed a Connect 4 solver in Java using alpha-beta pruning, bitmap encoding, and a transposition table.
+Built a Java Connect 4 solver using alpha-beta pruning, bitmap encoding, and a transposition table, alongside coursework in algorithms, theory of computation, computer architecture, and software systems.
