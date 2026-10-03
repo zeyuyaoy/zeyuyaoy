@@ -6,16 +6,15 @@
 .projectLink:focus-visible .project {
   outline: 2px solid var(--link-color);
   outline-offset: 3px;
-  box-shadow:
-    var(--shadow-sm),
-    0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
+  box-shadow: var(--shadow-sm),
+  0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .project {
   background: var(--foreground);
   border: 2px solid var(--primary-color);
   border-radius: var(--radius-md);
-  padding: var(--home-project-padding, 1rem);
+  padding: var(--card-padding);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
@@ -27,8 +26,8 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 6px;
+  gap: var(--content-gap);
+  margin-bottom: var(--metadata-gap);
 }
 
 .stars {

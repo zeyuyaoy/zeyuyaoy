@@ -23,11 +23,16 @@
 }
 
 .panel {
+  --panel-bottom: clamp(
+    var(--overlay-gutter),
+    calc(var(--panel-anchor-bottom, 0px) + var(--overlay-gap)),
+    max(var(--overlay-gutter), calc(100dvh - 240px))
+  );
   position: fixed;
-  inset: auto var(--panel-right, 16px) var(--panel-bottom, 80px) auto;
+  inset: auto max(var(--overlay-gutter), var(--panel-anchor-right, 0px)) var(--panel-bottom) auto;
   margin: 0;
-  width: min(440px, calc(100vw - 32px));
-  max-height: calc(100dvh - var(--panel-bottom, 80px) - 16px);
+  width: min(440px, calc(100vw - 2 * var(--overlay-gutter)));
+  max-height: calc(100dvh - var(--panel-bottom) - var(--overlay-gutter));
   overflow-y: auto;
   overscroll-behavior: contain;
   border: 1px solid var(--border-color);
@@ -51,15 +56,15 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  padding: 20px 20px 16px;
+  gap: var(--content-gap);
+  padding: var(--settings-padding) var(--settings-padding) var(--space-16);
   border-bottom: 1px solid var(--border-color);
 }
 
 .header h2 {
   font-size: 1.1rem;
   line-height: 1.35;
-  margin: 4px 0 6px;
+  margin: var(--space-4) 0 var(--space-6);
 }
 
 .header p,
@@ -75,8 +80,8 @@
 
 .controls {
   display: grid;
-  gap: 22px;
-  padding: 20px;
+  gap: var(--settings-gap);
+  padding: var(--settings-padding);
 }
 
 .controls fieldset {
@@ -87,13 +92,13 @@
 .controls legend {
   font-size: 0.85rem;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: var(--content-gap);
 }
 
 .badge {
   display: inline-block;
-  margin-left: 6px;
-  padding: 2px 7px;
+  margin-left: var(--space-6);
+  padding: var(--space-2) var(--space-8);
   border-radius: 6px;
   background: var(--accent-soft);
   color: var(--link-color);
@@ -103,7 +108,7 @@
 .presets {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: var(--content-gap);
 }
 
 .panel button {
@@ -115,8 +120,8 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 5px;
-  padding: 12px;
+  gap: var(--space-4);
+  padding: var(--space-12);
   color: var(--text-color);
   background: var(--foreground);
   border: 1px solid var(--border-color);
@@ -133,8 +138,8 @@
   --preview-paper: var(--surface-color);
   --preview-ink: var(--text-color);
   display: flex;
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .swatches i {
@@ -155,7 +160,7 @@
 
 .segmented {
   display: flex;
-  gap: 6px;
+  gap: var(--control-gap);
 }
 
 .segmented button,
@@ -167,7 +172,7 @@
   background: transparent;
   color: var(--text-color);
   font-size: 0.82rem;
-  padding: 8px;
+  padding: var(--control-padding);
 }
 
 .segmented button {
@@ -190,7 +195,7 @@
 .speedControl {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--content-gap);
   font-size: 1.4rem;
 }
 
@@ -212,16 +217,16 @@
 .accents {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 5px;
+  gap: var(--space-4);
 }
 
 .accents button {
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--space-4);
   font-size: 0.7rem;
-  padding-inline: 2px;
+  padding-inline: var(--space-2);
 }
 
 .accentDot {
@@ -282,13 +287,13 @@
 
 .fonts {
   display: grid;
-  gap: 6px;
+  gap: var(--control-gap);
 }
 
 .fonts button {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--control-gap);
   text-align: left;
 }
 
@@ -304,10 +309,10 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px 12px;
+  gap: var(--space-8) var(--space-12);
   justify-content: space-between;
   border-top: 1px solid var(--border-color);
-  padding: 12px 20px;
+  padding: var(--space-12) var(--settings-padding);
 }
 
 .panelFooter button {
@@ -338,7 +343,7 @@
 
   .header,
   .controls {
-    padding: 16px;
+    padding: var(--settings-padding);
   }
 }
 

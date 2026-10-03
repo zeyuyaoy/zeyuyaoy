@@ -66,7 +66,8 @@ function MarqueeText({ text = "", className }: { text?: string; className: strin
       }
 
       const width = content.scrollWidth;
-      setDistance(width > viewport.clientWidth + 1 ? width + 32 : 0);
+      const gap = Number.parseFloat(getComputedStyle(content.parentElement!).columnGap) || 0;
+      setDistance(width > viewport.clientWidth + 1 ? width + gap : 0);
     };
 
     const observer = new ResizeObserver(measure);

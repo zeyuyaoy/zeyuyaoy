@@ -22,12 +22,11 @@ export default function ProfileTabs({ panels }: { panels: Record<ProfileTab, Rea
     setSelected(tabs[index].id);
     button?.focus({ preventScroll: true });
 
-    // Reveal only within the tab strip; scrollIntoView can also move the page.
     if (button && list.current) {
       const strip = list.current;
       const bounds = strip.getBoundingClientRect();
       const tabBounds = button.getBoundingClientRect();
-      const inset = 6;
+      const inset = Number.parseFloat(getComputedStyle(strip).scrollPaddingInlineStart) || 0;
       if (tabBounds.left < bounds.left + inset) {
         strip.scrollLeft += tabBounds.left - bounds.left - inset;
       } else if (tabBounds.right > bounds.right - inset) {

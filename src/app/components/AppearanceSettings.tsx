@@ -45,12 +45,12 @@ export default function AppearanceSettings() {
         return;
       }
       dialog.current.style.setProperty(
-        "--panel-right",
-        `${Math.max(16, window.innerWidth - rect.right)}px`,
+        "--panel-anchor-right",
+        `${window.innerWidth - rect.right}px`,
       );
       dialog.current.style.setProperty(
-        "--panel-bottom",
-        `${Math.min(Math.max(16, window.innerHeight - rect.top + 12), Math.max(16, window.innerHeight - 240))}px`,
+        "--panel-anchor-bottom",
+        `${window.innerHeight - rect.top}px`,
       );
     };
     position();

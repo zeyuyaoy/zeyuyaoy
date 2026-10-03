@@ -5,7 +5,7 @@ if (!["127.0.0.1", "localhost", "[::1]"].includes(upstream.hostname)) {
   throw new Error("Use a local production server");
 }
 
-const allowed = new Set(["playing", "stale", "malformed", "unavailable", "timeout"]);
+const allowed = new Set(["playing", "long-title", "stale", "malformed", "unavailable", "timeout"]);
 const track = {
   isPlaying: true,
   title: "Browser fixture track",
@@ -53,6 +53,13 @@ const server = createServer(async (request, response) => {
           ? { isPlaying: true, title: { invalid: true } }
           : {
               ...track,
+              ...(scenario === "long-title"
+                ? {
+                    title:
+                      "A deliberately long song title to exercise the complete scrolling cassette label",
+                    artist: "A fixture artist with a long name for responsive spacing verification",
+                  }
+                : {}),
               progressCapturedAt: Date.now(),
               ...(scenario === "stale"
                 ? {
