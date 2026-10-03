@@ -39,8 +39,6 @@ export function hackclubNeighbors(data: unknown, siteUrl = site.url) {
     return url;
   });
   const host = new URL(siteUrl).hostname.toLowerCase();
-  // Match the official embed's index-zero fallback for unregistered hosts.
-  // https://github.com/skyfallwastaken/webring-v2/blob/main/src/pages/embed.html.astro
   const index = Math.max(
     0,
     urls.findIndex((url) => url.hostname.toLowerCase() === host),

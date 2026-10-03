@@ -22,8 +22,8 @@
   --direction: normal;
   --delay: -54s;
   --duration: calc(28s * var(--photo-count));
-  --light-opacity: 0.1;
-  --dark-opacity: 0.09;
+  --light-opacity: 0.13;
+  --dark-opacity: 0.12;
   position: relative;
   container-type: size;
   min-width: 0;
@@ -50,7 +50,6 @@
 }
 
 .track {
-  /* Explicit geometry avoids Safari undercounting percentage-height flex children. */
   --sequence-width: calc(var(--photo-count) * 100cqh * 16 / 9);
   display: flex;
   width: calc(2 * var(--sequence-width));

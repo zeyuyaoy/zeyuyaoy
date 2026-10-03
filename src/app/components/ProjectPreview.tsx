@@ -19,7 +19,6 @@ export default function ProjectPreview({ children }: { children: ReactNode }) {
     const release = () => {
       pointerDown.current = false;
       window.clearTimeout(closeTimer);
-      // Let the click finish before collapsing moves controls below the notebook.
       closeTimer = window.setTimeout(() => {
         if (!root.current?.contains(document.activeElement)) {
           setExpanded(false);

@@ -118,8 +118,6 @@ export class SpotifyService {
   }
 
   reset() {
-    // Each configuration owns its requests. Aborting also invalidates work whose
-    // fetch implementation cannot cancel (for example, an already-resolved body).
     this.generation?.abort();
     this.generation = new AbortController();
     this.inFlight = null;
@@ -375,8 +373,6 @@ export class SpotifyService {
       const config = readSpotifyConfig(env);
       this.syncConfig(config);
     } catch (error) {
-      // Forget the last valid identity so restoring the same credentials retries.
-      // Repeated missing-config calls still share one terminal result/log entry.
       if (this.config) {
         this.reset();
       }
