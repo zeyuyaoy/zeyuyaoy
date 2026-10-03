@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   allowedDevOrigins: ["192.168.1.3"],
+  devIndicators: { position: "top-right" },
   turbopack: { root: process.cwd() },
   outputFileTracingRoot: process.cwd(),
   images: {
