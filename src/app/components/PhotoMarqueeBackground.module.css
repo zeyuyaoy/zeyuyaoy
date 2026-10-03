@@ -25,6 +25,7 @@
   --light-opacity: 0.1;
   --dark-opacity: 0.09;
   position: relative;
+  container-type: size;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -49,24 +50,24 @@
 }
 
 .track {
+  /* Explicit geometry avoids Safari undercounting percentage-height flex children. */
+  --sequence-width: calc(var(--photo-count) * 100cqh * 16 / 9);
   display: flex;
-  width: max-content;
+  width: calc(2 * var(--sequence-width));
   height: 100%;
-  animation: marquee-scroll var(--loop-duration, calc(var(--duration) / 2.5)) linear var(--delay)
-    infinite var(--direction);
+  animation: marquee-scroll var(--loop-duration, calc(var(--duration) / 2.5)) linear var(--delay) infinite var(--direction);
 }
 
 .group {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--photo-count), minmax(0, 1fr));
   flex: 0 0 auto;
-  width: max-content;
+  width: var(--sequence-width);
   height: 100%;
-  min-width: 100vw;
 }
 
 .frame {
-  flex: 0 0 auto;
-  aspect-ratio: 16 / 9;
+  min-width: 0;
   height: 100%;
   overflow: hidden;
   position: relative;
