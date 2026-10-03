@@ -12,7 +12,7 @@ export const consoleContent = {
     "Hey, I'm Peter. You found my little corner of the console!\nCheck out my research, some things I've built, and a few things off the clock.",
   about: [
     "Hello! I'm Zeyu (Peter) Yao 姚则禹. I grew up in Singapore.",
-    "Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon.",
+    "Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon University.",
     "I use and build computational tools to understand complex biological systems: how they change, adapt, and sometimes break down.",
     "Alongside research, I enjoy building inclusive communities and helping people learn, create, and find opportunities through computing.",
   ],

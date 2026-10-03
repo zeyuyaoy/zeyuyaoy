@@ -46,6 +46,7 @@ export default async function Home() {
               </h1>
               <p className={styles.subtitle}>
                 Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon
+                University
               </p>
               <div className={styles.socialMedia}>
                 <nav className={styles.socialMediaIcons} aria-label="Peter's social media profiles">
