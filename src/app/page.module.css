@@ -113,9 +113,8 @@
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
-  transition:
-    background-color 120ms ease,
-    transform 120ms ease;
+  transition: background-color 120ms ease,
+  transform 120ms ease;
 }
 
 .githubIcon {
@@ -164,37 +163,6 @@
   border-color: var(--primary-color);
   box-shadow: var(--shadow-sm);
   background: var(--accent-soft);
-}
-
-.bio {
-  display: grid;
-  align-content: start;
-  gap: var(--home-paragraph-gap);
-  padding: var(--home-panel-padding);
-  border-radius: var(--radius-lg);
-  background: var(--surface-color);
-  border: 1px solid var(--panel-border-color, var(--border-color));
-  box-shadow: var(--shadow-sm);
-}
-
-.bioText {
-  color: var(--text-color);
-  font-size: max(var(--home-font-min, 0rem), calc(1rem * var(--home-font-scale, 1)));
-  text-align: left;
-  line-height: var(--home-bio-leading, 1.7);
-  margin: 0;
-  font-weight: 400;
-}
-
-.link {
-  color: var(--link-color);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: all 120ms ease;
-}
-
-.link:hover {
-  text-decoration-thickness: 2px;
 }
 
 .section {
@@ -257,11 +225,6 @@
     max-width: 100%;
     text-align: center;
   }
-
-  .bio,
-  .bioText {
-    text-align: center;
-  }
 }
 
 @media (max-width: 560px) {
@@ -278,11 +241,6 @@
   .subtitle {
     font-size: max(var(--home-font-min, 0rem), calc(0.9rem * var(--home-font-scale, 1)));
   }
-
-  .bioText {
-    font-size: max(var(--home-font-min, 0rem), calc(0.95rem * var(--home-font-scale, 1)));
-    line-height: var(--home-bio-leading, 1.65);
-  }
 }
 
 @media (max-width: 360px) {
@@ -292,12 +250,6 @@
     --home-section-gap: 1rem;
     --home-project-padding: 0.75rem;
   }
-}
-
-.bioHeading {
-  margin: 0;
-  font-size: max(var(--home-font-min, 0rem), calc(1rem * var(--home-font-scale, 1)));
-  font-weight: 700;
 }
 
 .footer {

@@ -1,5 +1,6 @@
 import styles from "./page.module.css";
 import ProfilePhoto from "./components/ProfilePhoto";
+import Profile from "./components/Profile";
 import ThemeProvider from "./components/ThemeProvider";
 import Webrings from "./components/Webrings";
 import AppearanceSettings from "./components/AppearanceSettings";
@@ -99,89 +100,7 @@ export default async function Home() {
             </div>
           </section>
 
-          <section
-            className={styles.bio}
-            aria-labelledby="research-heading"
-            data-home-section="bio"
-          >
-            <h2 id="research-heading" className={styles.bioHeading}>
-              Hello! I&apos;m Peter. I&apos;m interested in{" "}
-              <a
-                href="https://research.zeyuyaoy.com/garcia"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                using computational tools
-              </a>{" "}
-              (and{" "}
-              <a
-                href="https://research.zeyuyaoy.com/orcid-162573947"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                building new ones!
-              </a>
-              ) to{" "}
-              <a
-                href="https://research.zeyuyaoy.com/biorsp-posters"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                better understand
-              </a>{" "}
-              complex biological systems—how they change, adapt, and sometimes break down.
-            </h2>
-
-            <p className={styles.bioText}>
-              Growing up in Singapore, I&apos;ve been fortunate to learn across many areas of STEM
-              and from mentors who have shaped the way I think and work. Alongside research, I enjoy
-              building{" "}
-              <a
-                href="https://ijhscommunity.org"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                inclusive communities
-              </a>{" "}
-              and helping more people{" "}
-              <a
-                href="https://buildingblocs.sg"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                learn
-              </a>
-              ,{" "}
-              <a
-                href="https://hackclub.com/"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                create
-              </a>
-              , and{" "}
-              <a
-                href="https://www.iscb.org/ybs2026/home"
-                className={styles.link}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                find opportunities
-              </a>{" "}
-              through computing.
-            </p>
-
-            <p className={styles.bioText}>
-              Outside of research and building things, I enjoy playing jazz guitar, running,
-              swimming, and photography.
-            </p>
-          </section>
+          <Profile />
 
           <section className={styles.section} data-home-section="widgets">
             <Projects data={projectData} />

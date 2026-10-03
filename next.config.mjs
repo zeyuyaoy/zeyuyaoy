@@ -4,6 +4,9 @@ const nextConfig = {
   devIndicators: { position: "top-right" },
   turbopack: { root: process.cwd() },
   outputFileTracingRoot: process.cwd(),
+  outputFileTracingIncludes: {
+    "/": ["./src/content/profile/*.md"],
+  },
   images: {
     remotePatterns: [
       {
