@@ -62,12 +62,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <AppearanceRuntime />
         <KonamiRuntime />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([personJsonLd, websiteJsonLd]).replace(/</g, "\\u003c"),
-          }}
-        />
+        {[personJsonLd, websiteJsonLd].map((data) => (
+          <script
+            key={data["@type"]}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(data).replace(/</g, "\\u003c"),
+            }}
+          />
+        ))}
         {children}
         <CmuReferralAnalytics />
         <SpeedInsights />

@@ -94,15 +94,13 @@ for (const path of [
     assert.equal(tags(text, "link").find((tag) => tag.rel === "canonical")?.href, site.url);
     const structuredData = [
       ...text.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g),
-    ].flatMap(([, json]) => JSON.parse(json));
-    assert.deepEqual(
-      structuredData.find((entry) => entry["@type"] === "Person"),
-      personJsonLd,
-    );
-    assert.deepEqual(
-      structuredData.find((entry) => entry["@type"] === "WebSite"),
-      websiteJsonLd,
-    );
+    ].map(([, json]) => JSON.parse(json));
+    assert.equal(structuredData.length, 2, "Two separate JSON-LD scripts");
+    for (const entry of structuredData) {
+      assert.ok(entry && typeof entry === "object" && !Array.isArray(entry), "JSON-LD object");
+      assert.equal(entry["@context"], "https://schema.org", "JSON-LD string context");
+    }
+    assert.deepEqual(structuredData, [personJsonLd, websiteJsonLd], "Complete JSON-LD metadata");
     assert.ok(text.includes('id="research-heading"'), "Research heading in initial HTML");
     assert.ok(text.includes('id="projects-heading"'), "Project heading in initial HTML");
     assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), "No blanket noindex");
