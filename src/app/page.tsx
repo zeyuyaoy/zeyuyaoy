@@ -1,7 +1,7 @@
 import styles from "./page.module.css";
 import ProfilePhoto from "./components/ProfilePhoto";
 import ThemeProvider from "./components/ThemeProvider";
-import Webring from "./components/Webring";
+import Webrings from "./components/Webrings";
 import AppearanceSettings from "./components/AppearanceSettings";
 import StableHomeLayout from "./components/StableHomeLayout";
 
@@ -11,10 +11,12 @@ import PhotoMarqueeBackground from "./components/PhotoMarqueeBackground";
 import PersonalConsoleRuntime from "./components/PersonalConsoleRuntime";
 import { getGithubProjects, type ProjectData } from "@/lib/github";
 import { failureCode } from "@/lib/upstream";
+import { getWebrings } from "@/lib/webrings";
 
 export const revalidate = 600;
 
 export default async function Home() {
+  const webrings = getWebrings();
   let projectData: ProjectData;
   try {
     projectData = {
@@ -186,7 +188,7 @@ export default async function Home() {
           </section>
 
           <footer className={styles.footer} data-home-section="footer">
-            <Webring />
+            <Webrings items={webrings} />
             <AppearanceSettings />
           </footer>
         </StableHomeLayout>
