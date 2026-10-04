@@ -107,7 +107,7 @@
 
 .presets {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: var(--content-gap);
 }
 
@@ -117,33 +117,34 @@
 
 .preset {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   text-align: left;
-  gap: var(--space-4);
+  gap: var(--space-8);
   padding: var(--space-12);
   color: var(--text-color);
   background: var(--foreground);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   min-width: 0;
+  min-height: 44px;
 }
 
 .presetName {
   font-size: 1.1rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .swatches {
   --preview-paper: var(--surface-color);
   --preview-ink: var(--text-color);
   display: flex;
+  flex: none;
   gap: var(--space-4);
-  margin-bottom: var(--space-4);
 }
 
 .swatches i {
-  width: 22px;
+  width: 14px;
   height: 14px;
   border: 1px solid rgb(0 0 0 / 15%);
   border-radius: 4px;
@@ -214,9 +215,10 @@
   color: var(--muted-color);
 }
 
-.accents {
+.accents,
+.fonts {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
 }
 
@@ -257,6 +259,10 @@
   --swatch: #5b357b;
 }
 
+.accents [data-accent="neutral"] {
+  --swatch: #292929;
+}
+
 .accents [data-accent="neon"] {
   --swatch: #005565;
 }
@@ -281,20 +287,23 @@
   --swatch: #cfb3e9;
 }
 
+:global([data-theme="dark"]) .accents [data-accent="neutral"] {
+  --swatch: #e0e0e0;
+}
+
 :global([data-theme="dark"]) .accents [data-accent="neon"] {
   --swatch: #43e8ff;
 }
 
-.fonts {
-  display: grid;
-  gap: var(--control-gap);
-}
-
 .fonts button {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--control-gap);
-  text-align: left;
+  justify-content: center;
+  gap: var(--space-4);
+  min-width: 0;
+  padding-inline: var(--space-2);
+  text-align: center;
 }
 
 .fonts button > span:first-child {
@@ -302,7 +311,8 @@
 }
 
 .fonts button > span:last-child:not(:first-child) {
-  margin-left: auto;
+  height: 1em;
+  line-height: 1;
 }
 
 .panelFooter {
@@ -348,7 +358,8 @@
 }
 
 @media (max-width: 400px) {
-  .accents {
+  .accents,
+  .fonts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

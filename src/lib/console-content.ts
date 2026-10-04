@@ -57,7 +57,7 @@ export const commandGuide = {
   themes: ["Make yourself at home", "peter.themes()", "Available presets and current appearance"],
   theme: [
     "Make yourself at home",
-    'peter.theme("editorial")',
+    'peter.theme("bootstrap")',
     "Apply an available preset. Cyberpunk selects dark mode; use peter.mode() to change mode afterwards.",
   ],
   mode: ["Make yourself at home", 'peter.mode("dark")', "Set light, dark, or system mode"],

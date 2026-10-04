@@ -405,6 +405,17 @@ a.trackLabel:focus-visible {
   --cassette-hardware: var(--cyberpunk-magenta);
 }
 
+@media (max-width: 960px) {
+  .trackLabel {
+    justify-content: center;
+  }
+
+  .trackCopy {
+    flex: 0 1 auto;
+    text-align: left;
+  }
+}
+
 @media (max-width: 800px) {
   .cassette::before {
     top: 7%;

@@ -1,6 +1,8 @@
 "use client";
 
-import { type KeyboardEvent, type ReactNode, useId, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useId, useRef } from "react";
+import type { ProfileTab } from "@/lib/profile-content";
+import { useProfileTab } from "./ProfileTabProvider";
 import styles from "./Profile.module.css";
 
 const tabs = [
@@ -9,10 +11,8 @@ const tabs = [
   { id: "education", label: "Education" },
 ] as const;
 
-type ProfileTab = (typeof tabs)[number]["id"];
-
 export default function ProfileTabs({ panels }: { panels: Record<ProfileTab, ReactNode> }) {
-  const [selected, setSelected] = useState<ProfileTab>("about");
+  const { selected, setSelected } = useProfileTab();
   const prefix = useId();
   const list = useRef<HTMLDivElement>(null);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);

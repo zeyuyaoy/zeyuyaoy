@@ -93,8 +93,16 @@
   color: var(--background);
 }
 
-@media (max-width: 800px) {
+@media (max-width: 960px) {
   .projectHeader {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .project_description {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    overflow-wrap: anywhere;
   }
 }

@@ -1,10 +1,10 @@
 import { describe, expect, spyOn, test } from "bun:test";
 import {
   fetchHackclubNeighbors,
-  getWebrings,
   hackclubFallback,
   hackclubHome,
   hackclubNeighbors,
+  webrings,
 } from "../src/lib/webrings";
 
 describe("Hack Club webring navigation", () => {
@@ -71,7 +71,7 @@ describe("Hack Club webring navigation", () => {
   });
 
   test("renders initial links synchronously without a network request", () => {
-    const rings = getWebrings();
+    const rings = webrings;
     expect(rings).toHaveLength(2);
     expect(rings[0].nextHref).toContain("to=next&name=zeyuyaoy");
     expect(rings[1].previousHref).toBe(hackclubHome);

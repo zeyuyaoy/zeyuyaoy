@@ -9,7 +9,7 @@ import {
   type ProfileContent,
 } from "./profile-content";
 
-export async function loadProfileContent(): Promise<ProfileContent> {
+export function loadProfileContent(): ProfileContent {
   return {
     about: parseAbout(about),
     experience: parseExperience(experience),

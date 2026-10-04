@@ -5,9 +5,17 @@
 ```markdown
 ## [Organization](https://example.com/)
 
+> 2021–Present
+
 Describe your contribution in the first person.
 
 Add another paragraph for a distinct contribution or outcome.
+
+## [Program @ Host institution](https://example.com/)
+
+> June–August 2024
+
+Describe what you learned or built.
 ```
 
 ## Education
@@ -24,16 +32,6 @@ Add another paragraph for a distinct contribution or outcome.
 **Valedictorian, Class of 2026.** Unweighted GPA: 4.0/4.0.
 
 Describe achievements and activities here.
-
-## Summer experiences & programs
-
-### [Program](https://example.com/)
-
-> June–August 2024
->
-> Host institution
-
-Describe what you learned or built.
 ```
 
 ## Formatting and checks
@@ -42,8 +40,8 @@ Describe what you learned or built.
   ordinary bulleted or numbered lists.
 - Entry headings must be plain text or one link containing the title. Heading links use full HTTP(S) URLs. Body links
   can also use `mailto:`, `/site-relative-paths`, or `#anchors`.
-- Each entry needs a description and a unique title within its tab. Education group names must also be unique.
+- Each entry needs a description and a unique title within its tab.
 - Avoid additional headings inside descriptions. About Me starts with a paragraph and has no headings.
-- Raw HTML, JSX/MDX, images, tables, code blocks, reference-style links, and blockquotes outside education metadata are
+- Raw HTML, JSX/MDX, images, tables, code blocks, reference-style links, and blockquotes outside experience or education metadata are
   not supported.
 - Run `bun test tests/profile-content.test.js` for content checks and `bun run check` for the full repository checks.

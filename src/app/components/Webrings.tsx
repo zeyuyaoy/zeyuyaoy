@@ -10,7 +10,7 @@ import {
 import Webring from "./Webring";
 import styles from "./Webrings.module.css";
 
-export default function Webrings({ items }: { items: WebringData[] }) {
+export default function Webrings({ items }: { items: readonly WebringData[] }) {
   const [active, setActive] = useState<string | null>(null);
   const [hackclubLinks, setHackclubLinks] = useState(hackclubFallback);
   const hasHackclub = items.some((ring) => ring.href === hackclubHome);

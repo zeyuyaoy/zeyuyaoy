@@ -1,3 +1,49 @@
+import type { ProfileTab } from "./profile-content";
+
+export type MarqueeSection = { id: ProfileTab; start: number; count: number };
+export const marqueeSeekDuration = 600;
+
+export function createMarqueeNavigator(sections: readonly MarqueeSection[]) {
+  const total = sections.reduce((count, section) => count + section.count, 0);
+  let selected = sections[0].id;
+  let position = sections[0].start;
+  let seek: { from: number; to: number; startedAt: number } | null = null;
+  const boundary = () => sections.find((section) => section.id === selected)!.start;
+  const wrap = (value: number) => ((value % total) + total) % total;
+
+  function advance(now: number) {
+    if (seek) {
+      const progress = Math.min(1, Math.max(0, (now - seek.startedAt) / marqueeSeekDuration));
+      const eased = progress * progress * (3 - 2 * progress);
+      position = wrap(seek.from + (seek.to - seek.from) * eased);
+      if (progress === 1) {
+        position = boundary();
+        seek = null;
+      }
+    }
+    return { selected, position, seeking: seek !== null };
+  }
+
+  return {
+    advance,
+    select(id: ProfileTab, now: number) {
+      if (id === selected) {
+        return false;
+      }
+      advance(now);
+      selected = id;
+      const distance = wrap(boundary() - position) || total;
+      seek = { from: position, to: position + distance, startedAt: now };
+      return true;
+    },
+    settle() {
+      seek = null;
+      position = boundary();
+      return advance(0);
+    },
+  };
+}
+
 function isPositiveFinite(value: number): boolean {
   return Number.isFinite(value) && value > 0;
 }

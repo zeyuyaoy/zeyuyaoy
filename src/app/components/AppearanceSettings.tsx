@@ -18,6 +18,7 @@ const accents = [
   ["ocean", "Ocean"],
   ["terracotta", "Terracotta"],
   ["lavender", "Lavender"],
+  ["neutral", "Neutral"],
   ["neon", "Neon"],
 ] as const;
 
@@ -229,7 +230,7 @@ export default function AppearanceSettings() {
                   onClick={() => update("font", id)}
                 >
                   <span data-font={id}>{label}</span>
-                  {value.font === id && <span aria-hidden="true">✓</span>}
+                  <span aria-hidden="true">{value.font === id ? "✓" : ""}</span>
                 </button>
               ))}
             </div>

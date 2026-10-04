@@ -14,7 +14,7 @@ export default function Projects({ data: { projects, status } }: { data: Project
         </div>
         <div className={styles.notebookContent}>
           <h2 id="projects-heading" className={styles.projectText}>
-            Here&apos;s what I&apos;ve been working on!
+            Here&apos;s what I&apos;ve been working on lately!
           </h2>
           <div className={styles.projectsList}>
             {status === "unavailable" ? (

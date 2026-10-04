@@ -1,9 +1,105 @@
 import { describe, expect, test } from "bun:test";
 import {
   createMarqueeDurationUpdater,
+  createMarqueeNavigator,
   marqueeDuration,
+  marqueeSeekDuration,
   retimeMarquee,
 } from "../src/lib/photo-marquee-motion";
+
+const sections = [
+  { id: "about", start: 0, count: 28 },
+  { id: "experience", start: 28, count: 48 },
+  { id: "education", start: 76, count: 28 },
+];
+
+describe("marquee section navigation", () => {
+  test("starts on About without a transition", () => {
+    expect(createMarqueeNavigator(sections).advance(1000)).toEqual({
+      selected: "about",
+      position: 0,
+      seeking: false,
+    });
+  });
+
+  for (const from of sections) {
+    for (const to of sections.filter((section) => section.id !== from.id)) {
+      test(`${from.id} → ${to.id} always travels forward and lands after 600 ms`, () => {
+        const navigator = createMarqueeNavigator(sections);
+        navigator.select(from.id, 0);
+        navigator.settle();
+        navigator.select(to.id, 1000);
+        let last = from.start;
+        let distance = 0;
+        for (let elapsed = 0; elapsed <= marqueeSeekDuration; elapsed += 10) {
+          const state = navigator.advance(1000 + elapsed);
+          distance += (state.position - last + 104) % 104;
+          last = state.position;
+          expect(state.selected).toBe(to.id);
+          expect(state.seeking).toBe(elapsed < 600);
+        }
+        expect(distance).toBeCloseTo((to.start - from.start + 104) % 104, 8);
+        expect(last).toBe(to.start);
+        expect(navigator.advance(10000).position).toBe(to.start);
+      });
+    }
+  }
+
+  test("a rapid change retargets from the current position and cancels the old destination", () => {
+    const navigator = createMarqueeNavigator(sections);
+    navigator.select("education", 0);
+    expect(navigator.advance(300).position).toBe(38);
+    navigator.select("experience", 300);
+    expect(navigator.advance(300).position).toBe(38);
+    expect(navigator.advance(600)).toEqual({ selected: "experience", position: 85, seeking: true });
+    expect(navigator.advance(900)).toEqual({
+      selected: "experience",
+      position: 28,
+      seeking: false,
+    });
+  });
+
+  test("reselecting the active target does not restart motion", () => {
+    const navigator = createMarqueeNavigator(sections);
+    expect(navigator.select("about", 0)).toBe(false);
+    navigator.select("education", 0);
+    expect(navigator.select("education", 300)).toBe(false);
+    expect(navigator.advance(600)).toEqual({ selected: "education", position: 76, seeking: false });
+  });
+
+  test("returning immediately to the starting section wraps forward instead of snapping", () => {
+    const navigator = createMarqueeNavigator(sections);
+    navigator.select("experience", 0);
+    navigator.select("about", 0);
+    expect(navigator.advance(300)).toEqual({ selected: "about", position: 52, seeking: true });
+    expect(navigator.advance(600)).toEqual({ selected: "about", position: 0, seeking: false });
+  });
+
+  test("hiding or reducing motion settles the latest destination and cancels pending movement", () => {
+    const navigator = createMarqueeNavigator(sections);
+    navigator.select("education", 0);
+    navigator.advance(250);
+    navigator.select("experience", 250);
+    expect(navigator.settle()).toEqual({ selected: "experience", position: 28, seeking: false });
+    expect(navigator.advance(5000)).toEqual({
+      selected: "experience",
+      position: 28,
+      seeking: false,
+    });
+  });
+
+  test("positions stay in photo units while layout and normal playback speed change", () => {
+    const navigator = createMarqueeNavigator(sections);
+    navigator.select("experience", 0);
+    const halfway = navigator.advance(300);
+    expect(halfway.position).toBe(14);
+    expect(marqueeDuration(28 * 600, 1512, 2.5, 0.9)).not.toBe(
+      marqueeDuration(28 * 800, 1100, 25, 0.9),
+    );
+    expect(navigator.advance(300)).toEqual(halfway);
+    expect(navigator.advance(600).position).toBe(28);
+  });
+});
 
 function position(time, duration, delay, reverse = false) {
   const elapsed = (time - delay) / duration;

@@ -11,6 +11,7 @@
 }
 
 .main {
+  min-width: 0;
   position: relative;
   z-index: 1;
   pointer-events: none;
@@ -26,6 +27,7 @@
 
 .contentContainer {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--section-gap);
   align-content: start;
   min-width: 0;
@@ -51,6 +53,8 @@
 
 .name {
   display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   align-items: center;
   gap: var(--content-gap);
   font-size: max(var(--home-font-min, 0rem), calc(1.75rem * var(--home-font-scale, 1)));
@@ -106,10 +110,6 @@
   mask-size: contain;
   transition: background-color 120ms ease,
   transform 120ms ease;
-}
-
-.githubIcon {
-  mask-image: url("/github.svg");
 }
 
 .twitterIcon {
@@ -174,9 +174,7 @@
   .section {
     grid-template-columns: minmax(0, 1fr);
   }
-}
 
-@media (max-width: 800px) {
   .intro {
     flex-direction: column;
     align-items: center;
@@ -191,6 +189,12 @@
   .name {
     font-size: max(var(--home-font-min, 0rem), calc(1.6rem * var(--home-font-scale, 1)));
     justify-content: center;
+  }
+
+  .subtitle {
+    inline-size: 52ch;
+    max-inline-size: 100%;
+    margin-inline: auto;
   }
 
   .socialMedia {
@@ -229,4 +233,11 @@
   background: var(--surface-color);
   border: 1.5px solid var(--panel-border-color, var(--border-color));
   border-radius: var(--radius-lg);
+}
+
+@media (max-width: 960px) {
+  .footer {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }

@@ -1,17 +1,21 @@
-import { loadProfileContent } from "@/lib/load-profile-content";
+import type { ProfileContent } from "@/lib/profile-content";
 import ProfileTabs from "./ProfileTabs";
-import AboutPanel from "./profile/AboutPanel";
+import ProfileMarkdown from "./profile/ProfileMarkdown";
 import ExperiencePanel from "./profile/ExperiencePanel";
-import EducationPanel from "./profile/EducationPanel";
+import EducationTimeline from "./profile/EducationTimeline";
+import styles from "./Profile.module.css";
 
-export default async function Profile() {
-  const content = await loadProfileContent();
+export default function Profile({ content }: { content: ProfileContent }) {
   return (
     <ProfileTabs
       panels={{
-        about: <AboutPanel markdown={content.about} />,
+        about: (
+          <div className={styles.stack}>
+            <ProfileMarkdown source={content.about} introduction />
+          </div>
+        ),
         experience: <ExperiencePanel entries={content.experience} />,
-        education: <EducationPanel groups={content.education} />,
+        education: <EducationTimeline group={content.education} />,
       }}
     />
   );

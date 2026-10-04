@@ -256,10 +256,11 @@ describe("console appearance commands", () => {
     calls.length = 0;
     api.themes();
     expect(tables()[0].map((row) => row.Preset)).toEqual([
-      "Sundaze",
-      "Everyday",
-      "Editorial",
+      "Ghibli",
+      "Coastal",
+      "Bootstrap",
       "Goofball",
+      "B&W",
     ]);
   });
 
@@ -276,6 +277,34 @@ describe("console appearance commands", () => {
       ...defaultAppearance,
       cyberpunkUnlocked: true,
     });
+  });
+
+  test.each([
+    ["ghibli", "sundaze", "Ghibli"],
+    ["coastal", "everyday", "Coastal"],
+    ["bootstrap", "editorial", "Bootstrap"],
+    ["bw", "bw", "B&W"],
+  ])("accepts %s and its persisted ID %s", (command, id, name) => {
+    const { api, appearance, text, tables } = fixture();
+    for (const alias of new Set([command, id])) {
+      api.theme("goofball");
+      api.theme(alias);
+      expect(appearance.getSnapshot().preset).toBe(id);
+      expect(text()).toContain(`${name} applied.`);
+    }
+    api.themes();
+    expect(text()).toContain(`Current preset: ${name}`);
+    expect(
+      tables()
+        .at(-1)
+        .find((row) => row.Preset === name),
+    ).toMatchObject({
+      Command: `peter.theme("${command}")`,
+      Selected: "✓",
+    });
+    if (id === "bw") {
+      expect(appearance.getSnapshot()).toMatchObject({ accent: "neutral", font: "sans" });
+    }
   });
 
   test("works without storage and explains that changes last only for this visit", () => {
