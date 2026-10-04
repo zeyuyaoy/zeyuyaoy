@@ -2,13 +2,19 @@ import type { Heading, Nodes, Paragraph, RootContent } from "mdast";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 
+export type ProfileTab = "about" | "experience" | "education";
+
 export type ProfileEntry = {
   title: string;
   href?: string;
   body: string;
 };
 
-export type EducationEntry = ProfileEntry & {
+export type ExperienceEntry = ProfileEntry & {
+  dateLabel: string;
+};
+
+type EducationEntry = ProfileEntry & {
   dateLabel: string;
   subtitle?: string;
 };
@@ -20,8 +26,8 @@ export type EducationGroup = {
 
 export type ProfileContent = {
   about: string;
-  experience: ProfileEntry[];
-  education: [EducationGroup, EducationGroup];
+  experience: ExperienceEntry[];
+  education: EducationGroup;
 };
 
 const parser = unified().use(remarkParse);
@@ -67,6 +73,71 @@ function unique(title: string, seen: Set<string>, file: string) {
     invalid(file, title, "Duplicate title; each entry or group must have a unique title.");
   }
   seen.add(key);
+}
+
+const months = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+function dateRange(label: string, file: string, heading: string) {
+  const parts = label.replace(/^Incoming\s*·\s*/i, "").split(/\s*[-–—]\s*/);
+  const invalidDate = (): never =>
+    invalid(
+      file,
+      heading,
+      `Invalid date "${label}"; use a year or Month Year, optionally a range ending in another date or Present.`,
+    );
+  if (parts.length > 2) {
+    invalidDate();
+  }
+  const endLabel = parts[1] ?? parts[0];
+  const startLabel =
+    parts.length === 2 && /^[a-z]+$/i.test(parts[0])
+      ? `${parts[0]} ${endLabel.match(/\d{4}$/)?.[0] ?? ""}`
+      : parts[0];
+
+  function dateValue(value: string, isEnd: boolean): number {
+    if (isEnd && parts.length === 2 && /^Present$/i.test(value)) {
+      return Infinity;
+    }
+    const match = value.match(/^(?:([a-z]+)\s+)?(\d{4})$/i);
+    if (!match) {
+      return invalidDate();
+    }
+    const month = match[1] ? months.indexOf(match[1].toLowerCase()) : isEnd ? 11 : 0;
+    if (month < 0) {
+      return invalidDate();
+    }
+    return Number(match[2]) * 12 + month;
+  }
+
+  const start = dateValue(startLabel, false);
+  const end = dateValue(endLabel, true);
+  if (end < start) {
+    invalid(file, heading, `Invalid date "${label}"; the end must not precede the start.`);
+  }
+  return { start, end };
+}
+
+function sortDatedEntries<T extends { title: string; dateLabel: string }>(
+  entries: readonly T[],
+  file: string,
+): T[] {
+  return entries
+    .map((entry) => ({ entry, ...dateRange(entry.dateLabel, file, entry.title) }))
+    .toSorted((a, b) => b.start - a.start || (a.end === b.end ? 0 : a.end > b.end ? -1 : 1))
+    .map(({ entry }) => entry);
 }
 
 const bodyTypes = new Set([
@@ -118,14 +189,30 @@ export function parseAbout(source: string, file = "about.md"): string {
   return bodyMarkdown(nodes, source, file, "About Me");
 }
 
-export function parseExperience(source: string, file = "experience.md"): ProfileEntry[] {
-  const entries: ProfileEntry[] = [];
+export function parseExperience(source: string, file = "experience.md"): ExperienceEntry[] {
+  const entries: ExperienceEntry[] = [];
   const seen = new Set<string>();
   let current: Pick<ProfileEntry, "title" | "href"> | undefined;
   let body: RootContent[] = [];
   function finishEntry() {
     if (current) {
-      entries.push({ ...current, body: bodyMarkdown(body, source, file, current.title) });
+      const [metadata, ...description] = body;
+      if (
+        metadata?.type !== "blockquote" ||
+        metadata.children.length !== 1 ||
+        metadata.children[0].type !== "paragraph"
+      ) {
+        invalid(
+          file,
+          current.title,
+          "Start with a blockquote containing one plain-text date paragraph.",
+        );
+      }
+      entries.push({
+        ...current,
+        dateLabel: plainText(metadata.children[0], file, current.title),
+        body: bodyMarkdown(description, source, file, current.title),
+      });
     }
     body = [];
   }
@@ -151,16 +238,11 @@ export function parseExperience(source: string, file = "experience.md"): Profile
   if (!entries.length) {
     invalid(file, "Experience", "Add at least one ## entry.");
   }
-  return entries;
+  return sortDatedEntries(entries, file);
 }
 
-export function parseEducation(
-  source: string,
-  file = "education.md",
-): [EducationGroup, EducationGroup] {
-  const groups: EducationGroup[] = [];
+export function parseEducation(source: string, file = "education.md"): EducationGroup {
   const seenEntries = new Set<string>();
-  const seenGroups = new Set<string>();
   let group: EducationGroup | undefined;
   let current: Pick<ProfileEntry, "title" | "href"> | undefined;
   let body: RootContent[] = [];
@@ -202,9 +284,14 @@ export function parseEducation(
         if (fields.href) {
           invalid(file, fields.title, "Timeline group headings must be plain text.");
         }
-        unique(fields.title, seenGroups, file);
+        if (group) {
+          invalid(
+            file,
+            fields.title,
+            "Provide exactly one ## group for formal education; put programs in experience.md.",
+          );
+        }
         group = { title: fields.title, entries: [] };
-        groups.push(group);
       } else if (node.depth === 3 && group) {
         unique(fields.title, seenEntries, file);
         current = fields;
@@ -218,17 +305,15 @@ export function parseEducation(
     }
   }
   finishEntry();
-  if (groups.length !== 2) {
+  if (!group) {
     invalid(
       file,
-      groups.map((item) => item.title).join(", ") || "Education",
-      "Provide exactly two ## groups: formal education first, programs second.",
+      "Education",
+      "Provide exactly one ## group for formal education; put programs in experience.md.",
     );
   }
-  for (const item of groups) {
-    if (!item.entries.length) {
-      invalid(file, item.title, "Add at least one ### entry to this timeline.");
-    }
+  if (!group.entries.length) {
+    invalid(file, group.title, "Add at least one ### entry to this timeline.");
   }
-  return [groups[0], groups[1]];
+  return { ...group, entries: sortDatedEntries(group.entries, file) };
 }

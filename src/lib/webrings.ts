@@ -71,21 +71,19 @@ export async function fetchHackclubNeighbors(signal: AbortSignal, fetchImpl = fe
   }
 }
 
-export function getWebrings(): WebringData[] {
-  return [
-    {
-      name: "Bucket Webring",
-      href: "https://webring.bucketfish.me",
-      icon: "/bucket-webring.png",
-      previousHref: "https://webring.bucketfish.me/redirect.html?to=prev&name=zeyuyaoy",
-      nextHref: "https://webring.bucketfish.me/redirect.html?to=next&name=zeyuyaoy",
-      pixelated: true,
-    },
-    {
-      name: "Hack Club Webring",
-      href: hackclubHome,
-      icon: "/hackclub-webring.png",
-      ...hackclubFallback,
-    },
-  ];
-}
+export const webrings: readonly WebringData[] = [
+  {
+    name: "Bucket Webring",
+    href: "https://webring.bucketfish.me",
+    icon: "/bucket-webring.png",
+    previousHref: "https://webring.bucketfish.me/redirect.html?to=prev&name=zeyuyaoy",
+    nextHref: "https://webring.bucketfish.me/redirect.html?to=next&name=zeyuyaoy",
+    pixelated: true,
+  },
+  {
+    name: "Hack Club Webring",
+    href: hackclubHome,
+    icon: "/hackclub-webring.png",
+    ...hackclubFallback,
+  },
+];

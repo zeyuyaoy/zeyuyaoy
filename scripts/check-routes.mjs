@@ -101,7 +101,26 @@ for (const path of [
       assert.equal(entry["@context"], "https://schema.org", "JSON-LD string context");
     }
     assert.deepEqual(structuredData, [personJsonLd, websiteJsonLd], "Complete JSON-LD metadata");
-    assert.ok(text.includes('id="research-heading"'), "Research heading in initial HTML");
+    assert.equal(
+      tags(text, "section").filter((tag) => tag["aria-label"] === "Profile").length,
+      1,
+      "One Profile section in initial HTML",
+    );
+    const tabs = tags(text, "button").filter((tag) => tag.role === "tab");
+    const panels = tags(text, "div").filter((tag) => tag.role === "tabpanel");
+    assert.equal(tabs.length, 3, "Three profile tabs in initial HTML");
+    assert.equal(panels.length, 3, "Three profile panels in initial HTML");
+    assert.equal(new Set(tabs.map((tab) => tab.id)).size, 3, "Unique tab IDs");
+    assert.equal(new Set(panels.map((panel) => panel.id)).size, 3, "Unique panel IDs");
+    for (const [index, name] of ["about", "experience", "education"].entries()) {
+      const tab = tabs[index];
+      assert.ok(tab.id?.endsWith(`-tab-${name}`), `${name} tab ID`);
+      const panel = panels.find((item) => item.id === tab["aria-controls"]);
+      assert.ok(panel, `${name} tab controls its panel`);
+      assert.equal(panel["aria-labelledby"], tab.id, `${name} panel references its tab`);
+      assert.equal(tab["aria-selected"], String(index === 0), "About Me starts selected");
+      assert.equal(panel["aria-hidden"], String(index !== 0), `${name} panel visibility`);
+    }
     assert.ok(text.includes('id="projects-heading"'), "Project heading in initial HTML");
     assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), "No blanket noindex");
     assert.ok(!meta.find((tag) => tag.name === "robots")?.content.includes("noindex"));

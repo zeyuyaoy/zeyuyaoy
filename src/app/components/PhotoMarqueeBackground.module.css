@@ -20,8 +20,7 @@
   --edge-fade: 8%;
   --speed-factor: 0.9;
   --direction: normal;
-  --delay: -54s;
-  --duration: calc(28s * var(--photo-count));
+  --delay: 0s;
   --light-opacity: 0.13;
   --dark-opacity: 0.12;
   position: relative;
@@ -49,12 +48,29 @@
   opacity: var(--dark-opacity);
 }
 
-.track {
+.master {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  position: relative;
+  transform: translate3d(calc(-1 * var(--marquee-offset, 0px)), 0, 0);
+}
+
+.section {
   --sequence-width: calc(var(--photo-count) * 100cqh * 16 / 9);
+  --duration: calc(28s * var(--photo-count));
+  flex: 0 0 auto;
+  width: var(--sequence-width);
+  height: 100%;
+  overflow: hidden;
+}
+
+.track {
   display: flex;
   width: calc(2 * var(--sequence-width));
   height: 100%;
   animation: marquee-scroll var(--loop-duration, calc(var(--duration) / 2.5)) linear var(--delay) infinite var(--direction);
+  animation-play-state: paused;
 }
 
 .group {
@@ -107,9 +123,17 @@
   display: none;
 }
 
+:global([data-motion="reduce"]) .master {
+  left: calc(-1 * var(--marquee-offset, 0px));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .group + .group {
     display: none;
+  }
+
+  .master {
+    left: calc(-1 * var(--marquee-offset, 0px));
   }
 }
 

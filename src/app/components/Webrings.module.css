@@ -4,3 +4,10 @@
   gap: var(--control-gap);
   min-width: 0;
 }
+
+@media (max-width: 960px) {
+  .row {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

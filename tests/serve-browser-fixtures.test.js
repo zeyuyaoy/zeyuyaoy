@@ -344,7 +344,14 @@ if (process.versions.bun) {
       });
     }
 
-    for (const scenario of ["playing", "long-title", "stale", "malformed", "unavailable"]) {
+    for (const scenario of [
+      "playing",
+      "stopped",
+      "long-title",
+      "stale",
+      "malformed",
+      "unavailable",
+    ]) {
       it(`preserves ${scenario}`, async () => {
         const upstreamCount = upstreamRequests.length;
         const response = await send(`/api/spotify?fixture=${scenario}`);
@@ -354,6 +361,8 @@ if (process.versions.bun) {
         assert.equal(upstreamRequests.length, upstreamCount);
         if (scenario === "unavailable") {
           assert.equal(response.body.toString(), "Unavailable");
+        } else if (scenario === "stopped") {
+          assert.deepEqual(JSON.parse(response.body), { isPlaying: false });
         } else if (scenario === "malformed") {
           assert.deepEqual(JSON.parse(response.body), {
             isPlaying: true,

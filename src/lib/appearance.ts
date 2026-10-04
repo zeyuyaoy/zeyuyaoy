@@ -1,7 +1,7 @@
 export const appearanceOptions = {
-  preset: ["sundaze", "everyday", "editorial", "goofball", "cyberpunk"],
+  preset: ["sundaze", "everyday", "editorial", "goofball", "bw", "cyberpunk"],
   mode: ["system", "light", "dark"],
-  accent: ["sage", "ocean", "terracotta", "lavender", "neon"],
+  accent: ["sage", "ocean", "terracotta", "lavender", "neutral", "neon"],
   font: ["rounded", "sans", "serif", "mono", "comic"],
   size: ["standard", "larger"],
   motion: ["system", "reduce"],
@@ -12,10 +12,11 @@ export type Appearance = { version: 1; marqueeSpeed: number; cyberpunkUnlocked: 
 };
 
 export const presets = [
-  { id: "sundaze", name: "Sundaze", accent: "sage", font: "rounded" },
-  { id: "everyday", name: "Everyday", accent: "ocean", font: "sans" },
-  { id: "editorial", name: "Editorial", accent: "terracotta", font: "serif" },
+  { id: "sundaze", name: "Ghibli", accent: "sage", font: "rounded" },
+  { id: "everyday", name: "Coastal", accent: "ocean", font: "sans" },
+  { id: "editorial", name: "Bootstrap", accent: "terracotta", font: "serif" },
   { id: "goofball", name: "Goofball", accent: "lavender", font: "comic" },
+  { id: "bw", name: "B&W", accent: "neutral", font: "sans" },
   { id: "cyberpunk", name: "Cyberpunk", accent: "neon", font: "mono" },
 ] as const;
 

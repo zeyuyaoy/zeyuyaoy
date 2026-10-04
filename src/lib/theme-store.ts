@@ -13,6 +13,11 @@ type AppearanceSnapshot = Appearance & {
   resolvedMode: "light" | "dark";
   storageAvailable: boolean;
 };
+type AppearanceConfiguration = {
+  defaults: Appearance;
+  options: typeof appearanceOptions;
+  presets: typeof presets;
+};
 const serverSnapshot: AppearanceSnapshot = {
   ...defaultAppearance,
   resolvedMode: "light",
@@ -23,8 +28,13 @@ export function createAppearanceStore(
   storage: () => AppearanceStorage,
   events: () => EventTarget,
   colorScheme: () => ColorScheme,
+  configuration: AppearanceConfiguration = {
+    defaults: defaultAppearance,
+    options: appearanceOptions,
+    presets,
+  },
 ) {
-  let preferences = { ...defaultAppearance };
+  let preferences = { ...configuration.defaults };
   let snapshot = serverSnapshot;
   let initialized = false;
   let storageAvailable = true;
@@ -61,10 +71,10 @@ export function createAppearanceStore(
         } catch {
           parsed = null;
         }
-        preferences = normalizeAppearance(parsed, defaultAppearance, appearanceOptions);
+        preferences = normalizeAppearance(parsed, configuration.defaults, configuration.options);
       } else {
         const legacy = storage().getItem("theme");
-        preferences = { ...defaultAppearance };
+        preferences = { ...configuration.defaults };
         if (legacy === "dark" || legacy === "light") {
           preferences.mode = legacy;
           persist();
@@ -93,8 +103,8 @@ export function createAppearanceStore(
     getSnapshot();
     preferences = normalizeAppearance(
       { ...preferences, ...patch },
-      defaultAppearance,
-      appearanceOptions,
+      configuration.defaults,
+      configuration.options,
     );
     persist();
     notify();
@@ -144,7 +154,7 @@ export function createAppearanceStore(
       if (id === "cyberpunk" && !getSnapshot().cyberpunkUnlocked) {
         return;
       }
-      const preset = presets.find((item) => item.id === id)!;
+      const preset = configuration.presets.find((item) => item.id === id)!;
       update({
         preset: preset.id,
         accent: preset.accent,
@@ -175,13 +185,43 @@ export function createAppearanceStore(
       update({ mode: getSnapshot().resolvedMode === "dark" ? "light" : "dark" });
     },
     reset() {
-      update({ ...defaultAppearance, cyberpunkUnlocked: getSnapshot().cyberpunkUnlocked });
+      update({ ...configuration.defaults, cyberpunkUnlocked: getSnapshot().cyberpunkUnlocked });
     },
   };
 }
 
-export const appearanceStore = createAppearanceStore(
-  () => window.localStorage,
-  () => window,
-  () => window.matchMedia("(prefers-color-scheme: dark)"),
-);
+const browserStoreKey = Symbol.for("portfolio.appearance-store");
+type AppearanceBrowser = EventTarget & {
+  readonly localStorage: AppearanceStorage;
+  matchMedia(query: string): ColorScheme;
+  [browserStoreKey]?: {
+    store: ReturnType<typeof createAppearanceStore>;
+    configuration: AppearanceConfiguration;
+  };
+};
+
+export function getBrowserAppearanceStore(browser: AppearanceBrowser) {
+  const configuration = { defaults: defaultAppearance, options: appearanceOptions, presets };
+  const existing = browser[browserStoreKey];
+  if (existing) {
+    Object.assign(existing.configuration, configuration);
+    return existing.store;
+  }
+  const store = createAppearanceStore(
+    () => browser.localStorage,
+    () => browser,
+    () => browser.matchMedia("(prefers-color-scheme: dark)"),
+    configuration,
+  );
+  browser[browserStoreKey] = { store, configuration };
+  return store;
+}
+
+export const appearanceStore =
+  typeof window === "undefined"
+    ? createAppearanceStore(
+        () => window.localStorage,
+        () => window,
+        () => window.matchMedia("(prefers-color-scheme: dark)"),
+      )
+    : getBrowserAppearanceStore(window);

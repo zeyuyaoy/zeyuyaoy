@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { runInNewContext } from "node:vm";
-import { createAppearanceStore } from "../src/lib/theme-store";
+import { createAppearanceStore, getBrowserAppearanceStore } from "../src/lib/theme-store";
+import { createKonamiKeyboard, konamiSequence } from "../src/lib/konami";
 import {
   appearanceBootstrapScript,
   appearanceOptions,
@@ -53,6 +54,76 @@ function fixture({
 }
 
 describe("visitor appearance", () => {
+  test.each([
+    ["sundaze", "Ghibli"],
+    ["everyday", "Coastal"],
+    ["editorial", "Bootstrap"],
+  ])("restores saved %s preferences under the renamed %s label", (id, name) => {
+    const preferences = {
+      ...defaultAppearance,
+      preset: id,
+      accent: "lavender",
+      font: "mono",
+      mode: "dark",
+      size: "larger",
+      motion: "reduce",
+      marqueeSpeed: 1.75,
+    };
+    const { store } = fixture({ saved: JSON.stringify(preferences) });
+    expect(store.getSnapshot()).toMatchObject(preferences);
+    expect(presets.find((preset) => preset.id === store.getSnapshot().preset).name).toBe(name);
+  });
+
+  test.each(appearanceOptions.mode)("B&W persists and restores its defaults in %s mode", (mode) => {
+    const { store, data } = fixture();
+    store.update({ mode, size: "larger", motion: "reduce", marqueeSpeed: 1.75 });
+    store.selectPreset("bw");
+    const expected = {
+      preset: "bw",
+      accent: "neutral",
+      font: "sans",
+      mode,
+      size: "larger",
+      motion: "reduce",
+      marqueeSpeed: 1.75,
+    };
+    expect(store.getSnapshot()).toMatchObject(expected);
+    expect(fixture({ saved: data.get(appearanceStorageKey) }).store.getSnapshot()).toMatchObject(
+      expected,
+    );
+
+    store.update({ accent: "ocean", font: "serif" });
+    expect(fixture({ saved: data.get(appearanceStorageKey) }).store.getSnapshot()).toMatchObject({
+      ...expected,
+      accent: "ocean",
+      font: "serif",
+    });
+    store.selectPreset("bw");
+    expect(store.getSnapshot()).toMatchObject(expected);
+    store.reset();
+    expect(JSON.parse(data.get(appearanceStorageKey))).toEqual(defaultAppearance);
+  });
+
+  test("B&W syncs between tabs and follows system mode changes", () => {
+    const source = fixture();
+    const target = fixture();
+    const unsubscribe = target.store.subscribe(() => {});
+    source.store.selectPreset("bw");
+    target.data.set(appearanceStorageKey, source.data.get(appearanceStorageKey));
+    target.events.dispatchEvent(Object.assign(new Event("storage"), { key: appearanceStorageKey }));
+    expect(target.store.getSnapshot()).toMatchObject({
+      preset: "bw",
+      accent: "neutral",
+      font: "sans",
+      mode: "system",
+      resolvedMode: "light",
+    });
+    target.media.matches = true;
+    target.media.dispatchEvent(new Event("change"));
+    expect(target.store.getSnapshot()).toMatchObject({ preset: "bw", resolvedMode: "dark" });
+    unsubscribe();
+  });
+
   test("uses stable server and client snapshots, resolving system mode on the client", () => {
     const { store } = fixture({ dark: true });
     expect(store.getServerSnapshot().resolvedMode).toBe("light");
@@ -304,6 +375,58 @@ describe("visitor appearance", () => {
     store.selectPreset("cyberpunk");
     expect(store.getSnapshot().preset).toBe("cyberpunk");
   });
+
+  test.each([{}, { readFails: true }, { writeFails: true }])(
+    "keyboard unlock reaches current subscribers from a retained store without reload: %j",
+    (options) => {
+      const f = fixture(options);
+      const browser = Object.assign(f.events, {
+        localStorage: f.storage,
+        matchMedia: () => f.media,
+      });
+      const original = getBrowserAppearanceStore(browser);
+      original.getSnapshot();
+      const keyboard = createKonamiKeyboard(original.unlockCyberpunk);
+      const current = getBrowserAppearanceStore(browser);
+      expect(current).toBe(original);
+      const root = { dataset: {} };
+      let visiblePresets = [];
+      let notifications = 0;
+      const unsubscribe = current.subscribe(() => {
+        const value = current.getSnapshot();
+        applyAppearance(root, value, value.resolvedMode === "dark");
+        visiblePresets = presets.filter(
+          (preset) => preset.id !== "cyberpunk" || value.cyberpunkUnlocked,
+        );
+        notifications++;
+      });
+      expect(visiblePresets.some((preset) => preset.id === "cyberpunk")).toBe(false);
+      const before = notifications;
+      for (const key of konamiSequence) {
+        keyboard.handle({ key });
+      }
+      expect(notifications).toBe(before + 1);
+      expect(visiblePresets.some((preset) => preset.id === "cyberpunk")).toBe(true);
+      expect(root.dataset).toMatchObject({
+        palette: "cyberpunk",
+        theme: "dark",
+        accent: "neon",
+        font: "mono",
+      });
+      expect(current.getSnapshot()).toMatchObject({ cyberpunkUnlocked: true, preset: "cyberpunk" });
+
+      current.selectPreset("bw");
+      expect(original.getSnapshot().preset).toBe("bw");
+      for (const key of konamiSequence) {
+        keyboard.handle({ key });
+      }
+      expect(root.dataset.palette).toBe("cyberpunk");
+      unsubscribe();
+      const last = notifications;
+      original.selectPreset("bw");
+      expect(notifications).toBe(last);
+    },
+  );
 
   test.each(["light", "system"])(
     "Cyberpunk selection and repeated unlock restore dark from %s",

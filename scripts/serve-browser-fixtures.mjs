@@ -2,7 +2,15 @@ import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const allowed = new Set(["playing", "long-title", "stale", "malformed", "unavailable", "timeout"]);
+const allowed = new Set([
+  "playing",
+  "stopped",
+  "long-title",
+  "stale",
+  "malformed",
+  "unavailable",
+  "timeout",
+]);
 const track = {
   isPlaying: true,
   title: "Browser fixture track",
@@ -89,26 +97,28 @@ export function createBrowserFixtureServer(upstreamAddress = "http://127.0.0.1:3
 
       response.end(
         JSON.stringify(
-          scenario === "malformed"
-            ? { isPlaying: true, title: { invalid: true } }
-            : {
-                ...track,
-                ...(scenario === "long-title"
-                  ? {
-                      title:
-                        "A deliberately long song title to exercise the complete scrolling cassette label",
-                      artist:
-                        "A fixture artist with a long name for responsive spacing verification",
-                    }
-                  : {}),
-                progressCapturedAt: Date.now(),
-                ...(scenario === "stale"
-                  ? {
-                      stale: true,
-                      reason: "stale",
-                    }
-                  : {}),
-              },
+          scenario === "stopped"
+            ? { isPlaying: false }
+            : scenario === "malformed"
+              ? { isPlaying: true, title: { invalid: true } }
+              : {
+                  ...track,
+                  ...(scenario === "long-title"
+                    ? {
+                        title:
+                          "A deliberately long song title to exercise the complete scrolling cassette label",
+                        artist:
+                          "A fixture artist with a long name for responsive spacing verification",
+                      }
+                    : {}),
+                  progressCapturedAt: Date.now(),
+                  ...(scenario === "stale"
+                    ? {
+                        stale: true,
+                        reason: "stale",
+                      }
+                    : {}),
+                },
         ),
       );
       return;

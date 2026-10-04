@@ -156,17 +156,12 @@ export default function SpotifyWidget() {
     let cancelled = false;
     let consecutiveFailures = 0;
 
-    const scheduleNextFetch = (delay: number) => {
-      timeoutId = window.setTimeout(fetchSpotifyData, delay);
-    };
-
     const fetchSpotifyData = async () => {
       const requestController = new AbortController();
       controller = requestController;
 
       const deadline = window.setTimeout(() => requestController.abort(), 40_000);
-      let nextDelay = 30_000;
-      let stopPolling = false;
+      let data: SpotifyStatus;
 
       try {
         const response = await fetch("/api/spotify", {
@@ -177,35 +172,24 @@ export default function SpotifyWidget() {
           throw new Error(`Spotify endpoint returned ${response.status}`);
         }
 
-        const data = parseSpotifyStatus(await response.json());
-
-        if (cancelled) {
-          return;
-        }
-
-        setSong(data);
-        setIsLoaded(true);
-
-        const decision = getSpotifyPollDecision(data, consecutiveFailures);
-        consecutiveFailures = decision.consecutiveFailures;
-        nextDelay = decision.delay ?? 30_000;
-        stopPolling = decision.stop;
+        data = parseSpotifyStatus(await response.json());
       } catch {
-        if (cancelled) {
-          return;
-        }
-
-        setSong(unavailableSong);
-        setIsLoaded(true);
-
-        const decision = getSpotifyPollDecision(unavailableSong, consecutiveFailures);
-        consecutiveFailures = decision.consecutiveFailures;
-        nextDelay = decision.delay ?? 30_000;
+        data = unavailableSong;
       } finally {
         window.clearTimeout(deadline);
-        if (!cancelled && !stopPolling) {
-          scheduleNextFetch(nextDelay);
-        }
+      }
+
+      if (cancelled) {
+        return;
+      }
+
+      setSong(data);
+      setIsLoaded(true);
+
+      const decision = getSpotifyPollDecision(data, consecutiveFailures);
+      consecutiveFailures = decision.consecutiveFailures;
+      if (!decision.stop && decision.delay !== null) {
+        timeoutId = window.setTimeout(fetchSpotifyData, decision.delay);
       }
     };
 

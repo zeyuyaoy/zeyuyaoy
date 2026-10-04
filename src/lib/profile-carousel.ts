@@ -1,4 +1,4 @@
-export type WheelGesture = {
+type WheelGesture = {
   lastTime: number;
   distance: number;
   native: boolean;

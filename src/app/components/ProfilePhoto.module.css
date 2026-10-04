@@ -2,8 +2,7 @@
   --reveal-opacity: 0;
   --frame-color: var(--primary-color);
   --photo-transform: rotate(-5deg);
-  --photo-shadow:
-    var(--shadow-sm), 0 0 0 1px color-mix(in srgb, var(--primary-color) 24%, transparent);
+  --photo-shadow: var(--shadow-sm), 0 0 0 1px color-mix(in srgb, var(--primary-color) 24%, transparent);
   position: relative;
   display: block;
   width: 125px;
@@ -18,10 +17,9 @@
   box-shadow: var(--photo-shadow);
   transform: var(--photo-transform);
   cursor: pointer;
-  transition:
-    transform 140ms ease,
-    box-shadow 140ms ease,
-    border-color 140ms ease;
+  transition: transform 140ms ease,
+  box-shadow 140ms ease,
+  border-color 140ms ease;
 }
 
 .photo[aria-pressed="true"],
@@ -29,9 +27,8 @@
   --reveal-opacity: 1;
   --frame-color: var(--profile-reveal-color);
   --photo-transform: rotate(3deg) scale(1.03);
-  --photo-shadow:
-    var(--shadow-md), 0 0 18px color-mix(in srgb, var(--profile-reveal-color) 26%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--profile-reveal-color) 38%, transparent);
+  --photo-shadow: var(--shadow-md), 0 0 18px color-mix(in srgb, var(--profile-reveal-color) 26%, transparent),
+  0 0 0 1px color-mix(in srgb, var(--profile-reveal-color) 38%, transparent);
 }
 
 .photo:focus-visible {
@@ -45,9 +42,8 @@
     --reveal-opacity: 1;
     --frame-color: var(--profile-reveal-color);
     --photo-transform: rotate(3deg) scale(1.03);
-    --photo-shadow:
-      var(--shadow-md), 0 0 18px color-mix(in srgb, var(--profile-reveal-color) 26%, transparent),
-      0 0 0 1px color-mix(in srgb, var(--profile-reveal-color) 38%, transparent);
+    --photo-shadow: var(--shadow-md), 0 0 18px color-mix(in srgb, var(--profile-reveal-color) 26%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--profile-reveal-color) 38%, transparent);
   }
 }
 
@@ -65,7 +61,7 @@
   transition: opacity 140ms ease;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 960px) {
   .photo {
     width: 144px;
     height: 144px;

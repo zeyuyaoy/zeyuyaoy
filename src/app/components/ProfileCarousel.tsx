@@ -24,17 +24,20 @@ export default function ProfileCarousel({
 
   const select = useCallback(
     (index: number) => {
-      if (index < 0 || index >= items.length || index === selected.current) {
+      if (items.length < 2) {
         return;
       }
-      // Never leave focus inside a slide that is about to become inert.
+      const next = ((index % items.length) + items.length) % items.length;
+      if (next === selected.current) {
+        return;
+      }
       if (viewports.current[selected.current]?.contains(document.activeElement)) {
         frame.current?.focus({ preventScroll: true });
       }
       setDirection(index > selected.current ? 1 : -1);
-      selected.current = index;
-      setCurrent(index);
-      setAnnouncement(`${items[index].title}, ${itemLabel} ${index + 1} of ${items.length}`);
+      selected.current = next;
+      setCurrent(next);
+      setAnnouncement(`${items[next].title}, ${itemLabel} ${next + 1} of ${items.length}`);
     },
     [items, itemLabel],
   );
@@ -190,7 +193,7 @@ export default function ProfileCarousel({
         <button
           type="button"
           aria-label={`Previous ${itemLabel}`}
-          aria-disabled={current === 0}
+          aria-disabled={items.length < 2}
           aria-controls={`${prefix}-slide-${current}`}
           onClick={() => select(current - 1)}
         >
@@ -202,7 +205,7 @@ export default function ProfileCarousel({
         <button
           type="button"
           aria-label={`Next ${itemLabel}`}
-          aria-disabled={current === items.length - 1}
+          aria-disabled={items.length < 2}
           aria-controls={`${prefix}-slide-${current}`}
           onClick={() => select(current + 1)}
         >

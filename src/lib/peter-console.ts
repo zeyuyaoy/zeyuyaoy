@@ -70,6 +70,9 @@ export function createPeterConsole(
       (preset) => preset.id !== "cyberpunk" || appearance.getSnapshot().cyberpunkUnlocked,
     );
 
+  const presetCommand = (preset: (typeof presets)[number]) =>
+    preset.name.toLowerCase().replace("&", "");
+
   const saved = (message: string) => {
     view.heading(message);
     view.text(
@@ -189,14 +192,14 @@ export function createPeterConsole(
       const current = appearance.getSnapshot();
       view.heading("Make yourself at home");
       view.text(
-        `Current preset: ${current.preset} · mode: ${current.mode} (${current.resolvedMode})`,
+        `Current preset: ${presets.find((preset) => preset.id === current.preset)!.name} · mode: ${current.mode} (${current.resolvedMode})`,
       );
       view.text(`Accent: ${current.accent} · font: ${current.font}`);
       view.table(
         availablePresets().map((preset) => ({
           Preset: preset.name,
           Selected: preset.id === current.preset ? "✓" : "",
-          Command: `peter.theme("${preset.id}")`,
+          Command: `peter.theme("${presetCommand(preset)}")`,
         })),
       );
       view.text('Modes: peter.mode("light"), peter.mode("dark"), peter.mode("system").');
@@ -206,14 +209,12 @@ export function createPeterConsole(
       );
     },
     theme(id: unknown) {
-      const preset = availablePresets().find((item) => item.id === id);
+      const preset = availablePresets().find(
+        (item) => item.id === id || presetCommand(item) === id,
+      );
       if (!preset) {
-        view.text('Choose an available preset, for example peter.theme("editorial").');
-        view.text(
-          `Available: ${availablePresets()
-            .map((item) => item.id)
-            .join(", ")}.`,
-        );
+        view.text('Choose an available preset, for example peter.theme("bootstrap").');
+        view.text(`Available: ${availablePresets().map(presetCommand).join(", ")}.`);
         return "Appearance unchanged. Locked presets stay locked.";
       }
       appearance.selectPreset(preset.id);

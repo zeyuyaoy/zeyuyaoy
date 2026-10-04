@@ -73,25 +73,104 @@
 }
 
 .projectPeek {
-  height: 64px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 64px;
   flex: none;
   margin-inline: var(--space-8);
+  padding: var(--space-8);
+}
+
+.projectBackdrop {
+  position: absolute;
+  inset: 0;
   overflow: clip;
   opacity: 0.48;
   filter: saturate(0.65);
   mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
 }
 
-.projectPeek:focus-within,
-.projectPeek[data-expanded="true"] {
-  height: auto;
-  overflow: visible;
-  opacity: 1;
-  filter: none;
-  mask-image: none;
+.projectPeek:has(.projectBackdrop :focus-visible) {
   border-radius: var(--radius-md);
   outline: 2px solid var(--link-color);
   outline-offset: 3px;
+}
+
+.projectBackdrop:focus-within {
+  opacity: 1;
+  filter: none;
+  mask-image: none;
+}
+
+.githubButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  max-width: 100%;
+  padding: var(--space-8);
+  border: 2px solid var(--link-color);
+  border-radius: var(--radius-md);
+  background: var(--surface-color);
+  color: var(--link-color);
+  box-shadow: var(--shadow-sm);
+  font-size: max(var(--home-font-min, 0rem), calc(0.9rem * var(--home-font-scale, 1)));
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: background-color 120ms ease,
+  color 120ms ease,
+  box-shadow 120ms ease;
+}
+
+.githubButton:hover {
+  background: var(--link-color);
+  color: var(--background);
+  box-shadow: var(--shadow-md);
+}
+
+.githubButton:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+}
+
+.githubIcon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  background: currentColor;
+  mask: url("/github.svg") center / contain no-repeat;
+}
+
+.githubLabel {
+  display: grid;
+  grid-template-columns: 0fr;
+  min-width: 0;
+  opacity: 0;
+  transition: grid-template-columns 240ms ease,
+  opacity 180ms ease;
+}
+
+.githubLabelClip {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.githubLabelClip > span {
+  display: block;
+  width: max-content;
+  max-width: min(18em, calc(100vw - 10rem));
+  padding-left: var(--space-8);
+}
+
+.githubButton:hover .githubLabel,
+.githubButton:focus-visible .githubLabel {
+  grid-template-columns: 1fr;
+  opacity: 1;
 }
 
 .emptyState {
@@ -130,9 +209,7 @@
   .notebook {
     flex: none;
   }
-}
 
-@media (max-width: 800px) {
   .projectsContainer {
     text-align: center;
   }
