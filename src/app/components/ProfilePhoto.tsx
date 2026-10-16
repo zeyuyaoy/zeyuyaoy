@@ -6,7 +6,7 @@ import ProfilePic from "../../../public/profile.jpg";
 import ConanPic from "../../../public/conan.jpg";
 import styles from "./ProfilePhoto.module.css";
 
-const sizes = "(max-width: 560px) 120px, (max-width: 800px) 144px, 125px";
+const sizes = "(max-width: 560px) 120px, (max-width: 960px) 144px, 125px";
 
 export default function ProfilePhoto() {
   const [pinned, setPinned] = useState(false);

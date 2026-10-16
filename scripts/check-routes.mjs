@@ -101,6 +101,82 @@ for (const path of [
       assert.equal(entry["@context"], "https://schema.org", "JSON-LD string context");
     }
     assert.deepEqual(structuredData, [personJsonLd, websiteJsonLd], "Complete JSON-LD metadata");
+    const images = tags(text, "img");
+    const marquee = images.filter((image) =>
+      new URL(image.src, base).pathname.startsWith("/marquee/"),
+    );
+    assert.equal(marquee.length, 264, "All mounted marquee images bypass optimization");
+    for (const image of marquee) {
+      assert.equal(image.srcSet ?? image.srcset, undefined, "No marquee transformation candidates");
+      assert.equal(image.sizes, undefined, "No marquee responsive sizing hint");
+    }
+    const photoPaths = [
+      ...new Set(marquee.map((image) => new URL(image.src, base).pathname)),
+    ].sort();
+    assert.deepEqual(
+      photoPaths,
+      Array.from(
+        { length: 104 },
+        (_, index) => `/marquee/photo-${String(index + 1).padStart(3, "0")}.webp`,
+      ),
+      "All 104 direct marquee assets",
+    );
+    for (const photoPath of photoPaths) {
+      const photo = await fetch(new URL(photoPath, base), { signal: AbortSignal.timeout(10_000) });
+      assert.equal(photo.status, 200, photoPath);
+      const metadata = await sharp(Buffer.from(await photo.arrayBuffer())).metadata();
+      assert.equal(metadata.format, "webp", photoPath);
+      assert.equal(metadata.width, 960, photoPath);
+      assert.equal(metadata.height, 540, photoPath);
+    }
+    const optimized = images.filter(
+      (image) => new URL(image.src, base).pathname === "/_next/image",
+    );
+    assert.equal(optimized.length, 2, "Only the two profile images are initially optimized");
+    for (const image of optimized) {
+      const candidates = (image.srcSet ?? image.srcset)
+        .split(", ")
+        .map((candidate) => new URL(candidate.split(" ")[0], base));
+      assert.deepEqual(
+        candidates.map((candidate) => Number(candidate.searchParams.get("w"))),
+        [64, 96, 128, 256, 384, 640],
+        "Six profile resize candidates",
+      );
+      assert.equal(image.sizes, "(max-width: 560px) 120px, (max-width: 960px) 144px, 125px");
+      for (const candidate of candidates) {
+        assert.match(
+          candidate.searchParams.get("url"),
+          /^\/_next\/static\/(?:immutable\/)?media\/(?:profile|conan)\.[^/]+\.jpg$/,
+        );
+        assert.equal(candidate.searchParams.get("q"), "90", "Profile quality is preserved");
+      }
+      const photo = await fetch(new URL(image.src, base), {
+        headers: { Accept: "image/avif,image/webp" },
+        signal: AbortSignal.timeout(10_000),
+      });
+      assert.equal(photo.status, 200, image.src);
+      assert.ok(photo.headers.get("content-type")?.includes("image/webp"));
+      await photo.arrayBuffer();
+    }
+    const profileSource = new URL(optimized[0].src, base).searchParams.get("url");
+    for (const query of [
+      { url: "/marquee/photo-001.webp", w: "640", q: "75" },
+      { url: "/profile.jpg", w: "640", q: "90" },
+      { url: "/og-image.jpg", w: "640", q: "75" },
+      { url: "/bucket-webring.png", w: "64", q: "75" },
+      { url: `${profileSource}?v=1`, w: "640", q: "90" },
+      { url: profileSource, w: "3840", q: "90" },
+      { url: profileSource, w: "640", q: "80" },
+      { url: "https://example.com/image/cover", w: "64", q: "75" },
+      { url: "https://i.scdn.co/other/cover", w: "64", q: "75" },
+      { url: "https://i.scdn.co/image/cover?v=1", w: "64", q: "75" },
+    ]) {
+      const rejected = await fetch(new URL(`/_next/image?${new URLSearchParams(query)}`, base), {
+        signal: AbortSignal.timeout(10_000),
+      });
+      assert.equal(rejected.status, 400, `Disallowed transformation: ${JSON.stringify(query)}`);
+      await rejected.text();
+    }
     assert.equal(
       tags(text, "section").filter((tag) => tag["aria-label"] === "Profile").length,
       1,

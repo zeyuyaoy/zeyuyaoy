@@ -13,15 +13,23 @@ const nextConfig = {
   },
   outputFileTracingRoot: process.cwd(),
   images: {
+    localPatterns: [
+      { pathname: "/_next/static/media/**", search: "" },
+      { pathname: "/_next/static/immutable/media/**", search: "" },
+    ],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "i.scdn.co",
+        port: "",
+        pathname: "/image/**",
+        search: "",
       },
     ],
-    formats: ["image/webp", "image/avif"],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60,
+    formats: ["image/webp"],
+    deviceSizes: [640],
+    imageSizes: [64, 96, 128, 256, 384],
+    minimumCacheTTL: 2678400,
     qualities: [75, 90],
   },
 

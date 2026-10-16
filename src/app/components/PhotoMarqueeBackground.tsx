@@ -34,8 +34,7 @@ export default function PhotoMarqueeBackground({ queues }: { queues: PhotoMarque
                           alt=""
                           width={960}
                           height={540}
-                          sizes="auto, 600px"
-                          quality={75}
+                          unoptimized
                           loading="lazy"
                           fetchPriority="low"
                           decoding="async"
