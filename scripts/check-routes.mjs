@@ -92,6 +92,44 @@ for (const path of [
       assert.equal(matches[0].content, value, key);
     }
     assert.equal(tags(text, "link").find((tag) => tag.rel === "canonical")?.href, site.url);
+    const links = tags(text, "link");
+    for (const [rel, href] of [
+      ["icon", "/favicon.ico"],
+      ["icon", "/favicon-16x16.png"],
+      ["icon", "/favicon-32x32.png"],
+      ["shortcut icon", "/favicon.ico"],
+      ["apple-touch-icon", "/apple-touch-icon.png"],
+      ["manifest", "/site.webmanifest"],
+    ]) {
+      assert.ok(
+        links.some((link) => link.rel === rel && new URL(link.href, base).pathname === href),
+        `${href} is linked as ${rel}`,
+      );
+    }
+    const manifestResponse = await fetch(new URL("/site.webmanifest", base));
+    assert.equal(manifestResponse.status, 200, "Favicon manifest route");
+    const manifest = await manifestResponse.json();
+    assert.deepEqual(
+      manifest.icons.map((icon) => icon.src).sort(),
+      ["/android-chrome-192x192.png", "/android-chrome-512x512.png"],
+      "Both Android icons are used by the manifest",
+    );
+    for (const iconPath of [
+      "/favicon.ico",
+      "/favicon-16x16.png",
+      "/favicon-32x32.png",
+      "/apple-touch-icon.png",
+      ...manifest.icons.map((icon) => icon.src),
+    ]) {
+      const icon = await fetch(new URL(iconPath, base));
+      assert.equal(icon.status, 200, iconPath);
+      assert.ok(icon.headers.get("content-type")?.startsWith("image/"), iconPath);
+      assert.deepEqual(
+        Buffer.from(await icon.arrayBuffer()),
+        await readFile(new URL(`../public${iconPath}`, import.meta.url)),
+        `${iconPath} serves the supplied file`,
+      );
+    }
     const structuredData = [
       ...text.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g),
     ].map(([, json]) => JSON.parse(json));
