@@ -1,8 +1,16 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import styles from "../Profile.module.css";
 
 export default function ProfileLink({ href, children }: { href?: string; children: ReactNode }) {
   const external = href !== undefined && /^https?:\/\//i.test(href);
+  if (href?.startsWith("/") && !href.startsWith("//")) {
+    return (
+      <Link href={href} prefetch={false} className={styles.link}>
+        {children}
+      </Link>
+    );
+  }
   return (
     <a
       href={href}

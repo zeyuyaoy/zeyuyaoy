@@ -23,10 +23,6 @@
     min-height: var(--home-intro-height, 0px);
   }
 
-  .layout > [data-home-section="widgets"] {
-    min-height: var(--home-widgets-height, 0px);
-  }
-
   .layout > [data-home-section="footer"] {
     min-height: var(--home-footer-height, 0px);
   }

@@ -2,22 +2,6 @@ import type { ProfileContent, ProfileEntry, ProfileTab } from "@/lib/profile-con
 
 type PhotoMarqueePhoto = `/marquee/photo-${string}.webp`;
 export type PhotoMarqueeQueues = Readonly<Record<ProfileTab, readonly PhotoMarqueePhoto[]>>;
-type PhotoMarqueeSection = {
-  id: ProfileTab;
-  start: number;
-  count: number;
-  photos: readonly PhotoMarqueePhoto[];
-};
-
-export function createPhotoMarqueeSections(queues: PhotoMarqueeQueues): PhotoMarqueeSection[] {
-  let start = 0;
-  return (["about", "experience", "education"] as const).map((id) => {
-    const section = { id, start, count: queues[id].length, photos: queues[id] };
-    start += section.count;
-    return section;
-  });
-}
-
 const photoPath = (number: number): PhotoMarqueePhoto =>
   `/marquee/photo-${String(number).padStart(3, "0")}.webp`;
 

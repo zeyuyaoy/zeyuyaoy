@@ -11,10 +11,13 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "test": "bun test",
-    "check": "bun run format:check && bun run lint && bun run typecheck && bun test && bun run build",
+    "test": "bun run test:portfolio && bun run test:research",
+    "check": "bun run format:check && bun run lint && bun run typecheck && bun run test && bun run build",
     "check:routes": "bun scripts/check-routes.mjs",
-    "spotify:authorize": "node scripts/spotify-authorize.mjs"
+    "spotify:authorize": "node scripts/spotify-authorize.mjs",
+    "test:portfolio": "bun test ./tests",
+    "test:research": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -25,7 +28,10 @@
     "react-markdown": "^10.1.0",
     "remark-parse": "^11.0.0",
     "server-only": "^0.0.1",
-    "unified": "^11.0.5"
+    "unified": "^11.0.5",
+    "redis": "6.2.1",
+    "js-yaml": "5.4.2",
+    "lucide-react": "1.48.0"
   },
   "devDependencies": {
     "@types/mdast": "^4.0.4",
@@ -34,14 +40,24 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.3.6",
     "prettier": "3.9.9",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "5.0.2",
+    "jsdom": "30.1.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/jest-dom": "7.0.1",
+    "@types/react-dom": "19.3.0",
+    "@playwright/test": "1.61.1"
   },
-  "packageManager": "bun@1.3.14",
+  "packageManager": "bun@1.4.2",
   "overrides": {
     "baseline-browser-mapping": "2.11.22",
     "browserslist": "4.28.9"
   },
   "trustedDependencies": [
     "unrs-resolver"
-  ]
+  ],
+  "engines": {
+    "node": ">=24",
+    "bun": ">=1.4.2"
+  }
 }

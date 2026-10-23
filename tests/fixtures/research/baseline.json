@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "capturedAt": "2026-10-18T01:07:42.624Z",
+  "entries": [
+    {
+      "key": "collection:biorsp",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-18T16:26:25.193Z",
+        "projects": "orcid-162573947,biorsp-abstracts,biorsp-posters,orcid-199324188",
+        "description": "Conducted research in the AI.MED Laboratory at the University of Alabama at Birmingham under Professor Jake Y. Chen, focusing on quantitative spatial-heterogeneity metrics for single-cell embedding representations",
+        "createdAt": "2025-11-23T13:00:18.987Z",
+        "name": "BioRSP"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "count:ai4all",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:biorsp-abstracts",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:biorsp-posters",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:garcia",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:mapexploc",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:orcid-162573947",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:orcid-199324188",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "count:uchicago-bios10007",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    },
+    {
+      "key": "link:ai4all",
+      "type": "string",
+      "value": "https://drive.google.com/file/d/1Lj-B5yBkR5fOZmgIxEgMlK695zorjtOU/view",
+      "ttl": -1
+    },
+    {
+      "key": "link:biorsp-abstracts",
+      "type": "string",
+      "value": "https://drive.google.com/file/d/1M9qLzDH-AO9MuzlpVl6fm_ePKsb5_K4d/view",
+      "ttl": -1
+    },
+    {
+      "key": "link:biorsp-posters",
+      "type": "string",
+      "value": "https://drive.google.com/file/d/1PDP1lgk9IC73NnwI9GHKZIeo-axgModh/view",
+      "ttl": -1
+    },
+    {
+      "key": "link:garcia",
+      "type": "string",
+      "value": "https://drive.google.com/file/d/1-3LhfbTCgwFSExLKwH8TbirZM-C9JFfB/view?usp=sharing",
+      "ttl": -1
+    },
+    {
+      "key": "link:mapexploc",
+      "type": "string",
+      "value": "https://youtu.be/-KZpljBy5gM",
+      "ttl": -1
+    },
+    {
+      "key": "link:orcid-162573947",
+      "type": "string",
+      "value": "https://doi.org/10.1101/2024.06.25.599250",
+      "ttl": -1
+    },
+    {
+      "key": "link:orcid-199324188",
+      "type": "string",
+      "value": "https://doi.org/10.1145/3765612.3767793",
+      "ttl": -1
+    },
+    {
+      "key": "link:uchicago-bios10007",
+      "type": "string",
+      "value": "https://drive.google.com/file/d/1TpG24s6-Bp3fwSNGGUvTc3xirWzOcZXX/view",
+      "ttl": -1
+    },
+    {
+      "key": "meta:ai4all",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-26T12:40:49.986Z",
+        "title": "Stanford AI4ALL @ Stanford University Human-Centered AI (HAI)",
+        "startDate": "2023-06",
+        "endDate": "2023-06",
+        "description": "Explored autonomous aircraft taxiing using X-Plane simulations, a custom 5-layer neural network for runway alignment, and a PID-controlled autonomy stack",
+        "createdAt": "2025-11-23T11:06:10.116Z",
+        "tags": "machine learning,autonomous systems,robotics,simulation,computer vision,neural networks",
+        "githubRepo": "https://github.com/cytronicoder/ai4all-robotics"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:biorsp-abstracts",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-13T03:20:53.051Z",
+        "title": "BioRSP Conference Abstracts",
+        "endDate": "2025",
+        "startDate": "2023",
+        "description": "Abstract submissions on BioRSP prepared for major computational biology conferences, including ACM BCB 2025, ISMB/ECCB 2025, IEEE BHI 2024, ICIBM 2024, and GIW ISCB-Asia 2023",
+        "createdAt": "2025-10-16T17:35:14.428Z",
+        "permanent": "0",
+        "tags": "embeddings,computational biology"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:biorsp-posters",
+      "type": "hash",
+      "value": {
+        "createdAt": "2025-10-16T17:36:19.692Z",
+        "permanent": "0",
+        "updatedAt": "2025-12-13T03:21:00.578Z",
+        "description": "Posters from my BioRSP research",
+        "tags": "embeddings,computational biology",
+        "title": "BioRSP Conference Posters",
+        "startDate": "2023",
+        "endDate": "2025"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:garcia",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-26T12:40:30.377Z",
+        "title": "Garcia Research Scholar Program @ Stony Brook University",
+        "startDate": "2024-06",
+        "endDate": "2024-08",
+        "description": "Conducted AI-driven computational biology research on generative inhibitor design and protein–ligand interaction analysis under Prof. Yuefan Deng (Stony Brook University) and Prof. Bertal Aktas (Harvard Medical School)",
+        "createdAt": "2025-10-04T06:46:56.295Z",
+        "permanent": "1",
+        "tags": "drug discovery,molecular dynamics,machine learning,computational biology"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:mapexploc",
+      "type": "hash",
+      "value": {
+        "description": "Explainable ML model for predicting subcellular protein localization from amino acid sequences; winner of the 2025 ISCB YBS Student Challenge at ISMB/ECCB.",
+        "artifacts": "[]",
+        "permanent": "0",
+        "researchAreas": "[]",
+        "tags": "bioinformatics,computational biology,machine learning,neural networks",
+        "organizations": "[]",
+        "updatedAt": "2026-09-27T01:23:19.611Z",
+        "technologies": "[]",
+        "methods": "[]",
+        "githubRepo": "",
+        "longDescription": "",
+        "title": "Explainable Subcellular Localization Predictor",
+        "collaborators": "[]",
+        "startDate": "2025-07-21",
+        "endDate": "2025-07-21",
+        "createdAt": "2026-04-03T00:40:06.143Z",
+        "photoSetId": ""
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:orcid-162573947",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-13T03:51:59.107Z",
+        "title": "BioRSP bioRxiv Preprint",
+        "endDate": "2024-06",
+        "startDate": "2024-06",
+        "description": "Title: Detecting Data Embedding Spatial Patterns and Identifying Biomarkers with BioRSP",
+        "createdAt": "2025-10-16T15:51:51.082Z",
+        "permanent": "0",
+        "tags": "embeddings,computational biology"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:orcid-199324188",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-13T03:52:07.570Z",
+        "title": "BioRSP @ ACM BCB 2025 Proceedings",
+        "endDate": "2025-11",
+        "startDate": "2025-11",
+        "description": "Title: BioRSP: Angular Scanning for Directional Gene Expression Enrichment in Single-Cell Embeddings",
+        "createdAt": "2025-12-11T01:49:07.585Z",
+        "permanent": "0",
+        "tags": "embeddings,computational biology"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "meta:uchicago-bios10007",
+      "type": "hash",
+      "value": {
+        "updatedAt": "2025-12-13T09:50:00.623Z",
+        "title": "Mathematics & Computational Research in Biological Sciences Program @ University of Chicago",
+        "startDate": "2023-06",
+        "endDate": "2023-06",
+        "description": "Conducted exome sequencing data analysis from the 1000 Genomes Project, identifying over 189,000 disease- and drug-associated genetic variants using Midway2 HPC resources at UChicago's Research Computing Center",
+        "createdAt": "2025-12-13T09:26:38.800Z",
+        "tags": "bioinformatics,computational biology,genomics,HPC,variant analysis",
+        "githubRepo": "https://github.com/cytronicoder/bios10007-final-project"
+      },
+      "ttl": -1
+    }
+  ]
+}

@@ -1,113 +1,184 @@
 "use client";
 
-import { type KeyboardEvent, type ReactNode, useId, useRef } from "react";
-import type { ProfileTab } from "@/lib/profile-content";
-import { useProfileTab } from "./ProfileTabProvider";
+import dynamic from "next/dynamic";
+import { type MouseEvent, type ReactNode, useRef, useState } from "react";
+import { panelUrl, parseHomePanel } from "@/lib/home-panels";
+import MusicOverlay from "./MusicOverlay";
+import NotebookDialog from "./NotebookDialog";
+import useHomeLocation, { navigateHome } from "./useHomeLocation";
 import styles from "./Profile.module.css";
 
-const tabs = [
+const ResearchPopup = dynamic(() => import("./research/ResearchPopup"), {
+  loading: () => <p role="status">Loading research…</p>,
+});
+const sections = [
   { id: "about", label: "About Me" },
+  { id: "research", label: "Research" },
   { id: "experience", label: "Experience" },
   { id: "education", label: "Education" },
+  { id: "music", label: "Music" },
 ] as const;
+const popupSections = sections.filter(
+  (section) => section.id !== "about" && section.id !== "music",
+);
 
-export default function ProfileTabs({ panels }: { panels: Record<ProfileTab, ReactNode> }) {
-  const { selected, setSelected } = useProfileTab();
-  const prefix = useId();
-  const list = useRef<HTMLDivElement>(null);
-  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
-
-  function select(index: number) {
-    const button = buttons.current[index];
-    setSelected(tabs[index].id);
-    button?.focus({ preventScroll: true });
-
-    if (button && list.current) {
-      const strip = list.current;
-      const bounds = strip.getBoundingClientRect();
-      const tabBounds = button.getBoundingClientRect();
-      const inset = Number.parseFloat(getComputedStyle(strip).scrollPaddingInlineStart) || 0;
-      if (tabBounds.left < bounds.left + inset) {
-        strip.scrollLeft += tabBounds.left - bounds.left - inset;
-      } else if (tabBounds.right > bounds.right - inset) {
-        strip.scrollLeft += tabBounds.right - bounds.right + inset;
+export default function ProfileTabs({
+  panels,
+}: {
+  panels: Record<"about" | "experience" | "education" | "music", ReactNode>;
+}) {
+  const current = useHomeLocation();
+  const selected = parseHomePanel(new URL(current, "https://zeyuyaoy.com").search);
+  const [musicOpen, setMusicOpen] = useState(false);
+  const musicTrigger = useRef<HTMLButtonElement>(null);
+  const opener = useRef<HTMLElement | null>(null);
+  const title = sections.find((section) => section.id === selected)?.label ?? "";
+  const selectedIndex = popupSections.findIndex((section) => section.id === selected);
+  const previous = popupSections[(selectedIndex + popupSections.length - 1) % popupSections.length];
+  const next = popupSections[(selectedIndex + 1) % popupSections.length];
+  function close() {
+    navigateHome(panelUrl(location.href, null));
+  }
+  function followPanelLink(event: MouseEvent<HTMLElement>) {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    const link = (event.target as Element).closest("a");
+    if (!link || link.target === "_blank" || link.hasAttribute("download")) {
+      return;
+    }
+    const url = new URL(link.href, location.href);
+    if (
+      url.origin === location.origin &&
+      url.pathname === "/" &&
+      (parseHomePanel(url.search) || (selected && !url.search && !url.hash))
+    ) {
+      event.preventDefault();
+      if (!selected) {
+        opener.current = link;
+      }
+      if (selected === "research" && parseHomePanel(url.search) === "research") {
+        const destination = new URL(location.href);
+        destination.searchParams.delete("project");
+        for (const key of new Set(url.searchParams.keys())) {
+          const values = url.searchParams.getAll(key);
+          destination.searchParams.set(key, values[0]);
+          for (const value of values.slice(1)) {
+            destination.searchParams.append(key, value);
+          }
+        }
+        if (url.hash) {
+          destination.hash = url.hash;
+        }
+        navigateHome(`${destination.pathname}${destination.search}${destination.hash}`);
+      } else {
+        navigateHome(`${url.pathname}${url.search}${url.hash}`);
       }
     }
   }
-
-  function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next: number;
-    switch (event.key) {
-      case "ArrowRight":
-        next = (index + 1) % tabs.length;
-        break;
-      case "ArrowLeft":
-        next = (index + tabs.length - 1) % tabs.length;
-        break;
-      case "Home":
-        next = 0;
-        break;
-      case "End":
-        next = tabs.length - 1;
-        break;
-      default:
-        return;
-    }
-    event.preventDefault();
-    select(next);
-  }
-
   return (
-    <section className={styles.profile} aria-label="Profile" data-home-section="bio">
+    <section
+      className={styles.profile}
+      aria-label="Profile"
+      data-home-section="bio"
+      onClickCapture={followPanelLink}
+    >
       <div className={styles.header}>
         <div className={styles.windowDots} aria-hidden="true">
           <span />
           <span />
           <span />
         </div>
-        <div ref={list} className={styles.tabs} role="tablist" aria-label="Profile sections">
-          {tabs.map((tab, index) => (
+        <nav className={styles.tabs} aria-label="Profile sections">
+          {sections.map((section) => (
             <button
-              key={tab.id}
+              key={section.id}
               ref={(element) => {
-                buttons.current[index] = element;
+                if (section.id === "music") {
+                  musicTrigger.current = element;
+                }
+                if (section.id === selected && !opener.current) {
+                  opener.current = element;
+                }
               }}
               type="button"
-              role="tab"
-              id={`${prefix}-tab-${tab.id}`}
-              aria-controls={`${prefix}-panel-${tab.id}`}
-              aria-selected={selected === tab.id}
-              tabIndex={selected === tab.id ? 0 : -1}
               className={styles.tab}
-              onClick={() => select(index)}
-              onKeyDown={(event) => onKeyDown(event, index)}
+              aria-label={section.label}
+              aria-current={section.id === "about" ? "page" : undefined}
+              aria-haspopup={
+                section.id === "about" || section.id === "music" ? undefined : "dialog"
+              }
+              aria-expanded={
+                section.id === "music"
+                  ? musicOpen
+                  : section.id === "about"
+                    ? undefined
+                    : selected === section.id
+              }
+              aria-controls={section.id === "music" && musicOpen ? "homepage-cassette" : undefined}
+              onClick={(event) => {
+                if (section.id === "music") {
+                  setMusicOpen(true);
+                  document
+                    .querySelector<HTMLButtonElement>(
+                      '#homepage-cassette button[aria-label="Change cassette finish"]',
+                    )
+                    ?.focus({ preventScroll: true });
+                  return;
+                }
+                if (section.id === "about") {
+                  close();
+                  return;
+                }
+                opener.current = event.currentTarget;
+                navigateHome(panelUrl(location.href, section.id));
+              }}
             >
-              {tab.label}
+              {section.id === "music" ? (
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M9 18V5l12-2v13" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="16" r="3" />
+                </svg>
+              ) : (
+                section.label
+              )}
             </button>
           ))}
-        </div>
+        </nav>
       </div>
-      <div className={styles.panels}>
-        {tabs.map((tab) => (
-          <div
-            key={tab.id}
-            role="tabpanel"
-            id={`${prefix}-panel-${tab.id}`}
-            aria-labelledby={`${prefix}-tab-${tab.id}`}
-            aria-hidden={selected !== tab.id}
-            inert={selected !== tab.id}
-            data-profile-about={tab.id === "about"}
-            tabIndex={tab.id === "about" && selected === tab.id ? 0 : undefined}
-            className={styles.panel}
-          >
-            {tab.id === "about" ? (
-              <div className={styles.aboutContent}>{panels[tab.id]}</div>
-            ) : (
-              panels[tab.id]
-            )}
-          </div>
-        ))}
-      </div>
+      <div className={styles.aboutContent}>{panels.about}</div>
+      <MusicOverlay open={musicOpen} onClose={() => setMusicOpen(false)} trigger={musicTrigger}>
+        {panels.music}
+      </MusicOverlay>
+      {selected ? (
+        <NotebookDialog
+          title={title}
+          onClose={close}
+          returnFocus={opener}
+          previousTitle={previous.label}
+          nextTitle={next.label}
+          onNavigate={(direction) => {
+            const section =
+              popupSections[
+                (selectedIndex + direction + popupSections.length) % popupSections.length
+              ];
+            navigateHome(panelUrl(location.href, section.id));
+          }}
+        >
+          {selected === "research" ? <ResearchPopup /> : panels[selected]}
+        </NotebookDialog>
+      ) : null}
     </section>
   );
 }

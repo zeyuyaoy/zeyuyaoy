@@ -1,15 +1,12 @@
 import { appearanceOptions, presets } from "./appearance";
 import { commandGuide, consoleContent as content } from "./console-content";
 import { type ConsoleOutput, createConsoleRenderer } from "./console-renderer";
-import type { ProjectData } from "./github";
 import type { appearanceStore } from "./theme-store";
 
 interface PeterConsole {
   help(command?: string): string;
 
   about(): string;
-
-  projects(name?: string): string;
 
   research(): string;
 
@@ -45,14 +42,13 @@ declare global {
 type ConsoleDependencies = {
   output: ConsoleOutput;
   appearance: Pick<typeof appearanceStore, "getSnapshot" | "selectPreset" | "update" | "reset">;
-  data: ProjectData;
   origin: string;
 };
 
 type Discovery = "conan" | "astra";
 
 export function createPeterConsole(
-  { output, appearance, data, origin }: ConsoleDependencies,
+  { output, appearance, origin }: ConsoleDependencies,
   discoveries = new Set<Discovery>(),
 ): Readonly<PeterConsole> {
   const view = createConsoleRenderer(output);
@@ -93,7 +89,7 @@ export function createPeterConsole(
     help(command: unknown = undefined) {
       if (command !== undefined) {
         if (typeof command !== "string" || !Object.hasOwn(commandGuide, command)) {
-          view.text('Unknown command. Use peter.help() or peter.help("projects").');
+          view.text('Unknown command. Use peter.help() or peter.help("research").');
           return "Help is a good place to start.";
         }
         const [, example, description] = commandGuide[command as keyof typeof commandGuide];
@@ -117,53 +113,6 @@ export function createPeterConsole(
       content.about.forEach(view.text);
       return next("Nice to meet you.", "peter.research()");
     },
-    projects(name: unknown = undefined) {
-      if (name !== undefined && (typeof name !== "string" || !name.trim())) {
-        view.text('Use peter.projects() or peter.projects("name") with a project name.');
-        return "Project names must be non-empty strings.";
-      }
-      view.heading("Things I've been building");
-      if (data.status === "unavailable") {
-        view.text("Projects are unavailable right now.");
-        links([["Browse on GitHub", content.github]]);
-        return next("The rest of the terminal is ready to explore.", "peter.research()");
-      }
-      if (!data.projects.length) {
-        view.text("No public projects at the moment.");
-        return next("Check back later.", "peter.research()");
-      }
-      if (typeof name === "string") {
-        const query = name.trim().toLowerCase();
-        const project = data.projects.find((item) => item.name.toLowerCase() === query);
-        if (!project) {
-          const matches = data.projects.filter((item) => item.name.toLowerCase().includes(query));
-          const suggestions = (matches.length ? matches : data.projects).slice(0, 5);
-          view.text(`No project named ${JSON.stringify(name)}. Try one of these:`);
-          suggestions.forEach((item) => view.text(`peter.projects(${JSON.stringify(item.name)})`));
-          return "Use an exact project name; capitalization doesn't matter.";
-        }
-        view.heading(project.name);
-        view.text(project.description || "No description provided yet.");
-        view.text(`${project.stars} stars`);
-        links([["GitHub", project.url]]);
-        return next("Project explored.", "peter.projects()");
-      }
-      const projects = data.projects.slice(0, 8);
-      view.table(
-        projects.map((project) => ({
-          Project: project.name,
-          Description: project.description || "No description provided yet.",
-          Stars: project.stars,
-        })),
-      );
-      view.details("Project links", () =>
-        links(projects.map((project) => [project.name, project.url])),
-      );
-      view.text(
-        `Showing ${projects.length} of ${data.projects.length} projects. Look up any by its exact name.`,
-      );
-      return next("Projects listed.", `peter.projects(${JSON.stringify(projects[0].name)})`);
-    },
     research() {
       view.heading("Computing × biology");
       view.text(
@@ -171,7 +120,7 @@ export function createPeterConsole(
       );
       view.text(content.researchTopics.join(" · "));
       links(content.research);
-      return next("Research links ready.", "peter.projects()");
+      return next("Research links ready.", "peter.interests()");
     },
     interests() {
       view.heading("Off the clock");
@@ -248,7 +197,7 @@ export function createPeterConsole(
         return "Look toward the stars.";
       }
       view.text("Both discoveries found. Thanks for looking a little closer.");
-      return next("Case closed; onwards to the stars.", "peter.projects()");
+      return next("Case closed; onwards to the stars.", "peter.research()");
     },
     conan() {
       discoveries.add("conan");

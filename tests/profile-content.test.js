@@ -6,6 +6,18 @@ const education = (first = "### School\n\n> 2022–2026\n\nSchool description.")
   `## Formal education\n\n${first}`;
 
 describe("profile Markdown", () => {
+  test("preserves local research heading links and rejects protocol-relative destinations", () => {
+    expect(
+      parseExperience("## [Garcia](/?panel=research&project=garcia)\n\n> 2024\n\nResearch.")[0]
+        .href,
+    ).toBe("/?panel=research&project=garcia");
+    expect(() => parseExperience("## [A](//example.com)\n\n> 2024\n\nResearch.")).toThrow(
+      "Heading links",
+    );
+    expect(() => parseExperience("## [A](/\\\\example.com)\n\n> 2024\n\nResearch.")).toThrow(
+      "Heading links",
+    );
+  });
   test("keeps headings, formatting, and paragraphs while sorting entries by date", () => {
     const body =
       "First **bold** and *emphasized* paragraph with [a link](https://example.com).\n\nSecond paragraph.\n\n- One\n- Two";
@@ -194,11 +206,14 @@ describe("profile Markdown", () => {
     ]);
     expect(() => parseAbout(about)).not.toThrow();
     expect(parseExperience(experience).map((entry) => entry.title)).toEqual([
+      "Singapore Army",
       "ISCB Youth Bioinformatics Symposium",
       "Garcia Research Scholar Program @ Stony Brook University",
       "LaunchX Innovation Program @ University of Michigan, Ann Arbor",
       "Stanford AI4ALL @ Stanford University",
       "Mathematics & Computational Research in Biological Sciences @ University of Chicago",
+      "AI.MED Lab @ University of Alabama at Birmingham",
+      "Geekcamp Singapore",
       "Fundamentals of Computer Science @ Johns Hopkins CTY",
       "BuildingBloCS",
       "Hack Club",

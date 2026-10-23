@@ -9,7 +9,6 @@
 }
 
 .cassette {
-  flex: 1;
   --cassette-shell: var(--background-color);
   --cassette-paper: var(--surface-color);
   --cassette-ink: var(--text-color);
@@ -24,18 +23,19 @@
   background-image: linear-gradient(160deg, rgb(255 255 255 / 5%), transparent 55%);
   border: 1px solid var(--cassette-border);
   border-radius: var(--radius-lg);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%),
-  inset 0 -2px 0 rgb(0 0 0 / 12%),
-  0 4px 10px rgb(0 0 0 / 12%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 25%),
+    inset 0 -2px 0 rgb(0 0 0 / 12%),
+    0 4px 10px rgb(0 0 0 / 12%);
 }
 
 .cassette::before {
   position: absolute;
   z-index: 1;
-  top: 9%;
+  top: 7%;
   right: 7.5%;
   left: 7.5%;
-  height: 54%;
+  height: 63%;
   content: "";
   background-color: var(--cassette-paper, #e8ecdd);
   background-image: linear-gradient(
@@ -54,9 +54,10 @@
   width: clamp(7px, 2.6%, 12px);
   aspect-ratio: 1;
   background: color-mix(in srgb, var(--cassette-ink) 22%, var(--cassette-shell));
-  border-radius: 50%;
-  box-shadow: inset 0 1px 1px rgb(0 0 0 / 18%),
-  0 1px 0 rgb(255 255 255 / 15%);
+  border-radius: var(--radius-round);
+  box-shadow:
+    inset 0 1px 1px rgb(0 0 0 / 18%),
+    0 1px 0 rgb(255 255 255 / 15%);
 }
 
 .screw::before {
@@ -67,7 +68,7 @@
   height: 8%;
   content: "";
   background: color-mix(in srgb, var(--cassette-ink) 40%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .screwTopLeft {
@@ -93,18 +94,18 @@
 .trackLabel {
   position: absolute;
   z-index: 4;
-  top: 12.5%;
-  right: 11.5%;
-  left: 11.5%;
-  height: 26%;
+  top: 10%;
+  right: 10%;
+  left: 10%;
+  height: 27%;
   display: flex;
   align-items: center;
-  gap: clamp(var(--space-8), 2vw, var(--space-12));
+  gap: 2cqw;
   min-width: 0;
-  padding: var(--space-8) clamp(var(--space-12), 2.2vw, var(--space-16));
+  padding: 1cqw 2cqw;
   color: var(--cassette-ink);
   text-decoration: none;
-  border-radius: min(8px, var(--radius-md));
+  border-radius: var(--radius-md);
 }
 
 a.trackLabel:focus-visible {
@@ -123,12 +124,12 @@ a.trackLabel:focus-visible {
 
 .albumArtwork {
   position: relative;
-  flex: 0 0 clamp(38px, 9vw, 52px);
-  width: clamp(38px, 9vw, 52px);
+  flex: 0 0 13cqw;
+  width: 13cqw;
   aspect-ratio: 1;
   overflow: hidden;
   background: var(--inset-color);
-  border-radius: clamp(7px, 1.6vw, 10px);
+  border-radius: var(--radius-md);
 }
 
 .albumArtwork img {
@@ -142,7 +143,7 @@ a.trackLabel:focus-visible {
   gap: var(--space-4);
   margin-bottom: var(--space-4);
   color: var(--cassette-muted);
-  font-size: clamp(0.48rem, 1.45vw, 0.66rem);
+  font-size: clamp(0.5rem, 2.8cqw, 0.66rem);
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -152,11 +153,11 @@ a.trackLabel:focus-visible {
   width: 0.48em;
   height: 0.48em;
   background: currentColor;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
 }
 
 .live {
-  color: var(--accent-ink);
+  color: var(--cassette-ink);
 }
 
 .live .statusDot {
@@ -176,7 +177,7 @@ a.trackLabel:focus-visible {
 
 .songTitle {
   color: var(--cassette-ink);
-  font-size: clamp(0.72rem, 2.6vw, 1.1rem);
+  font-size: clamp(0.75rem, 4.2cqw, 1rem);
   font-weight: 700;
   letter-spacing: -0.01em;
 }
@@ -184,7 +185,7 @@ a.trackLabel:focus-visible {
 .artistName {
   margin-top: 0;
   color: var(--cassette-muted);
-  font-size: clamp(0.58rem, 1.9vw, 0.8rem);
+  font-size: clamp(0.625rem, 3.3cqw, 0.8rem);
 }
 
 .marqueeTrack,
@@ -239,54 +240,64 @@ a.trackLabel:focus-visible {
 .tapeWindow {
   position: absolute;
   z-index: 3;
-  top: 39%;
-  right: 18%;
-  left: 18%;
-  height: 20.5%;
+  top: 40%;
+  right: 16%;
+  left: 16%;
+  height: 26%;
+  border: 2px solid color-mix(in srgb, var(--cassette-hardware) 70%, black);
+  border-radius: var(--radius-pill);
+  background:
+    linear-gradient(175deg, rgb(255 255 255 / 12%), transparent 55%),
+    color-mix(in srgb, var(--cassette-shell) 30%, #201c18);
+  box-shadow:
+    inset 0 2px 4px rgb(0 0 0 / 45%),
+    0 1px 0 rgb(255 255 255 / 30%);
 }
 
 .tapeWindow::after {
   position: absolute;
-  top: 49%;
+  bottom: 16%;
   right: 20%;
   left: 20%;
-  height: 1px;
+  height: 2px;
   content: "";
-  background: color-mix(in srgb, var(--cassette-hardware) 35%, transparent);
+  background: #74604a;
 }
 
 .reel {
   position: absolute;
   z-index: 2;
   top: 50%;
-  width: 18.8%;
+  width: 24%;
   aspect-ratio: 1;
   background: color-mix(in srgb, var(--cassette-hardware) 28%, var(--cassette-paper));
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--cassette-hardware) 12%, var(--cassette-paper)),
-  0 1px 2px rgb(0 0 0 / 15%);
+  border-radius: var(--radius-round);
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--cassette-hardware) 12%, var(--cassette-paper)),
+    0 1px 2px rgb(0 0 0 / 15%);
   translate: 0 -50%;
 }
 
 .reelLeft {
-  left: 12.5%;
+  left: 8%;
 }
 
 .reelRight {
-  right: 12.5%;
+  right: 8%;
 }
 
 .reelHub {
   position: absolute;
   inset: 17%;
-  background: radial-gradient(circle, var(--cassette-paper) 0 24%, transparent 25%),
-  repeating-conic-gradient(
-    from 0deg,
-    var(--cassette-hardware) 0deg 12deg,
-    var(--cassette-paper) 12deg 60deg
-  );
+  background:
+    radial-gradient(circle, var(--cassette-paper) 0 24%, transparent 25%),
+    repeating-conic-gradient(
+      from 0deg,
+      var(--cassette-hardware) 0deg 12deg,
+      var(--cassette-paper) 12deg 60deg
+    );
   border: 2px solid var(--cassette-hardware);
-  border-radius: 50%;
+  border-radius: var(--radius-round);
 }
 
 .spinning {
@@ -302,21 +313,21 @@ a.trackLabel:focus-visible {
 .progressRow {
   position: absolute;
   z-index: 5;
-  top: 66%;
-  right: 19%;
-  left: 19%;
+  top: 71%;
+  right: 12%;
+  left: 12%;
   display: grid;
   grid-template-columns: minmax(28px, auto) 1fr minmax(28px, auto);
   align-items: center;
-  gap: clamp(var(--space-4), 1.5vw, var(--space-12));
-  padding: var(--space-4) clamp(var(--space-4), 1.2vw, var(--space-8));
+  gap: 2cqw;
+  padding: 0;
 }
 
 .time {
   min-width: 0;
   color: var(--cassette-ink);
   font-family: var(--font-mono), sans-serif;
-  font-size: clamp(0.48rem, 1.45vw, 0.66rem);
+  font-size: clamp(0.5rem, 2.8cqw, 0.66rem);
   font-variant-numeric: tabular-nums;
   line-height: 1;
   text-align: center;
@@ -324,27 +335,27 @@ a.trackLabel:focus-visible {
 
 .progress {
   width: 100%;
-  height: clamp(3px, 0.8vw, 5px);
+  height: 1.2cqw;
   overflow: hidden;
   appearance: none;
   background: color-mix(in srgb, var(--cassette-ink) 18%, var(--cassette-shell));
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .progress::-webkit-progress-bar {
   background: color-mix(in srgb, var(--cassette-ink) 18%, var(--cassette-shell));
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 .progress::-webkit-progress-value {
-  background: var(--accent-ink);
-  border-radius: 999px;
+  background: var(--cassette-ink);
+  border-radius: var(--radius-pill);
 }
 
 .progress::-moz-progress-bar {
-  background: var(--accent-ink);
-  border-radius: 999px;
+  background: var(--cassette-ink);
+  border-radius: var(--radius-pill);
 }
 
 .lowerDeck {
@@ -357,7 +368,7 @@ a.trackLabel:focus-visible {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: clamp(10px, 4.2vw, 24px);
+  gap: 5cqw;
   padding-bottom: 4.2%;
   background: linear-gradient(
     180deg,
@@ -373,88 +384,36 @@ a.trackLabel:focus-visible {
 .deckSlot {
   display: block;
   flex: 0 0 auto;
-  height: clamp(7px, 2.5vw, 13px);
+  height: 3cqw;
   background: color-mix(in srgb, var(--cassette-shell) 65%, black);
   border: 1px solid color-mix(in srgb, var(--cassette-ink) 60%, var(--cassette-shell));
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 25%);
 }
 
 .deckHole {
-  width: clamp(7px, 2.5vw, 13px);
-  border-radius: 50%;
+  width: 3cqw;
+  border-radius: var(--radius-round);
 }
 
 .deckPin {
-  width: clamp(6px, 2vw, 10px);
-  border-radius: 35%;
+  width: 2.4cqw;
+  border-radius: var(--radius-round);
 }
 
 .deckSlot {
-  width: clamp(30px, 10vw, 54px);
-  border-radius: clamp(2px, 0.8vw, 5px);
+  width: 12cqw;
+  border-radius: var(--radius-sm);
 }
 
 .loadingLabel {
   color: var(--cassette-muted);
-  font-size: clamp(0.66rem, 1.8vw, 0.82rem);
+  font-size: clamp(0.625rem, 3.3cqw, 0.82rem);
   font-weight: 700;
 }
 
 :global([data-palette="cyberpunk"]) .cassette {
   --cassette-border: color-mix(in srgb, var(--link-color) 35%, var(--inset-color));
   --cassette-hardware: var(--cyberpunk-magenta);
-}
-
-@media (max-width: 960px) {
-  .trackLabel {
-    justify-content: center;
-  }
-
-  .trackCopy {
-    flex: 0 1 auto;
-    text-align: left;
-  }
-}
-
-@media (max-width: 800px) {
-  .cassette::before {
-    top: 7%;
-    right: 4%;
-    left: 4%;
-    height: 57%;
-  }
-
-  .trackLabel {
-    top: 10%;
-    right: 6%;
-    left: 6%;
-    height: 28%;
-    gap: var(--control-gap);
-    padding: var(--space-4);
-  }
-
-  .albumArtwork {
-    flex-basis: clamp(44px, 12vw, 64px);
-    width: clamp(44px, 12vw, 64px);
-  }
-
-  .songTitle {
-    font-size: clamp(0.875rem, 2.6vw, 1.1rem);
-  }
-
-  .artistName {
-    font-size: clamp(0.75rem, 1.9vw, 0.8rem);
-  }
-
-  .status {
-    font-size: clamp(0.55rem, 1.45vw, 0.66rem);
-  }
-
-  .progressRow {
-    right: 12%;
-    left: 12%;
-    padding-inline: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -465,11 +424,5 @@ a.trackLabel:focus-visible {
 
   .marqueeRepeat {
     display: none;
-  }
-}
-
-@media (min-width: 961px) {
-  .cassette {
-    aspect-ratio: auto;
   }
 }

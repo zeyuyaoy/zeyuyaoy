@@ -38,7 +38,7 @@ Describe achievements and activities here.
 
 - Use ordinary paragraphs separated by blank lines, `**bold**`, `*emphasis*`, inline `[links](https://example.com)`, and
   ordinary bulleted or numbered lists.
-- Entry headings must be plain text or one link containing the title. Heading links use full HTTP(S) URLs. Body links
+- Entry headings must be plain text or one link containing the title. Heading links use full HTTP(S) URLs or site-relative paths such as `/?panel=research&project=garcia`. Body links
   can also use `mailto:`, `/site-relative-paths`, or `#anchors`.
 - Each entry needs a description and a unique title within its tab.
 - Avoid additional headings inside descriptions. About Me starts with a paragraph and has no headings.

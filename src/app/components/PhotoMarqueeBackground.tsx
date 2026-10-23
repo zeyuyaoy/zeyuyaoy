@@ -1,52 +1,53 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import type { ProfileTab } from "@/lib/profile-content";
 import PhotoMarqueeMotion from "./PhotoMarqueeMotion";
-import { createPhotoMarqueeSections, type PhotoMarqueeQueues } from "./photoMarqueeData";
+import type { PhotoMarqueeQueues } from "./photoMarqueeData";
 import styles from "./PhotoMarqueeBackground.module.css";
 
-export default function PhotoMarqueeBackground({ queues }: { queues: PhotoMarqueeQueues }) {
-  const sections = createPhotoMarqueeSections(queues);
-  const total = sections.reduce((count, section) => count + section.count, 0);
-  const strips = [...sections, { ...sections[0], start: total }];
-
+export default function PhotoMarqueeBackground({
+  photos,
+  section,
+  inline = false,
+}: {
+  photos: PhotoMarqueeQueues[ProfileTab];
+  section: ProfileTab;
+  inline?: boolean;
+}) {
+  if (!photos.length) {
+    return null;
+  }
   return (
-    <PhotoMarqueeMotion sections={sections.map(({ id, start, count }) => ({ id, start, count }))}>
+    <PhotoMarqueeMotion inline={inline} section={section}>
       <div className={styles.row}>
-        <div className={styles.master} data-marquee-master>
-          {strips.map(({ id, start, count, photos }, index) => (
-            <div
-              key={`${id}-${index}`}
-              className={styles.section}
-              data-marquee-section={id}
-              data-marquee-start={start}
-              data-marquee-count={count}
-              data-marquee-bridge={index === sections.length ? "true" : undefined}
-              style={{ "--photo-count": count } as CSSProperties}
-            >
-              <div className={styles.track}>
-                {[0, 1].map((copy) => (
-                  <div className={styles.group} key={copy}>
-                    {photos.map((photo) => (
-                      <div className={styles.frame} key={photo}>
-                        <Image
-                          className={styles.image}
-                          src={photo}
-                          alt=""
-                          width={960}
-                          height={540}
-                          unoptimized
-                          loading="lazy"
-                          fetchPriority="low"
-                          decoding="async"
-                          draggable={false}
-                        />
-                      </div>
-                    ))}
+        <div
+          className={styles.section}
+          data-marquee-section={section}
+          data-marquee-count={photos.length}
+          style={{ "--photo-count": photos.length } as CSSProperties}
+        >
+          <div className={styles.track} data-marquee-track>
+            {[0, 1].map((copy) => (
+              <div className={styles.group} key={copy}>
+                {photos.map((photo) => (
+                  <div className={styles.frame} key={photo}>
+                    <Image
+                      className={styles.image}
+                      src={photo}
+                      alt=""
+                      width={960}
+                      height={540}
+                      unoptimized
+                      loading="lazy"
+                      fetchPriority="low"
+                      decoding="async"
+                      draggable={false}
+                    />
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </PhotoMarqueeMotion>

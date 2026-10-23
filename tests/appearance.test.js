@@ -133,10 +133,10 @@ describe("visitor appearance", () => {
     expect(store.getServerSnapshot().font).toBe("rounded");
   });
 
-  test("migrates the old preference once and gives new preferences precedence", () => {
+  test("ignores the retired theme key and reads current preferences", () => {
     const { store, data } = fixture({ legacy: "dark" });
-    expect(store.getSnapshot().mode).toBe("dark");
-    expect(JSON.parse(data.get(appearanceStorageKey)).mode).toBe("dark");
+    expect(store.getSnapshot().mode).toBe(defaultAppearance.mode);
+    expect(data.has(appearanceStorageKey)).toBe(false);
 
     const other = fixture({
       legacy: "dark",
@@ -275,8 +275,12 @@ describe("visitor appearance", () => {
     expect(store.getSnapshot()).toMatchObject({ font: "serif", resolvedMode: "dark" });
 
     const snapshot = store.getSnapshot();
-    events.dispatchEvent(Object.assign(new Event("storage"), { key: "unrelated" }));
-    expect(store.getSnapshot()).toBe(snapshot);
+    const beforeIgnoredEvents = notifications;
+    for (const key of ["unrelated", "theme"]) {
+      events.dispatchEvent(Object.assign(new Event("storage"), { key }));
+      expect(store.getSnapshot()).toBe(snapshot);
+    }
+    expect(notifications).toBe(beforeIgnoredEvents);
     expect(notifications).toBeGreaterThan(initial);
     unsubscribe();
 
@@ -512,7 +516,7 @@ describe("visitor appearance", () => {
     unsubscribe();
   });
 
-  test("pre-paint script recovers from unavailable storage, corruption, and legacy settings", () => {
+  test("pre-paint script recovers from unavailable storage and corruption and ignores the old theme", () => {
     for (const options of [{ readFails: true }, { saved: "{broken" }, { legacy: "dark" }]) {
       const f = fixture(options);
       const root = { dataset: {} };
@@ -521,6 +525,7 @@ describe("visitor appearance", () => {
         localStorage: f.storage,
         window: { matchMedia: () => f.media },
       });
+      expect(root.dataset.theme).toBe("light");
       expect(root.dataset.theme).toBe(f.store.getSnapshot().resolvedMode);
       expect(root.dataset.palette).toBe("sundaze");
     }

@@ -59,8 +59,8 @@ function headingFields(
   const first = node.children[0];
   if (node.children.length === 1 && first.type === "link") {
     const title = plainText({ ...node, children: first.children }, file, context);
-    if (!/^https?:\/\//i.test(first.url)) {
-      invalid(file, title, "Heading links must use an http:// or https:// URL.");
+    if (!/^https?:\/\//i.test(first.url) && !/^\/(?![\/\\])[^\\\s]*$/.test(first.url)) {
+      invalid(file, title, "Heading links must use an http(s) URL or a site-relative path.");
     }
     return { title, href: first.url };
   }

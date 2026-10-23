@@ -9,6 +9,7 @@ export const site = {
 export const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": `${site.url}/#person`,
   name: "Peter Yao",
   alternateName: ["Zeyu Yao", "姚则禹"],
   url: site.url,
@@ -31,6 +32,7 @@ export const personJsonLd = {
 export const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": `${site.url}/#website`,
   name: site.name,
   alternateName: ["Peter Yao", "姚则禹", "zeyuyaoy"],
   url: site.url,

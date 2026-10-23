@@ -4,7 +4,7 @@ import { type ReactNode, useLayoutEffect, useRef } from "react";
 import { appearanceOptions } from "@/lib/appearance";
 import styles from "./StableHomeLayout.module.css";
 
-const sectionNames = ["intro", "widgets", "footer"] as const;
+const sectionNames = ["intro", "footer"] as const;
 const omittedElements = new Set([
   "img",
   "picture",

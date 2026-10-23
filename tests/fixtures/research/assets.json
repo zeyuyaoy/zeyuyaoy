@@ -1,0 +1,30 @@
+{
+  "og-image.jpg": {
+    "bytes": 290410,
+    "sha256": "7c37e53995f155decb3f38588a208ff1333ecf36ea2c50573997e89c80abee7d"
+  },
+  "pet.png": {
+    "bytes": 461094,
+    "sha256": "59ebc3c3d196be4b224c62255906fc524f16706c994acf44f23697ccfedb6470"
+  },
+  "biorsp/giw.jpeg": {
+    "bytes": 1658766,
+    "sha256": "32224ab95e9faa2ea4596c3d78a6502d5ee5f253e8276b002dc8ac792b7ef114"
+  },
+  "biorsp/bcb.jpeg": {
+    "bytes": 1169881,
+    "sha256": "6a21b0066c3a4710286c31b7a97e23553eb0bbd406157db3cb429beb70bc4ae8"
+  },
+  "biorsp/icibm.jpeg": {
+    "bytes": 857908,
+    "sha256": "15e0b0c1b195c00587b478ca4795c0571f6ece7f37eb710f5815d81e1906daa3"
+  },
+  "biorsp/ismb.jpeg": {
+    "bytes": 1562410,
+    "sha256": "ec7519d0a4d86562bab0e7044ebd47008c1bd8d9526de00f0bc1f8a22f03b0f8"
+  },
+  "biorsp/ieeebhi.jpeg": {
+    "bytes": 394154,
+    "sha256": "3a9628085f310b83ca4ce7fe8b4730ffdaae366cffe926ad6ae49e250cb3f150"
+  }
+}

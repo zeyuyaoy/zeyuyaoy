@@ -29,7 +29,10 @@
     "src/**/*.js",
     "src/**/*.jsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "e2e/**/*.ts",
+    "playwright.config.ts",
+    "vitest.config.mts"
   ],
   "exclude": ["node_modules", ".vercel"]
 }

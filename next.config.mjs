@@ -12,8 +12,17 @@ const nextConfig = {
     },
   },
   outputFileTracingRoot: process.cwd(),
+  webpack(config) {
+    config.module.rules.push({ test: /\.md$/, use: ["./scripts/profile-markdown-loader.cjs"] });
+    return config;
+  },
+  outputFileTracingIncludes: {
+    "/api/research/presentation": ["./src/content/research/photoSets.yml"],
+  },
   images: {
     localPatterns: [
+      { pathname: "/research/biorsp/**", search: "" },
+      { pathname: "/research/pet.png", search: "" },
       { pathname: "/_next/static/media/**", search: "" },
       { pathname: "/_next/static/immutable/media/**", search: "" },
     ],
@@ -27,21 +36,19 @@ const nextConfig = {
       },
     ],
     formats: ["image/webp"],
-    deviceSizes: [640],
+    deviceSizes: [640, 960, 1440],
     imageSizes: [64, 96, 128, 256, 384],
     minimumCacheTTL: 2678400,
     qualities: [75, 90],
   },
 
   async redirects() {
-    return ["cytronicoder\\.com", "www\\.cytronicoder\\.com", "www\\.zeyuyaoy\\.com"].map(
-      (host) => ({
-        source: "/:path*",
-        has: [{ type: "host", value: host }],
-        destination: "https://zeyuyaoy.com/:path*",
-        permanent: true,
-      }),
-    );
+    return ["www\\.zeyuyaoy\\.com"].map((host) => ({
+      source: "/:path*",
+      has: [{ type: "host", value: host }],
+      destination: "https://zeyuyaoy.com/:path*",
+      permanent: true,
+    }));
   },
 
   async headers() {
@@ -68,6 +75,14 @@ const nextConfig = {
           },
         ],
       },
+      ...["/research/:path*", "/api/research/:path*"].map((source) => ({
+        source,
+        headers: [
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+        ],
+      })),
     ];
   },
 };

@@ -22,7 +22,11 @@ const accents = [
   ["neon", "Neon"],
 ] as const;
 
-export default function AppearanceSettings() {
+export default function AppearanceSettings({
+  showPhotoControls = true,
+}: {
+  showPhotoControls?: boolean;
+}) {
   const value = useSyncExternalStore(
     appearanceStore.subscribe,
     appearanceStore.getSnapshot,
@@ -230,7 +234,6 @@ export default function AppearanceSettings() {
                   onClick={() => update("font", id)}
                 >
                   <span data-font={id}>{label}</span>
-                  <span aria-hidden="true">{value.font === id ? "✓" : ""}</span>
                 </button>
               ))}
             </div>
@@ -273,29 +276,33 @@ export default function AppearanceSettings() {
               </button>
             </div>
           </fieldset>
-          <fieldset className={styles.photoSettings}>
-            <legend>
-              <label htmlFor="marquee-speed">Photo scroll speed</label>
-            </legend>
-            <div className={styles.speedControl}>
-              <span aria-hidden="true">🐢</span>
-              <input
-                id="marquee-speed"
-                type="range"
-                min="1"
-                max="50"
-                step="0.5"
-                value={value.marqueeSpeed * 2}
-                aria-valuetext={`${value.marqueeSpeed * 2} percent of screen width per second`}
-                aria-describedby="marquee-speed-description"
-                onChange={(event) => update("marqueeSpeed", event.currentTarget.valueAsNumber / 2)}
-              />
-              <span aria-hidden="true">🐇</span>
-            </div>
-            <p id="marquee-speed-description" className={styles.speedDescription}>
-              Reduced motion pauses the photos.
-            </p>
-          </fieldset>
+          {showPhotoControls && (
+            <fieldset className={styles.photoSettings}>
+              <legend>
+                <label htmlFor="marquee-speed">Photo scroll speed</label>
+              </legend>
+              <div className={styles.speedControl}>
+                <span aria-hidden="true">🐢</span>
+                <input
+                  id="marquee-speed"
+                  type="range"
+                  min="1"
+                  max="50"
+                  step="0.5"
+                  value={value.marqueeSpeed * 2}
+                  aria-valuetext={`${value.marqueeSpeed * 2} percent of screen width per second`}
+                  aria-describedby="marquee-speed-description"
+                  onChange={(event) =>
+                    update("marqueeSpeed", event.currentTarget.valueAsNumber / 2)
+                  }
+                />
+                <span aria-hidden="true">🐇</span>
+              </div>
+              <p id="marquee-speed-description" className={styles.speedDescription}>
+                Reduced motion pauses the photos.
+              </p>
+            </fieldset>
+          )}
         </div>
         {open && <SecretController />}
         <footer className={styles.panelFooter}>

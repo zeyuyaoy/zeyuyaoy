@@ -143,7 +143,7 @@ for (const path of [
     const marquee = images.filter((image) =>
       new URL(image.src, base).pathname.startsWith("/marquee/"),
     );
-    assert.equal(marquee.length, 264, "All mounted marquee images bypass optimization");
+    assert.equal(marquee.length, 56, "All mounted marquee images bypass optimization");
     for (const image of marquee) {
       assert.equal(image.srcSet ?? image.srcset, undefined, "No marquee transformation candidates");
       assert.equal(image.sizes, undefined, "No marquee responsive sizing hint");
@@ -153,11 +153,13 @@ for (const path of [
     ].sort();
     assert.deepEqual(
       photoPaths,
-      Array.from(
-        { length: 104 },
-        (_, index) => `/marquee/photo-${String(index + 1).padStart(3, "0")}.webp`,
-      ),
-      "All 104 direct marquee assets",
+      [
+        2, 6, 7, 8, 9, 14, 17, 19, 28, 31, 35, 36, 39, 42, 47, 56, 57, 60, 62, 65, 68, 79, 81, 90,
+        91, 92, 96, 97,
+      ]
+        .map((number) => `/marquee/photo-${String(number).padStart(3, "0")}.webp`)
+        .sort(),
+      "Only About Me photos on the homepage",
     );
     for (const photoPath of photoPaths) {
       const photo = await fetch(new URL(photoPath, base), { signal: AbortSignal.timeout(10_000) });
@@ -177,7 +179,7 @@ for (const path of [
         .map((candidate) => new URL(candidate.split(" ")[0], base));
       assert.deepEqual(
         candidates.map((candidate) => Number(candidate.searchParams.get("w"))),
-        [64, 96, 128, 256, 384, 640],
+        [64, 96, 128, 256, 384, 640, 960, 1440],
         "Six profile resize candidates",
       );
       assert.equal(image.sizes, "(max-width: 560px) 120px, (max-width: 960px) 144px, 125px");
@@ -220,22 +222,17 @@ for (const path of [
       1,
       "One Profile section in initial HTML",
     );
-    const tabs = tags(text, "button").filter((tag) => tag.role === "tab");
-    const panels = tags(text, "div").filter((tag) => tag.role === "tabpanel");
-    assert.equal(tabs.length, 3, "Three profile tabs in initial HTML");
-    assert.equal(panels.length, 3, "Three profile panels in initial HTML");
-    assert.equal(new Set(tabs.map((tab) => tab.id)).size, 3, "Unique tab IDs");
-    assert.equal(new Set(panels.map((panel) => panel.id)).size, 3, "Unique panel IDs");
-    for (const [index, name] of ["about", "experience", "education"].entries()) {
-      const tab = tabs[index];
-      assert.ok(tab.id?.endsWith(`-tab-${name}`), `${name} tab ID`);
-      const panel = panels.find((item) => item.id === tab["aria-controls"]);
-      assert.ok(panel, `${name} tab controls its panel`);
-      assert.equal(panel["aria-labelledby"], tab.id, `${name} panel references its tab`);
-      assert.equal(tab["aria-selected"], String(index === 0), "About Me starts selected");
-      assert.equal(panel["aria-hidden"], String(index !== 0), `${name} panel visibility`);
-    }
-    assert.ok(text.includes('id="projects-heading"'), "Project heading in initial HTML");
+    const launchers = tags(text, "button").filter(
+      (tag) =>
+        tag["aria-haspopup"] === "dialog" &&
+        ["Research", "Experience", "Education"].includes(tag["aria-label"]),
+    );
+    assert.equal(launchers.length, 3, "Three profile dialog launchers");
+    assert.ok(
+      launchers.every((button) => button["aria-expanded"] === "false"),
+      "Dialogs start closed",
+    );
+    assert.ok(!tags(text, "div").some((tag) => tag.role === "tabpanel"), "No inline tab panels");
     assert.ok(!response.headers.get("x-robots-tag")?.includes("noindex"), "No blanket noindex");
     assert.ok(!meta.find((tag) => tag.name === "robots")?.content.includes("noindex"));
 

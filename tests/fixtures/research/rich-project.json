@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "key": "link:migration-rich-project",
+      "type": "string",
+      "value": "https://example.org/manuscript",
+      "ttl": -1
+    },
+    {
+      "key": "meta:migration-rich-project",
+      "type": "hash",
+      "value": {
+        "title": "Migration verification project",
+        "description": "A fixture for rich research presentation and accessibility.",
+        "longDescription": "A preserved long description.\nA second paragraph with supplementary context.",
+        "tags": "migration test,computational biology",
+        "researchAreas": "[\"migration test\"]",
+        "technologies": "[\"TypeScript\"]",
+        "methods": "[\"Representation analysis\"]",
+        "organizations": "[{\"name\": \"Example Research Institute\", \"role\": \"Host\", \"url\": \"https://example.org/institute\"}]",
+        "collaborators": "[{\"name\": \"Example Collaborator\", \"role\": \"Mentor\", \"url\": \"https://example.org/person\"}]",
+        "artifacts": "[{\"type\": \"preprint\", \"title\": \"Fixture manuscript\", \"url\": \"https://example.org/manuscript\", \"date\": \"2025\", \"venue\": \"Example archive\", \"featured\": true}, {\"type\": \"poster\", \"title\": \"Fixture poster\", \"url\": \"https://example.org/poster.pdf\", \"date\": \"2025-06\", \"venue\": \"Example conference\", \"featured\": true}, {\"type\": \"award\", \"title\": \"Fixture award\", \"url\": null, \"date\": \"2025\", \"venue\": null, \"featured\": false}]",
+        "startDate": "2024-06",
+        "endDate": "2025-08",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-01-02T00:00:00.000Z",
+        "permanent": "0",
+        "targetType": "preprint",
+        "githubRepo": "https://github.com/example/research",
+        "photoSetId": "biorsp"
+      },
+      "ttl": -1
+    },
+    {
+      "key": "count:migration-rich-project",
+      "type": "string",
+      "value": "0",
+      "ttl": -1
+    }
+  ]
+}

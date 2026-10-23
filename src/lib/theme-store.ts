@@ -73,12 +73,7 @@ export function createAppearanceStore(
         }
         preferences = normalizeAppearance(parsed, configuration.defaults, configuration.options);
       } else {
-        const legacy = storage().getItem("theme");
         preferences = { ...configuration.defaults };
-        if (legacy === "dark" || legacy === "light") {
-          preferences.mode = legacy;
-          persist();
-        }
       }
     } catch {
       storageAvailable = false;
@@ -121,12 +116,7 @@ export function createAppearanceStore(
         const media = colorScheme();
         const onStorage = (event: Event) => {
           const key = (event as StorageEvent).key;
-          if (
-            key !== null &&
-            key !== undefined &&
-            key !== appearanceStorageKey &&
-            key !== "theme"
-          ) {
+          if (key !== null && key !== undefined && key !== appearanceStorageKey) {
             return;
           }
           read();

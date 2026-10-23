@@ -216,7 +216,7 @@ export default function SpotifyWidget() {
   if (!isLoaded) {
     return (
       <div className={styles.loading} role="status">
-        <div className={styles.cassette}>
+        <div className={styles.cassette} data-cassette>
           <CassetteHardware />
           <div className={`${styles.trackLabel} ${styles.loadingLabel}`}>
             <span>Loading music player…</span>
@@ -261,7 +261,7 @@ export default function SpotifyWidget() {
 
   return (
     <section className={styles.player} aria-label="Spotify now playing">
-      <div className={styles.cassette}>
+      <div className={styles.cassette} data-cassette>
         <CassetteHardware isLive={isLive} />
 
         {song.isPlaying && song.songUrl ? (

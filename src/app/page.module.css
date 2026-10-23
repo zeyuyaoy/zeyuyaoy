@@ -93,6 +93,7 @@
 }
 
 .socialMediaIcons a {
+  border-radius: var(--radius-md);
   display: grid;
   place-items: center;
   width: 44px;
@@ -108,8 +109,9 @@
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
-  transition: background-color 120ms ease,
-  transform 120ms ease;
+  transition:
+    background-color 120ms ease,
+    transform 120ms ease;
 }
 
 .twitterIcon {
@@ -124,6 +126,10 @@
   mask-image: url("/linkedin.svg");
 }
 
+.githubIcon {
+  mask-image: url("/github.svg");
+}
+
 [data-theme="dark"] .socialMediaIcon {
   background-color: #fff;
 }
@@ -134,45 +140,9 @@
   transform: scale(1.1);
 }
 
-.blogWidget {
-  min-width: 0;
-  min-height: 44px;
-  overflow-wrap: anywhere;
-  color: var(--link-color);
-  text-decoration: none;
-  font-weight: 600;
-  padding: var(--space-12) var(--space-16);
-  border: 1.5px solid var(--panel-border-color, var(--border-color));
-  border-radius: var(--radius-md);
-  transition: all 120ms ease;
-  position: relative;
-  overflow: hidden;
-  font-size: max(var(--home-font-min, 0rem), calc(0.9rem * var(--home-font-scale, 1)));
-}
-
-.blogWidget:hover {
-  border-color: var(--primary-color);
-  box-shadow: var(--shadow-sm);
-  background: var(--accent-soft);
-}
-
-.section {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--widget-gap);
-}
-
-.section > * {
-  min-width: 0;
-}
-
 @media (max-width: 960px) {
   .main {
     align-items: flex-start;
-  }
-
-  .section {
-    grid-template-columns: minmax(0, 1fr);
   }
 
   .intro {
@@ -205,12 +175,6 @@
 
   .socialMediaIcons {
     justify-content: center;
-  }
-
-  .blogWidget {
-    display: inline-block;
-    max-width: 100%;
-    text-align: center;
   }
 }
 

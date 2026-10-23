@@ -23,7 +23,7 @@
   const sections = [...layout.children].filter((element) =>
     element.hasAttribute("data-home-section"),
   );
-  assert(sections.length === 4, "expected intro, profile, widgets, and footer");
+  assert(sections.length === 3, "expected intro, profile, and footer");
   const gap = px(style(layout).rowGap);
   const gaps = sections
     .slice(1)
@@ -46,13 +46,19 @@
   );
 
   const profile = sections.find((section) => section.dataset.homeSection === "bio");
-  const widgets = sections.find((section) => section.dataset.homeSection === "widgets");
-  const notebook = widgets.querySelector('[class*="notebookContent"]');
-  assert(profile && notebook, "profile or project panel is missing");
+  const notebook = document.querySelector("[data-notebook-body]") ?? profile;
+  assert(profile && notebook, "profile or notebook is missing");
   const panelPadding = px(style(profile).paddingLeft);
-  assert(near(panelPadding, px(style(notebook).paddingLeft)), "outer panels use different padding");
+  const notebookPadding =
+    notebook === profile
+      ? panelPadding
+      : px(style(notebook.closest("dialog")).getPropertyValue("--popup-padding"));
+  assert(
+    near(notebookPadding, px(style(notebook).paddingLeft)),
+    "notebook padding differs from its shared spacing token",
+  );
   assert(near(panelPadding, px(style(profile).paddingRight)), "profile padding is asymmetric");
-  assert(near(panelPadding, px(style(notebook).paddingRight)), "notebook padding is asymmetric");
+  assert(near(notebookPadding, px(style(notebook).paddingRight)), "notebook padding is asymmetric");
   const expectedPanelPadding = rootSize * (viewport.right <= 560 ? 1 : 1.25);
   assert(
     near(panelPadding, expectedPanelPadding),
@@ -60,30 +66,16 @@
   );
 
   if (viewport.right <= 960) {
-    assert(near(gap, px(style(widgets).rowGap)), "stacked widgets diverge from section rhythm");
     assert(near(gap, px(style(intro).gap)), "intro diverges from stacked section rhythm");
-    const widgetChildren = [...widgets.children];
-    assert(
-      widgetChildren.every(
-        (child) =>
-          near(box(child).left, box(widgets).left) && near(box(child).right, box(widgets).right),
-      ),
-      "stacked widgets have different outer edges",
-    );
     const introItems = [
       intro.firstElementChild,
       intro.querySelector("h1"),
       intro.querySelector("p"),
       intro.querySelector("nav"),
-      intro.querySelector('[class*="blogWidget"]'),
     ];
     assert(
       introItems.every((item) => centered(box(item), box(intro))),
       "intro items are off-center",
-    );
-    assert(
-      near(box(widgetChildren[1]).top - box(widgetChildren[0]).bottom, gap),
-      "rendered stacked widgets have extra space",
     );
     assert(
       sections
@@ -93,15 +85,22 @@
         ),
       "desktop section-height reservations leaked into mobile",
     );
-  } else {
-    const [projects, spotify] = [...widgets.children];
-    assert(near(box(projects).top, box(spotify).top), "desktop widgets are not aligned");
-    assert(near(box(projects).width, box(spotify).width), "desktop widget columns differ");
-    assert(near(box(projects).bottom, box(spotify).bottom), "desktop widget bottoms differ");
   }
 
-  const tabstrip = profile.querySelector('[role="tablist"]');
-  const tabs = [...tabstrip.querySelectorAll('[role="tab"]')];
+  const widget = profile.querySelector('[data-profile-widget="true"][aria-hidden="false"]');
+  if (widget) {
+    assert(
+      near(box(widget).height, box(widget.firstElementChild).height),
+      "widget panel reserves unrelated content height",
+    );
+    assert(
+      box(widget).bottom <= box(profile).bottom - panelPadding + 1,
+      "widget escapes its panel vertically",
+    );
+  }
+
+  const tabstrip = profile.querySelector('nav[aria-label="Profile sections"]');
+  const tabs = [...tabstrip.querySelectorAll("button")];
   assert(inside(box(tabstrip), box(profile)), "tab strip escapes profile");
   if (viewport.right <= 960) {
     assert(
@@ -125,7 +124,7 @@
     for (const content of profile.querySelectorAll(
       '[class*="aboutContent"], [class*="experienceContent"]',
     )) {
-      if (visible(content)) {
+      if (visible(content) && !content.closest("dialog")) {
         assert(style(content).textAlign === "center", "profile prose is not centered");
         assert(centered(box(content), box(profile)), "profile prose block is off-center");
       }
@@ -136,37 +135,11 @@
       assert(style(list).textAlign === "left", "profile list or timeline is not left-aligned");
     }
   }
-  const carousel = [...profile.querySelectorAll('[aria-roledescription="carousel"]')].find(visible);
-  if (carousel) {
-    const slides = carousel.querySelector('[class*="slides"]');
-    const controls = carousel.querySelector('[class*="carouselControls"]');
-    assert(inside(box(controls), box(profile)), "carousel controls escape profile");
-    assert(
-      box(controls).bottom <= box(carousel).bottom + 1,
-      "carousel controls escape panel vertically",
-    );
-    if (viewport.right <= 960) {
-      assert(box(controls).top >= box(slides).bottom - 1, "carousel controls overlap content");
-      const buttons = [...controls.querySelectorAll("button")];
-      const group = {
-        left: box(buttons[0]).left,
-        width: box(buttons.at(-1)).right - box(buttons[0]).left,
-      };
-      assert(centered(group, box(profile)), "carousel navigation is off-center");
-      assert(near(box(buttons[0]).top, box(buttons.at(-1)).top), "carousel controls are not a row");
-    } else {
-      assert(
-        box(controls).left >= box(slides).right - 1,
-        "desktop carousel controls overlap content",
-      );
-    }
-  }
-
   const descendants = [...layout.querySelectorAll("p, h1, h2, h3, h4, li, button, a")].filter(
     (element) =>
       visible(element) &&
       !element.closest(
-        'dialog, [role="tablist"], [class*="trackLabel"], [class*="githubLabel"], [class*="srOnly"]',
+        'dialog, nav[aria-label="Profile sections"], [class*="trackLabel"], [class*="srOnly"]',
       ),
   );
   for (const element of descendants) {
@@ -182,13 +155,6 @@
       );
     }
   }
-
-  const cards = [...notebook.querySelectorAll('[class*="projectLink"] > [class*="project"]')];
-  const expectedCardPadding = rootSize * (viewport.right <= 560 ? 0.75 : 1);
-  assert(
-    cards.every((card) => near(px(style(card).paddingLeft), expectedCardPadding)),
-    "nested card padding is inconsistent",
-  );
 
   const footer = sections.find((section) => section.dataset.homeSection === "footer");
   const footerControls = [...footer.querySelectorAll('nav, button[aria-haspopup="dialog"]')];
@@ -219,9 +185,9 @@
     );
   }
 
-  const trackLabel = widgets.querySelector('[class*="trackLabel"]');
+  const trackLabel = profile.querySelector('[class*="trackLabel"]');
   const trackCopy = trackLabel?.querySelector('[class*="trackCopy"]');
-  if (trackCopy && viewport.right <= 960) {
+  if (trackCopy && visible(trackCopy) && viewport.right <= 960) {
     const artwork = trackLabel.querySelector('[class*="albumArtwork"]');
     const group = {
       left: box(trackCopy).left,
@@ -267,10 +233,17 @@
       dialogBox.top >= -1 && dialogBox.bottom <= innerHeight + 1,
       "dialog escapes viewport vertically",
     );
-    assert(dialog.scrollWidth <= dialog.clientWidth + 1, "dialog contents overflow horizontally");
+    const dialogContent = dialog.querySelector("[data-notebook-body]") ?? dialog;
+    assert(
+      dialogContent.scrollWidth <= dialogContent.clientWidth + 1,
+      "dialog contents overflow horizontally",
+    );
     const regions = [...dialog.children].filter((element) =>
       /^(HEADER|DIV|SECTION|FOOTER)$/.test(element.tagName),
     );
+    if (dialog.hasAttribute("data-notebook-dialog")) {
+      return { viewport: viewport.right, sectionGaps: gaps, panelPadding, dialog: true };
+    }
     assert(regions.length === 4, "expected settings header, body, controller, and footer");
     const inset = px(style(regions[0]).paddingLeft);
     assert(

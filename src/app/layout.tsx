@@ -62,6 +62,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#d8dfcf" },
+    { media: "(prefers-color-scheme: dark)", color: "#141a16" },
+  ],
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${nunito.variable} ${comic.variable}`} suppressHydrationWarning>

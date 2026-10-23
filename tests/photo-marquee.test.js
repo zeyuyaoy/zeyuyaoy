@@ -1,10 +1,6 @@
 import { expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
-import {
-  createPhotoMarqueeQueues,
-  createPhotoMarqueeSections,
-  marqueePhotos,
-} from "../src/app/components/photoMarqueeData";
+import { createPhotoMarqueeQueues, marqueePhotos } from "../src/app/components/photoMarqueeData";
 import { parseEducation, parseExperience } from "../src/lib/profile-content";
 
 const [experience, education] = await Promise.all(
@@ -70,22 +66,6 @@ test("the three queues partition all 104 assets without omissions, repetitions, 
   const photos = Object.values(queues).flat();
   expect(new Set(photos).size).toBe(104);
   expect(photos.toSorted()).toEqual(marqueePhotos);
-});
-
-test("permanent section boundaries follow About, Experience, Education and their actual counts", () => {
-  const queues = createPhotoMarqueeQueues(content);
-  const sections = createPhotoMarqueeSections(queues);
-  expect(sections.map(({ id, start, count }) => ({ id, start, count }))).toEqual([
-    { id: "about", start: 0, count: 28 },
-    { id: "experience", start: 28, count: 48 },
-    { id: "education", start: 76, count: 28 },
-  ]);
-  expect(sections.flatMap(({ photos }) => photos)).toEqual([
-    ...paths(expectedAbout),
-    ...paths(expectedExperienceGroups.flat()),
-    ...paths(expectedEducationGroups.flat()),
-  ]);
-  expect(createPhotoMarqueeSections({ ...queues, about: queues.about.slice(1) })[2].start).toBe(75);
 });
 
 test("the marquee follows its supplied entry order while retaining numeric order inside each group", () => {

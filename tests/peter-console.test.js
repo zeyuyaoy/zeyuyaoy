@@ -2,15 +2,13 @@ import { describe, expect, test } from "bun:test";
 import { createPeterConsole, installPeterConsole } from "../src/lib/peter-console";
 import { createAppearanceStore } from "../src/lib/theme-store";
 import { appearanceStorageKey, defaultAppearance } from "../src/lib/appearance";
+import { createConsoleRenderer } from "../src/lib/console-renderer";
 import { commandGuide, consoleContent } from "../src/lib/console-content";
 
-function fixture({ data, storageFails = false, saved } = {}) {
+function fixture({ storageFails = false, saved } = {}) {
   const calls = [];
   const output = Object.fromEntries(
-    ["log", "table", "groupCollapsed", "groupEnd"].map((method) => [
-      method,
-      (...args) => calls.push({ method, args }),
-    ]),
+    ["log", "table"].map((method) => [method, (...args) => calls.push({ method, args })]),
   );
 
   const storage = new Map(saved ? [[appearanceStorageKey, JSON.stringify(saved)]] : []);
@@ -36,25 +34,17 @@ function fixture({ data, storageFails = false, saved } = {}) {
     () => media,
   );
 
-  const projects = Array.from({ length: 10 }, (_, index) => ({
-    name: `project-${index}`,
-    description: index === 1 ? null : `Project ${index}`,
-    stars: index,
-    url: `https://github.com/zeyuyaoy/project-${index}`,
-  }));
-
   const dependencies = {
     output,
     appearance,
     origin: "http://localhost:3456",
-    data: data ?? { status: "ready", projects },
   };
 
   const api = createPeterConsole(dependencies);
   const text = () =>
     calls
       .filter((call) => call.method !== "table")
-      .flatMap((call) => call.args.slice(call.method === "groupEnd" ? 0 : 1))
+      .flatMap((call) => call.args.slice(1))
       .join("\n");
 
   const tables = () => calls.filter((call) => call.method === "table").map((call) => call.args[0]);
@@ -66,6 +56,7 @@ describe("personal console content", () => {
   test("has a small welcome card and a frozen, getter-free command surface", () => {
     const { api, text, calls } = fixture();
     expect(Object.isFrozen(api)).toBe(true);
+    expect(Object.hasOwn(api, "projects")).toBe(false);
     expect(Object.values(Object.getOwnPropertyDescriptors(api)).every((value) => !value.get)).toBe(
       true,
     );
@@ -91,7 +82,7 @@ describe("personal console content", () => {
       expect(text()).toContain(commandGuide[command][1]);
     }
 
-    for (const command of ["missing", "__proto__", "toString", null, 1, {}]) {
+    for (const command of ["projects", "missing", "__proto__", "toString", null, 1, {}]) {
       calls.length = 0;
       api.help(command);
       expect(text()).toContain("Unknown command");
@@ -124,86 +115,18 @@ describe("personal console content", () => {
     expect(text()).toContain("http://localhost:3456/conan.jpg");
   });
 
-  test("lists eight projects in server order but can look up the complete list", () => {
-    const { api, text, tables, calls } = fixture();
-    api.projects();
-
-    expect(tables()[0].map((row) => row.Project)).toEqual(
-      Array.from({ length: 8 }, (_, i) => `project-${i}`),
-    );
-    expect(tables()[0][1].Description).toBe("No description provided yet.");
-    expect(text()).toContain("Showing 8 of 10");
-    expect(calls.filter((call) => call.method === "groupCollapsed")).toHaveLength(1);
-    expect(calls.filter((call) => call.method === "groupEnd")).toHaveLength(1);
-
-    calls.length = 0;
-    api.projects(" PROJECT-9 ");
-    expect(text()).toContain("Project 9");
-    expect(text()).toContain("https://github.com/zeyuyaoy/project-9");
-  });
-
-  test("project lookup suggests available names and validates arguments", () => {
-    const { api, text, calls } = fixture();
-    api.projects("9");
-    expect(text()).toContain('peter.projects("project-9")');
-    calls.length = 0;
-    api.projects("unknown");
-    expect(text()).toContain('peter.projects("project-0")');
-
-    for (const value of [null, 1, {}, [], "", "   "]) {
-      calls.length = 0;
-      expect(api.projects(value)).toContain("non-empty strings");
-      expect(text()).toContain("Use peter.projects()");
-    }
-  });
-
-  test.each(["ready", "unavailable"])(
-    "handles %s projects without disabling other commands",
-    (status) => {
-      const { api, text } = fixture({ data: { status, projects: [] } });
-      api.projects();
-      expect(text()).toContain(
-        status === "ready" ? "No public projects" : "Projects are unavailable",
-      );
-
-      if (status === "unavailable") {
-        expect(text()).toContain("https://github.com/zeyuyaoy");
-      }
-
-      api.about();
-      expect(text()).toContain("Zeyu (Peter) Yao");
-    },
-  );
-
   test("external strings stay data rather than becoming formatting instructions", () => {
     const name = '%c<script>alert("hi")</script>姚';
     const description = "%s %c <img src=x onerror=alert(1)>";
-    const { api, calls, tables } = fixture({
-      data: {
-        status: "ready",
-        projects: [
-          {
-            name,
-            description,
-            stars: 0,
-            url: "https://github.com/zeyuyaoy/example",
-          },
-        ],
-      },
-    });
-
-    api.projects();
-    expect(tables()[0][0]).toMatchObject({ Project: name, Description: description });
-    api.projects(name);
-    api.projects('%c"missing');
+    const { calls, dependencies } = fixture();
+    const renderer = createConsoleRenderer(dependencies.output);
+    renderer.table([{ Name: name, Description: description }]);
+    renderer.heading(name);
+    renderer.text(description);
 
     for (const { method, args } of calls) {
       if (method === "log") {
         expect(["%s", "%c%s"]).toContain(args[0]);
-      }
-
-      if (method === "groupCollapsed") {
-        expect(args[0]).toBe("%s");
       }
     }
     expect(calls.some((call) => call.args[0] === "%s" && call.args[1] === description)).toBe(true);

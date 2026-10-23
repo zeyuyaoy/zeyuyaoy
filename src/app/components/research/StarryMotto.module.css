@@ -1,0 +1,88 @@
+.motto {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  isolation: isolate;
+  touch-action: manipulation;
+}
+
+.motto:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 4px;
+}
+
+.stars {
+  position: absolute;
+  inset: -5px -8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  background: radial-gradient(ellipse, var(--accent-soft), transparent 70%);
+}
+
+.star {
+  position: absolute;
+  background: var(--link-color);
+  clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+  opacity: 0.8;
+  transform: translate(-50%, -50%);
+}
+
+.motto:is(:focus-visible, [data-sparkling]) .stars {
+  opacity: 1;
+}
+
+.motto:is(:focus-visible, [data-sparkling]) .star {
+  animation: twinkle 1400ms ease-in-out var(--star-delay) infinite backwards;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .motto:hover .stars {
+    opacity: 1;
+  }
+
+  .motto:hover .star {
+    animation: twinkle 1400ms ease-in-out var(--star-delay) infinite backwards;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 2px) scale(0.3) rotate(-20deg);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(-50%, -7px) scale(1.1) rotate(15deg);
+  }
+  75% {
+    opacity: 0.6;
+    transform: translate(-50%, -11px) scale(0.75) rotate(30deg);
+  }
+}
+
+:global([data-motion="reduce"]) .motto .star {
+  animation: none;
+}
+
+:global([data-motion="reduce"]) .stars {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motto .star {
+    animation: none;
+  }
+
+  .stars {
+    transition: none;
+  }
+}

@@ -41,3 +41,9 @@ next-env.d.ts
 
 # webstorm
 .idea
+
+!.env.example
+/playwright-report/
+/test-results/
+/research-backups/
+.env*.local

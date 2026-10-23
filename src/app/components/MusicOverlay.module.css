@@ -1,0 +1,82 @@
+.overlay {
+  --inset-x: max(16px, env(safe-area-inset-left), env(safe-area-inset-right));
+  --inset-y: max(16px, env(safe-area-inset-top), env(safe-area-inset-bottom));
+  scroll-margin-left: var(--inset-x);
+  scroll-margin-top: var(--inset-y);
+  position: fixed;
+  z-index: 50;
+  right: var(--inset-x);
+  bottom: var(--inset-y);
+  width: min(
+    360px,
+    calc(100dvw - 2 * var(--inset-x)),
+    calc((100dvh - 2 * var(--inset-y) - 44px) * 1.55)
+  );
+  height: fit-content;
+}
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  height: 44px;
+}
+.close {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--surface-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+.body {
+  container-type: inline-size;
+  position: relative;
+}
+.surface {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+}
+.surface:active {
+  cursor: grabbing;
+}
+.surface:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+}
+.body a {
+  z-index: 9;
+}
+.overlay[data-finish="1"] [data-cassette] {
+  --cassette-shell: #c7af86;
+  --cassette-paper: #f4e7c8;
+  --cassette-ink: #302819;
+  --cassette-muted: #62513a;
+  --cassette-border: #8b7452;
+  --cassette-hardware: #685a45;
+}
+.overlay[data-finish="2"] [data-cassette] {
+  --cassette-shell: rgb(28 32 38 / 94%);
+  --cassette-paper: #343b46;
+  --cassette-ink: #f5f6f8;
+  --cassette-muted: #c0c8d4;
+  --cassette-border: #77818e;
+  --cassette-hardware: #aab6c5;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

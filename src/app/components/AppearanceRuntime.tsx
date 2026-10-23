@@ -13,6 +13,12 @@ export default function AppearanceRuntime() {
   useEffect(() => {
     const value = appearanceStore.getSnapshot();
     applyAppearance(document.documentElement, value, value.resolvedMode === "dark");
+    const color = getComputedStyle(document.documentElement)
+      .getPropertyValue("--background-color")
+      .trim();
+    document
+      .querySelectorAll('meta[name="theme-color"]')
+      .forEach((meta) => meta.setAttribute("content", color));
   }, [snapshot]);
   return null;
 }

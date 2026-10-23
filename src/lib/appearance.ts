@@ -90,11 +90,6 @@ export function appearanceBootstrapScript() {
     const raw = localStorage.getItem(${JSON.stringify(appearanceStorageKey)});
     if (raw !== null) {
       value = normalize(JSON.parse(raw), defaults, options);
-    } else {
-      const legacy = localStorage.getItem("theme");
-      if (legacy === "light" || legacy === "dark") {
-        value = { ...defaults, mode: legacy };
-      }
     }
   } catch {}
 

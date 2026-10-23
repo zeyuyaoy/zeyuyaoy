@@ -9,7 +9,7 @@ export const consoleContent = {
     "+----------------------------------+",
   ].join("\n"),
   welcome:
-    "Hey, I'm Peter. You found my little corner of the console!\nCheck out my research, some things I've built, and a few things off the clock.",
+    "Hey, I'm Peter. You found my little corner of the console!\nCheck out my research and a few things off the clock.",
   about: [
     "Hello! I'm Zeyu (Peter) Yao 姚则禹. I grew up in Singapore.",
     "Currently serving National Service! Soon-to-be Class of 2032 @ Carnegie Mellon University.",
@@ -17,10 +17,13 @@ export const consoleContent = {
     "Alongside research, I enjoy building inclusive communities and helping people learn, create, and find opportunities through computing.",
   ],
   research: [
-    ["Research portfolio", "https://research.zeyuyaoy.com"],
-    ["Using computational tools", "https://research.zeyuyaoy.com/garcia"],
-    ["Building new tools", "https://research.zeyuyaoy.com/orcid-162573947"],
-    ["Understanding biological systems", "https://research.zeyuyaoy.com/biorsp-posters"],
+    ["Research portfolio", "https://zeyuyaoy.com/?panel=research"],
+    ["Using computational tools", "https://zeyuyaoy.com/?panel=research&project=garcia"],
+    ["Building new tools", "https://zeyuyaoy.com/?panel=research&project=orcid-162573947"],
+    [
+      "Understanding biological systems",
+      "https://zeyuyaoy.com/?panel=research&project=biorsp-posters",
+    ],
   ],
   researchTopics: personJsonLd.knowsAbout,
   interests: ["Jazz guitar", "Running", "Swimming", "Photography"],
@@ -32,7 +35,6 @@ export const consoleContent = {
     ["LinkedIn", personJsonLd.sameAs[1]],
     ["Email", "mailto:cytronicoder+hi@gmail.com"],
   ],
-  github: personJsonLd.sameAs[2],
   photos: [
     ["Photo 1 from the marquee", marqueePhotos[0]],
     ["Photo 34 from the marquee", marqueePhotos[33]],
@@ -45,11 +47,6 @@ export const consoleContent = {
 
 export const commandGuide = {
   about: ["Explore", "peter.about()", "Hello! Learn more about me."],
-  projects: [
-    "Explore",
-    'peter.projects() · peter.projects("name")',
-    "List my projects, or look up any project by its name",
-  ],
   research: ["Explore", "peter.research()", "Research interests and links from the homepage"],
   interests: ["Explore", "peter.interests()", "A few things off the clock"],
   photos: ["Explore", "peter.photos()", "A few photographs from the page's photo marquee"],
@@ -68,5 +65,5 @@ export const commandGuide = {
   ],
   hint: ["Discover", "peter.hint()", "A clue to the next personal discovery"],
   banner: ["Discover", "peter.banner()", "Redisplay the welcome card without clearing the console"],
-  help: ["Discover", 'peter.help() · peter.help("projects")', "Show this guide!"],
+  help: ["Discover", 'peter.help() · peter.help("research")', "Show this guide!"],
 } as const;
