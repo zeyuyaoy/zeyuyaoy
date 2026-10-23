@@ -88,7 +88,7 @@ export default function MusicOverlay({
     try {
       localStorage.setItem(storageKey, finishes[next]);
     } catch {
-      /* Storage is optional. */
+      /* Storage is optional */
     }
   }
   function remove() {

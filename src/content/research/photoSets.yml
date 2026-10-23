@@ -1,5 +1,6 @@
 # Photo sets keyed by slug or collection id (case-insensitive)
-# date should be in ISO format (YYYY-MM-DD) so sorting works reliably.
+# date should be in ISO format (YYYY-MM-DD)
+# so sorting works reliably
 
 biorsp:
   slides:

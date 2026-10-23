@@ -10,7 +10,6 @@
   --card-raised: var(--surface-color);
   --card-border: var(--border-color);
   --collection-bg: var(--surface-color);
-  /* WebKit can crash when a mixed border token is mixed again. */
   --collection-border: var(--border-color);
   --collection-accent: var(--accent-soft);
   --line: color-mix(in srgb, var(--muted-color) 25%, var(--surface-color));
@@ -2340,7 +2339,6 @@
   }
 }
 
-/* Pop-ups inherit one spacing system; standalone admin pages retain the page shell. */
 .research-popup {
   --space-panel: var(--popup-card-padding);
   --entry-gap: var(--popup-gap);

@@ -51,7 +51,6 @@ export default function ResearchPopup() {
         ?.querySelector<HTMLElement>("[data-project-title]")
         ?.focus({ preventScroll: true });
     } else if (data && hash) {
-      // Collection anchors scroll the dialog, leaving the homepage position intact.
       const target = document.getElementById(decodeURIComponent(hash.slice(1)));
       if (target && root.current?.contains(target)) {
         viewport.scrollTop +=

@@ -970,7 +970,6 @@ test.describe("touch cassette", () => {
     const box = (await shell.boundingBox())!;
     await page.touchscreen.tap(box.x + 30, box.y + box.height * 0.75);
     await expect(cassette).toHaveAttribute("data-finish", "1");
-    // Dispatch movement through the same Pointer Events path on both browser engines.
     await shell.evaluate((element) => {
       element.setPointerCapture = () => {};
       const base = {
