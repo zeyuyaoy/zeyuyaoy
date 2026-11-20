@@ -37,6 +37,7 @@ export interface ProjectArtifact {
 interface ProjectMetadata {
   targetType: ArtifactType | null;
   permanent: boolean;
+  highlight: boolean;
   title: string;
   description: string | null;
   longDescription: string | null;
@@ -68,6 +69,7 @@ export interface PublicProject {
   target: string;
   targetType: ArtifactType;
   shortUrl: string;
+  highlight: boolean;
   title: string;
   description: string | null;
   longDescription: string | null;
@@ -89,6 +91,7 @@ export interface PublicProject {
 
 export interface CollectionRecord {
   id: string;
+  highlight: boolean;
   name: string;
   description: string;
   projects: string[];
@@ -114,6 +117,7 @@ interface ProjectInput {
   target?: string;
   targetType?: ArtifactType | null;
   permanent?: boolean;
+  highlight?: boolean;
   title?: string;
   description?: string;
   longDescription?: string;
@@ -132,6 +136,7 @@ interface ProjectInput {
 
 interface CollectionInput {
   id: string;
+  highlight?: boolean;
   name?: string;
   description?: string;
   projects?: string[];
@@ -219,6 +224,10 @@ export function normalizeTags(value: unknown): string[] {
         .filter((tag) => tag.length > 0 && tag.length <= 80),
     ),
   );
+}
+
+export function normalizeResearchAreas(value: unknown): string[] {
+  return [...new Set(normalizeTags(value).map((area) => area.toLowerCase()))];
 }
 
 function parseJsonArray(value: unknown): unknown[] {
@@ -375,6 +384,9 @@ export function validateProjectInput(
       error: "permanent must be a boolean",
     };
   }
+  if (raw.highlight !== undefined && typeof raw.highlight !== "boolean") {
+    return { success: false, error: "highlight must be a boolean" };
+  }
 
   return {
     success: true,
@@ -383,11 +395,13 @@ export function validateProjectInput(
       target,
       targetType,
       permanent: raw.permanent as boolean | undefined,
+      highlight: raw.highlight,
       title: optionalString(raw.title, 240),
       description: optionalString(raw.description, 4000),
       longDescription: optionalString(raw.longDescription, 20_000),
       tags: raw.tags === undefined ? undefined : normalizeTags(raw.tags),
-      researchAreas: raw.researchAreas === undefined ? undefined : normalizeTags(raw.researchAreas),
+      researchAreas:
+        raw.researchAreas === undefined ? undefined : normalizeResearchAreas(raw.researchAreas),
       technologies: raw.technologies === undefined ? undefined : normalizeTags(raw.technologies),
       methods: raw.methods === undefined ? undefined : normalizeTags(raw.methods),
       organizations:
@@ -433,10 +447,14 @@ export function validateCollectionInput(
       error: "projects contains an invalid slug",
     };
   }
+  if (raw.highlight !== undefined && typeof raw.highlight !== "boolean") {
+    return { success: false, error: "highlight must be a boolean" };
+  }
   return {
     success: true,
     data: {
       id,
+      highlight: raw.highlight,
       name,
       description: optionalString(raw.description, 4000),
       projects,
@@ -449,11 +467,12 @@ export function parseMetadata(slug: string, meta: Record<string, string>): Proje
   return {
     targetType: parseArtifactType(meta.targetType),
     permanent: meta.permanent === "1",
+    highlight: meta.highlight === "1",
     title: meta.title?.trim() || slug,
     description: meta.description?.trim() || null,
     longDescription: meta.longDescription?.trim() || null,
     tags: normalizeTags(meta.tags),
-    researchAreas: normalizeTags(parseJsonArray(meta.researchAreas)),
+    researchAreas: normalizeResearchAreas(parseJsonArray(meta.researchAreas)),
     technologies: normalizeTags(parseJsonArray(meta.technologies)),
     methods: normalizeTags(parseJsonArray(meta.methods)),
     organizations: normalizeNamedEntities(meta.organizations),
@@ -478,6 +497,7 @@ export function serializeProjectMetadata(
       input.targetType === undefined ? existing?.targetType || "" : input.targetType || "",
     permanent:
       input.permanent === undefined ? existing?.permanent || "0" : input.permanent ? "1" : "0",
+    highlight: (input.highlight ?? existing?.highlight === "1") ? "1" : "0",
     title: input.title === undefined ? existing?.title || input.slug : input.title || input.slug,
     description: input.description === undefined ? existing?.description || "" : input.description,
     longDescription:
@@ -515,6 +535,7 @@ export function serializeProjectMetadata(
 export function parseCollection(id: string, data: Record<string, string>): CollectionRecord {
   return {
     id,
+    highlight: data.highlight === "1",
     name: data.name || id,
     description: data.description || "",
     projects: normalizeTags(data.projects).map(normalizeSlug),
@@ -538,6 +559,7 @@ export function toPublicProject(project: ProjectRecord): PublicProject {
       artifacts: project.metadata.artifacts,
     }),
     shortUrl: shortPath(project.slug),
+    highlight: project.metadata.highlight,
     title: project.metadata.title,
     description: project.metadata.description,
     longDescription: project.metadata.longDescription,
@@ -608,9 +630,13 @@ export function formatResearchDateRange(startDate: string | null, endDate: strin
 export function researchTimestamp(
   project: Pick<ProjectMetadata, "startDate" | "endDate" | "createdAt">,
 ): number {
-  const value = project.endDate || project.startDate || project.createdAt;
-  const normalized =
-    value.length === 4 ? `${value}-01-01` : value.length === 7 ? `${value}-01` : value;
-  const timestamp = Date.parse(normalized);
+  const { startDate, endDate, createdAt } = project;
+  const value =
+    startDate && isValidDate(startDate)
+      ? startDate
+      : endDate && isValidDate(endDate)
+        ? endDate
+        : createdAt;
+  const timestamp = Date.parse(value);
   return Number.isNaN(timestamp) ? 0 : timestamp;
 }

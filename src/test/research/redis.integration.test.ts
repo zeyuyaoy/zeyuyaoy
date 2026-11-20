@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
-import { DELETE, GET, POST } from "@/app/api/research/links/route";
+import { DELETE, GET, POST, PUT } from "@/app/api/research/links/route";
 import {
   DELETE as DELETE_COLLECTION,
   GET as GET_COLLECTIONS,
   POST as POST_COLLECTION,
+  PUT as PUT_COLLECTION,
 } from "@/app/api/research/collections/route";
 import { GET as GET_DIRECTORY } from "@/app/api/research/directory/route";
 import { GET as GET_REDIRECT } from "@/app/research/[slug]/route";
@@ -52,7 +53,12 @@ suite("Redis-backed project workflow", () => {
       new NextRequest("http://localhost/api/research/links", {
         method: "POST",
         headers,
-        body: JSON.stringify({ slug, target: "https://example.org", tags: ["test"] }),
+        body: JSON.stringify({
+          slug,
+          target: "https://example.org",
+          tags: ["test"],
+          highlight: true,
+        }),
       }),
     );
     expect(created.status).toBe(201);
@@ -60,7 +66,18 @@ suite("Redis-backed project workflow", () => {
       new NextRequest(`http://localhost/api/research/links?slug=${slug}`, { headers }),
     );
     expect(fetched.status).toBe(200);
-    expect((await fetched.json()).metadata.title).toBe(slug);
+    expect((await fetched.json()).metadata).toMatchObject({ title: slug, highlight: true });
+    for (const values of [{ description: "Updated" }, { highlight: false }]) {
+      const updated = await PUT(
+        new NextRequest("http://localhost/api/research/links", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ slug, ...values }),
+        }),
+      );
+      expect(updated.status).toBe(200);
+      expect((await updated.json()).metadata.highlight).toBe(values.highlight ?? true);
+    }
     const deleted = await DELETE(
       new NextRequest(`http://localhost/api/research/links?slug=${slug}`, {
         method: "DELETE",
@@ -80,6 +97,8 @@ suite("Redis-backed project workflow", () => {
           target: "https://example.org/permanent",
           permanent: true,
           title: "Permanent study",
+          startDate: "2025-06",
+          endDate: "2025-11",
           tags: ["test"],
           researchAreas: ["Integration biology"],
           organizations: [{ name: "Test Institute", role: "Host", url: null }],
@@ -104,6 +123,8 @@ suite("Redis-backed project workflow", () => {
           slug: temporarySlug,
           target: "https://example.org/temporary",
           title: "Temporary study",
+          startDate: "2023",
+          endDate: "2026",
         }),
       }),
     );
@@ -131,34 +152,49 @@ suite("Redis-backed project workflow", () => {
           name: "Integration studies",
           projects: [slug, temporarySlug],
           tags: ["integration"],
+          highlight: true,
         }),
       }),
     );
     expect(collection.status).toBe(201);
 
+    for (const values of [{ description: "Updated" }, { highlight: false }]) {
+      const updated = await PUT_COLLECTION(
+        new NextRequest("http://localhost/api/research/collections", {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ id: collectionId, ...values }),
+        }),
+      );
+      expect(updated.status).toBe(200);
+      const response = await GET_COLLECTIONS(
+        new NextRequest("http://localhost/api/research/collections", { headers }),
+      );
+      expect((await response.json()).collections).toContainEqual(
+        expect.objectContaining({ id: collectionId, highlight: values.highlight ?? true }),
+      );
+    }
+
     const publicDirectory = await GET_DIRECTORY(
       new NextRequest("http://localhost/api/research/directory?limit=200"),
     );
     expect(publicDirectory.status).toBe(200);
-    const publicProject = (
-      (await publicDirectory.json()) as {
-        links: Array<Record<string, unknown>>;
-      }
-    ).links.find((project) => project.slug === slug);
+    const { links } = (await publicDirectory.json()) as {
+      links: Array<Record<string, unknown>>;
+    };
+    expect(
+      links.map((project) => project.slug).filter((id) => id === slug || id === temporarySlug),
+    ).toEqual([slug, temporarySlug]);
+    const publicProject = links.find((project) => project.slug === slug);
     expect(publicProject).toBeDefined();
     expect(publicProject).not.toHaveProperty("clicks");
     expect(publicProject).toMatchObject({
-      researchAreas: ["Integration biology"],
+      researchAreas: ["integration biology"],
       organizations: [{ name: "Test Institute", role: "Host", url: null }],
     });
-    const oldPublicProject = (
-      (await GET_DIRECTORY(
-        new NextRequest("http://localhost/api/research/directory?limit=200"),
-      ).then((response) => response.json())) as {
-        links: Array<Record<string, unknown>>;
-      }
-    ).links.find((project) => project.slug === temporarySlug);
+    const oldPublicProject = links.find((project) => project.slug === temporarySlug);
     expect(oldPublicProject).toMatchObject({
+      highlight: false,
       researchAreas: [],
       organizations: [],
       artifacts: [],

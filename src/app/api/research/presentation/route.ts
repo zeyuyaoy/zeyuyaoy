@@ -1,5 +1,5 @@
 import { after, NextResponse } from "next/server";
-import { toProjectSummary } from "@/lib/research/archive";
+import { compareProjectSummaries, toProjectSummary } from "@/lib/research/archive";
 import { getPhotoSet } from "@/lib/research/conferenceSlides";
 import { getDirectorySnapshot } from "@/lib/research/directory";
 import { toPublicProject } from "@/lib/research/models";
@@ -34,6 +34,7 @@ export async function GET() {
         photoSet: getPhotoSet(collection.id),
       })),
     };
+    payload.projects.sort((a, b) => compareProjectSummaries(a.summary, b.summary, "newest"));
     const orcid = process.env.ORCID_ID;
     if (orcid) {
       after(async () => {

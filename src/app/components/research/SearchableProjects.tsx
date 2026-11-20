@@ -7,13 +7,16 @@ import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } f
 import {
   type ArchiveState,
   archiveUrl,
+  compareProjectSummaries,
   filterProjects,
   parseArchiveState,
   type ProjectSummary,
 } from "@/lib/research/archive";
+import { isValidDate } from "@/lib/research/models";
 import type { CollectionView } from "@/lib/research/views";
 import CollectionCard from "./CollectionCard";
 import FilterDrawer from "./FilterDrawer";
+import ProjectCard from "./ProjectCard";
 import ProjectList from "./ProjectList";
 import SiteHeader from "./SiteHeader";
 import TimelineView from "./TimelineView";
@@ -84,22 +87,54 @@ export default function SearchableProjects({
     () => filterProjects(initialLinks, effectiveState),
     [effectiveState, initialLinks],
   );
-  const model = useMemo(() => {
+  const entries = useMemo(() => {
+    const projectsBySlug = new Map(initialLinks.map((project) => [project.slug, project]));
     const visibleSlugs = new Set(filtered.map((project) => project.slug));
+    const grouped = new Set<string>();
     const collections = initialCollections.flatMap((collection) => {
-      const members = initialLinks.filter(
-        (project) => collection.projects.includes(project.slug) && visibleSlugs.has(project.slug),
-      );
-      return members.length ? [{ ...collection, members }] : [];
+      const members = [...new Set(collection.projects)]
+        .map((slug) => projectsBySlug.get(slug))
+        .filter((project): project is ProjectSummary => project !== undefined);
+      const visibleMembers = members
+        .filter((project) => visibleSlugs.has(project.slug))
+        .sort((a, b) => compareProjectSummaries(a, b, state.sort));
+      if (!visibleMembers.length) {
+        return [];
+      }
+      visibleMembers.forEach((project) => grouped.add(project.slug));
+      const latestDate = (field: "endDate" | "startDate") =>
+        members
+          .map((project) => project[field])
+          .filter((date): date is string => date !== null && isValidDate(date))
+          .sort()
+          .at(-1) ?? null;
+      return [
+        {
+          collection,
+          visibleMembers,
+          pinned: collection.highlight || members.some((project) => project.highlight),
+          order: {
+            slug: collection.id,
+            title: collection.name,
+            startDate: null,
+            endDate: latestDate("endDate") ?? latestDate("startDate"),
+            createdAt: members
+              .map((project) => project.createdAt)
+              .sort()
+              .at(-1)!,
+          },
+        },
+      ];
     });
-    const grouped = new Set(
-      collections.flatMap((collection) => collection.members.map((project) => project.slug)),
+    const standalone = filtered
+      .filter((project) => !grouped.has(project.slug))
+      .map((project) => ({ project, pinned: project.highlight, order: project }));
+    return [...collections, ...standalone].sort(
+      (a, b) =>
+        Number(b.pinned) - Number(a.pinned) ||
+        compareProjectSummaries(a.order, b.order, state.sort),
     );
-    return {
-      collections,
-      standalone: filtered.filter((project) => !grouped.has(project.slug)),
-    };
-  }, [filtered, initialCollections, initialLinks]);
+  }, [filtered, initialCollections, initialLinks, state.sort]);
 
   const tagCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -305,31 +340,31 @@ export default function SearchableProjects({
           {state.view === "timeline" ? (
             <TimelineView selectedTags={state.tags} projects={filtered} onTagSelect={toggleTag} />
           ) : (
-            <>
-              {model.collections.length ? (
-                <div className="archive-list">
-                  {model.collections.map((collection) => (
-                    <CollectionCard
-                      key={collection.id}
-                      {...collection}
-                      projects={collection.members}
-                      selectedTags={state.tags}
-                      onTagSelect={toggleTag}
-                    />
-                  ))}
-                </div>
-              ) : null}
-              <ProjectList
-                selectedTags={state.tags}
-                links={model.standalone}
-                isSearching={filtersActive}
-                highlights={highlights}
-                availability={availability}
-                hasCollectionResults={model.collections.length > 0}
-                onTagSelect={toggleTag}
-                onReset={clearFilters}
-              />
-            </>
+            <ProjectList
+              isSearching={filtersActive}
+              availability={availability}
+              onReset={clearFilters}
+            >
+              {entries.map((entry) =>
+                "collection" in entry ? (
+                  <CollectionCard
+                    key={`collection-${entry.collection.id}`}
+                    {...entry.collection}
+                    projects={entry.visibleMembers}
+                    selectedTags={state.tags}
+                    onTagSelect={toggleTag}
+                  />
+                ) : (
+                  <ProjectCard
+                    key={`project-${entry.project.slug}`}
+                    project={entry.project}
+                    highlights={highlights}
+                    selectedTags={state.tags}
+                    onTagSelect={toggleTag}
+                  />
+                ),
+              )}
+            </ProjectList>
           )}
           {state.view === "timeline" && !filtered.length ? (
             <div className="empty-state">

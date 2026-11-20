@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
       description: collection.description || "",
       projects: (collection.projects || []).join(","),
       tags: (collection.tags || []).join(","),
+      highlight: collection.highlight ? "1" : "0",
       createdAt: now,
       updatedAt: "",
     });
@@ -101,6 +102,9 @@ export async function PUT(req: NextRequest) {
     }
     if (collection.tags !== undefined) {
       updates.tags = collection.tags.join(",");
+    }
+    if (collection.highlight !== undefined) {
+      updates.highlight = collection.highlight ? "1" : "0";
     }
     await redis.hSet(key, updates);
     invalidateDirectoryCache();

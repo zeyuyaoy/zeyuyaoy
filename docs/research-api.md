@@ -11,17 +11,15 @@ curl https://zeyuyaoy.com/api/research/auth \
 
 ### `GET /api/research/presentation`
 
-Loads the Research homepage pop-up in one request. Returns `availability`, `projects`
-(each with public `summary`, `detail`, and optional `photoSet`), and `collections`
-with their optional photo sets. This endpoint requires no admin key and never
-includes private records or click counters. Responses use `Cache-Control: no-store`.
-A missing configuration returns `availability: "unconfigured"`; a temporary service
-failure returns HTTP 503 with `availability: "unavailable"`. Configured empty data
-returns `availability: "ready"`. Existing ORCID refresh runs after the response
-when `ORCID_ID` is configured.
+Loads the Research homepage pop-up in one request. Returns `availability`, `projects` (each with public `summary`, `detail`, and optional `photoSet`), and `collections` with their optional photo sets. This endpoint requires no admin key and never includes private records or click counters. Responses use `Cache-Control: no-store`. A missing configuration returns `availability: "unconfigured"`; a temporary service failure returns HTTP 503 with `availability: "unavailable"`. Configured empty data returns `availability: "ready"`. Existing ORCID refresh runs after the response when `ORCID_ID` is configured.
 
-Project presentation links use `/?panel=research&project=<slug>`. Counted artifact
-short links remain `/research/<slug>`.
+In the Research list, project and collection cards share the same sort order. Newest first uses project start dates and each collection's latest member end date. Projects missing a start date use their end date and then their creation date. A collection with no member end dates uses its latest member start date, then its latest member creation date. The sort uses all public members, even when filters hide some of them.
+
+If a collection or any of its members has `highlight: true`, the collection is
+pinned. A highlighted project outside a collection is pinned individually.
+Search and filters continue to control which cards and members are visible.
+
+Project presentation links use `/?panel=research&project=<slug>`. Counted artifact short links remain `/research/<slug>`.
 
 ### `GET /api/research/directory`
 
@@ -34,7 +32,7 @@ short links remain `/research/<slug>`.
 curl "https://zeyuyaoy.com/api/research/directory?tag=genomics&source=manual&limit=20"
 ```
 
-Each project includes `slug`, `target`, resolved `targetType`, `shortUrl`, both descriptions, tags, research areas, technologies, methods, organizations, collaborators, typed artifacts, source, dates, repository URL, photo-set ID, and timestamps.
+Each project includes `slug`, `target`, resolved `targetType`, `shortUrl`, both descriptions, tags, lowercase research areas, technologies, methods, organizations, collaborators, typed artifacts, source, dates, repository URL, photo-set ID, timestamps, and `highlight`. Results are ordered newest start first.
 
 ### `GET /api/research/search`
 
@@ -42,7 +40,7 @@ Each project includes `slug`, `target`, resolved `targetType`, `shortUrl`, both 
 curl "https://zeyuyaoy.com/api/research/search?q=protein&tag=bioinformatics&source=orcid"
 ```
 
-Search matches titles, descriptions, dates, tags and research areas, organizations, collaborators, methods, technologies, artifact metadata/domains, slug, target, and source. `tag` may be repeated or comma-separated and uses case-insensitive match-all semantics. Optional `year`, `source`, `sort` (`newest`, `oldest`, `title-asc`, or `title-desc`), `limit`, and `offset` parameters are supported. Results add a numeric `score` and plain-text `highlights` arrays.
+Search matches titles, descriptions, dates, tags and research areas, organizations, collaborators, methods, technologies, artifact metadata/domains, slug, target, and source. `tag` may be repeated or comma-separated and uses case-insensitive match-all semantics. Optional `year`, `source`, `sort` (`newest`, `oldest`, `title-asc`, or `title-desc`), `limit`, and `offset` parameters are supported. Chronological sorts use the project start date. Results add a numeric `score` and plain-text `highlights` arrays.
 
 ## Projects
 
@@ -66,6 +64,7 @@ curl -X POST https://zeyuyaoy.com/api/research/links \
     "organizations": [{"name": "Example Institute", "role": "Host", "url": "https://example.org"}],
     "artifacts": [{"type": "publication", "title": "Paper", "url": "https://doi.org/10.1000/example", "date": "2025", "venue": "Example Journal", "featured": true}],
     "permanent": true,
+    "highlight": true,
     "startDate": "2024-06",
     "endDate": "2025",
     "githubRepo": "https://github.com/example/project",
@@ -76,6 +75,8 @@ curl -X POST https://zeyuyaoy.com/api/research/links \
 `slug` and an HTTP(S) `target` are required. Titles are optional and fall back to the normalized slug; the server does not fetch the target page. A `{ "links": [...] }` body creates multiple projects and returns per-entry results.
 
 Optional `targetType` overrides the primary link's resource type. Accepted values are `publication`, `preprint`, `poster`, `talk`, `presentation`, `award`, `code`, `dataset`, `video`, `file`, `website`, and `other`. These same values are supported for artifact `type`. Invalid primary-link types return `400`.
+
+Projects and collections accept the optional JSON boolean `highlight` on creation and update. It defaults to `false`, including for existing records without the field. On update, omission preserves the saved value and `false` clears the flag. Reads and project exports include the saved value.
 
 On creation, an omitted or null `targetType` selects automatic detection. On update, omission preserves the current override and `null` clears it. Authenticated project responses expose this nullable override in `metadata.targetType`; JSON/YAML exports preserve it and CSV uses an empty cell for automatic detection. Public directory/search responses expose the resolved `targetType`: explicit override, matching artifact type, then conservative URL inference. Unknown destinations use `website`.
 
@@ -109,7 +110,7 @@ Supply `slug`, comma-separated `slugs`, or `tag` in the query or JSON body. Proj
 All `/api/research/collections` methods require authentication.
 
 - `GET` lists collections.
-- `POST` creates `{ id, name, description?, projects?, tags? }`.
+- `POST` creates `{ id, name, description?, projects?, tags?, highlight? }`.
 - `PUT` updates supplied fields for an existing `id`.
 - `PATCH` applies `{ id, addProjects?, removeProjects? }`.
 - `DELETE ?id=<id>` removes a collection.

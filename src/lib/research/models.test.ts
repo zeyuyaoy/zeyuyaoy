@@ -6,6 +6,7 @@ import {
   isHttpUrl,
   isValidDate,
   normalizeTags,
+  parseCollection,
   parseMetadata,
   parsePagination,
   resolveTargetType,
@@ -16,6 +17,24 @@ import {
 } from "./models";
 
 describe("project validation", () => {
+  it("defaults legacy highlights to false and preserves or clears explicit project highlights", () => {
+    expect(parseMetadata("study", {}).highlight).toBe(false);
+    expect(parseCollection("group", {}).highlight).toBe(false);
+    expect(parseCollection("group", { highlight: "1" }).highlight).toBe(true);
+    const input = { slug: "study", highlight: true };
+    expect(validateProjectInput(input, false)).toMatchObject({ success: true, data: input });
+    const stored = serializeProjectMetadata(input);
+    const updated = serializeProjectMetadata({ slug: "study" }, stored);
+    expect(parseMetadata("study", updated).highlight).toBe(true);
+    const cleared = serializeProjectMetadata({ ...input, highlight: false }, updated);
+    expect(parseMetadata("study", cleared).highlight).toBe(false);
+  });
+
+  it.each(["true", 1, null])("rejects a non-boolean highlight %j", (highlight) => {
+    const error = { success: false, error: "highlight must be a boolean" };
+    expect(validateProjectInput({ slug: "study", highlight }, false)).toEqual(error);
+    expect(validateCollectionInput({ id: "group", highlight }, false)).toEqual(error);
+  });
   it("round-trips target type overrides, preserves omitted values, and clears explicit null", () => {
     const parsed = validateProjectInput(
       {
@@ -151,7 +170,7 @@ describe("project validation", () => {
       {
         slug: "study",
         target: "https://example.org",
-        researchAreas: ["Genomics"],
+        researchAreas: ["Genomics", " genomics ", "BIOINFORMATICS"],
         organizations: [{ name: "Institute", role: "Host", url: "https://example.org/institute" }],
         artifacts: [
           {
@@ -171,9 +190,13 @@ describe("project validation", () => {
       return;
     }
     const stored = serializeProjectMetadata(parsed.data);
+    expect(JSON.parse(stored.researchAreas)).toEqual(["genomics", "bioinformatics"]);
+    expect(
+      parseMetadata("old-record", { researchAreas: '["Genomics","GENOMICS"]' }).researchAreas,
+    ).toEqual(["genomics"]);
     expect(parseMetadata("study", stored)).toEqual(
       expect.objectContaining({
-        researchAreas: ["Genomics"],
+        researchAreas: ["genomics", "bioinformatics"],
         organizations: [expect.objectContaining({ name: "Institute" })],
         artifacts: [expect.objectContaining({ type: "dataset", featured: true })],
       }),

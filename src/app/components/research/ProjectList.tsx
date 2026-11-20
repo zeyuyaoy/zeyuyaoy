@@ -1,31 +1,19 @@
 "use client";
 
-import type { ProjectSummary } from "@/lib/research/archive";
-import ProjectCard from "./ProjectCard";
+import type { ReactNode } from "react";
 
 export default function ProjectList({
-  links,
+  children,
   isSearching,
-  highlights,
   availability,
-  hasCollectionResults,
-  onTagSelect,
   onReset,
-  selectedTags,
 }: {
-  links: ProjectSummary[];
+  children: ReactNode[];
   isSearching: boolean;
-  highlights?: string[];
-  selectedTags?: string[];
   availability: "ready" | "unconfigured" | "unavailable";
-  hasCollectionResults: boolean;
-  onTagSelect?: (tag: string) => void;
   onReset?: () => void;
 }) {
-  if (!links.length && hasCollectionResults) {
-    return null;
-  }
-  if (!links.length) {
+  if (!children.length) {
     const message = isSearching
       ? "No projects match this search and filter combination."
       : availability === "unconfigured"
@@ -45,17 +33,5 @@ export default function ProjectList({
       </div>
     );
   }
-  return (
-    <div className="archive-list">
-      {links.map((project) => (
-        <ProjectCard
-          key={project.slug}
-          project={project}
-          highlights={highlights}
-          selectedTags={selectedTags}
-          onTagSelect={onTagSelect}
-        />
-      ))}
-    </div>
-  );
+  return <div className="archive-list">{children}</div>;
 }

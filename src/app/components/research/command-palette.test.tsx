@@ -4,6 +4,7 @@ import type { ProjectSummary } from "@/lib/research/archive";
 import CommandPalette from "./CommandPalette";
 
 const project: ProjectSummary = {
+  highlight: false,
   slug: "atlas",
   target: "https://example.org",
   targetType: "website",

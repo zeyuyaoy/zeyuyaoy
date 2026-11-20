@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ChevronRight, FileText } from "lucide-react";
 import type { ProjectSummary } from "@/lib/research/archive";
 import type { PhotoSet } from "@/lib/research/conferenceSlides";
-import { formatResearchDate } from "@/lib/research/models";
+import { formatResearchDate, normalizeResearchAreas } from "@/lib/research/models";
 import ConferenceCarousel from "./ConferenceCarousel";
 import CopyLinkButton from "./CopyLinkButton";
 
@@ -43,9 +43,10 @@ export default function CollectionCard({
   onTagSelect?: (tag: string) => void;
 }) {
   const dates = collectionDates(projects);
-  const areas = Array.from(
-    new Set([...tags, ...projects.flatMap((project) => project.researchAreas)]),
-  ).slice(0, 4);
+  const areas = normalizeResearchAreas([
+    ...tags,
+    ...projects.flatMap((project) => project.researchAreas),
+  ]).slice(0, 4);
   return (
     <div className="archive-entry collection-entry" id={`collection-${id}`}>
       <div className="entry-date">{dates || "Collection"}</div>

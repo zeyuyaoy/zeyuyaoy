@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jsonError, routeError } from "@/lib/research/api";
+import { compareProjectSummaries } from "@/lib/research/archive";
 import { getDirectorySnapshot } from "@/lib/research/directory";
 import { parsePagination, toPublicProject } from "@/lib/research/models";
 
@@ -25,11 +26,12 @@ export async function GET(req: NextRequest) {
         (project) =>
           !tag || project.metadata.tags.some((value) => value.toLowerCase().includes(tag)),
       )
-      .sort((a, b) => Date.parse(b.metadata.createdAt) - Date.parse(a.metadata.createdAt));
+      .map(toPublicProject)
+      .sort((a, b) => compareProjectSummaries(a, b, "newest"));
     const { limit, offset } = pagination.data;
     return NextResponse.json(
       {
-        links: filtered.slice(offset, offset + limit).map(toPublicProject),
+        links: filtered.slice(offset, offset + limit),
         pagination: {
           total: filtered.length,
           limit,

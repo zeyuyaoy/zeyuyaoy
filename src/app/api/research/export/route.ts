@@ -68,6 +68,7 @@ export async function GET(req: NextRequest) {
             ...(includeClicks ? ["clicks"] : []),
             "targetType",
             "permanent",
+            "highlight",
             "title",
             "description",
             "longDescription",

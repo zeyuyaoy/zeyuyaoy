@@ -31,7 +31,7 @@ export default function ResearchProjectDetail({
   const related = relatedProjects(summary, allSummaries);
   const artifacts = effectiveArtifacts(project);
   const date = formatResearchDateRange(project.startDate, project.endDate);
-  const areas = Array.from(new Set([...project.researchAreas, ...project.tags]));
+  const areas = summary.researchAreas;
   const methods = [...project.methods, ...project.technologies];
   return (
     <>

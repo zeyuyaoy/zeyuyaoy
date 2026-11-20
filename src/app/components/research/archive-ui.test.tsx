@@ -8,6 +8,7 @@ const initialState = parseArchiveState(new URLSearchParams());
 
 const projects: ProjectSummary[] = [
   {
+    highlight: false,
     slug: "atlas",
     target: "https://example.org",
     targetType: "website",
@@ -105,6 +106,74 @@ describe("archive interactions", () => {
 });
 
 describe("archive integration regressions", () => {
+  it.each([false, true])(
+    "interleaves collection end dates with project start dates and applies pins (%s)",
+    (pinned) => {
+      const project = (
+        slug: string,
+        startDate: string,
+        endDate: string | null = null,
+        highlight = false,
+        hidden = false,
+      ) => ({
+        ...projects[0],
+        slug,
+        title: slug,
+        detailUrl: `/?panel=research&project=${slug}`,
+        startDate,
+        endDate,
+        highlight,
+        searchText: hidden ? "other" : "match",
+      });
+      const collection = (id: string, members: string[], highlight = false) => ({
+        id,
+        name: id,
+        description: "",
+        tags: ["BIOLOGY"],
+        projects: members,
+        highlight,
+        createdAt: "2025-01-01",
+        updatedAt: null,
+      });
+      const { container } = render(
+        <SearchableProjects
+          initialLinks={[
+            project("Newest", "2026"),
+            project("Middle", "2024-06"),
+            project("Older", "2015", "2027", pinned),
+            project("First group early", "2023", "2025", false, true),
+            project("First group late", "2024", "2024"),
+            project("Second group early", "2020", null, pinned, true),
+            project("Second group late", "2022"),
+            project("Hidden", "2026", null, pinned, true),
+          ]}
+          initialCollections={[
+            collection("first", ["First group early", "First group late"], pinned),
+            collection("second", ["Second group early", "Second group late"]),
+            collection("hidden", ["Hidden"], pinned),
+          ]}
+          availability="ready"
+          initialState={{ ...initialState, query: "match" }}
+        />,
+      );
+      const headings = Array.from(
+        container.querySelectorAll(".archive-list .archive-entry h2"),
+      ).map((heading) => heading.textContent);
+      expect(headings).toEqual(
+        pinned
+          ? ["first (2024)", "second (2022)", "Older", "Newest", "Middle"]
+          : ["Newest", "first (2024)", "Middle", "second (2022)", "Older"],
+      );
+      expect(screen.queryByText("Second group early")).not.toBeInTheDocument();
+      expect(screen.queryByText("Hidden")).not.toBeInTheDocument();
+      expect(screen.getAllByRole("link", { name: "Second group late" })).toHaveLength(2);
+      expect(
+        within(container.querySelector("#collection-first")!).getAllByRole("button", {
+          name: "biology",
+        }),
+      ).toHaveLength(1);
+    },
+  );
   it("preserves sorting and view state and restores the archive on history navigation", async () => {
     window.history.replaceState({}, "", "/?panel=research");
     render(
@@ -216,6 +285,7 @@ describe("archive integration regressions", () => {
         initialCollections={[
           {
             id: "atlas",
+            highlight: false,
             name: "Atlas collection",
             description: "Research outputs",
             projects: members.map((p) => p.slug),

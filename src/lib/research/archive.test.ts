@@ -12,6 +12,7 @@ import type { PublicProject } from "./models";
 
 function project(overrides: Partial<PublicProject> = {}): PublicProject {
   return {
+    highlight: false,
     slug: "alpha",
     target: "https://example.org/alpha",
     targetType: "website",
@@ -82,6 +83,7 @@ describe("archive query model", () => {
         }),
       ),
     ];
+    expect(projects[0].researchAreas).toEqual(["spatial omics", "biology"]);
     const state = parseArchiveState(
       new URLSearchParams("q=genome+ismb+ada+microscopy&tag=biology&tag=spatial%20omics"),
     );
@@ -93,11 +95,13 @@ describe("archive query model", () => {
     expect(projectMatchesYear(summary, "2023")).toBe(true);
     expect(projectMatchesYear(summary, "2025")).toBe(false);
     const sameDate = toProjectSummary(project({ slug: "aardvark", title: "Aardvark" }));
+    const newerStart = toProjectSummary(
+      project({ slug: "later", startDate: "2023-06", endDate: null }),
+    );
     const state = parseArchiveState(new URLSearchParams());
-    expect(filterProjects([summary, sameDate], state).map((item) => item.title)).toEqual([
-      "Aardvark",
-      "Alpha protein atlas",
-    ]);
+    expect(filterProjects([summary, sameDate, newerStart], state).map((item) => item.slug)).toEqual(
+      ["later", "aardvark", "alpha"],
+    );
   });
 
   it("ranks related projects by shared terms, then research date and title", () => {

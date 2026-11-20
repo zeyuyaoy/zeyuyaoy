@@ -9,6 +9,7 @@ import type {
 import {
   artifactTypeLabel,
   formatResearchDate,
+  normalizeResearchAreas,
   researchTimestamp,
   resolveTargetType,
   toPublicProject,
@@ -33,6 +34,7 @@ export interface ProjectSummary {
   shortUrl: string;
   detailUrl: string;
   title: string;
+  highlight: boolean;
   description: string | null;
   tags: string[];
   researchAreas: string[];
@@ -163,7 +165,10 @@ function searchableText(project: PublicProject, artifacts: ProjectArtifact[]) {
 export function toProjectSummary(project: ProjectRecord | PublicProject): ProjectSummary {
   const publicProject = "metadata" in project ? toPublicProject(project) : project;
   const artifacts = effectiveArtifacts(publicProject);
-  const researchAreas = unique([...publicProject.researchAreas, ...publicProject.tags]);
+  const researchAreas = normalizeResearchAreas([
+    ...publicProject.researchAreas,
+    ...publicProject.tags,
+  ]);
   return {
     slug: publicProject.slug,
     target: publicProject.target,
@@ -171,6 +176,7 @@ export function toProjectSummary(project: ProjectRecord | PublicProject): Projec
     shortUrl: publicProject.shortUrl,
     detailUrl: projectPath(publicProject.slug),
     title: publicProject.title,
+    highlight: publicProject.highlight,
     description: publicProject.description,
     tags: publicProject.tags,
     researchAreas,
@@ -239,22 +245,24 @@ export function searchScore(project: ProjectSummary, query: string) {
   );
 }
 
-export function compareProjectSummaries(a: ProjectSummary, b: ProjectSummary, sort: ArchiveSort) {
+type ResearchOrder = Pick<ProjectSummary, "slug" | "title" | "startDate" | "endDate" | "createdAt">;
+
+export function compareProjectSummaries(a: ResearchOrder, b: ResearchOrder, sort: ArchiveSort) {
+  const slugOrder = a.slug.localeCompare(b.slug);
   if (sort === "title-asc") {
-    return a.title.localeCompare(b.title);
+    return a.title.localeCompare(b.title) || slugOrder;
   }
   if (sort === "title-desc") {
-    return b.title.localeCompare(a.title);
+    return b.title.localeCompare(a.title) || slugOrder;
   }
   const dateA = researchTimestamp(a);
   const dateB = researchTimestamp(b);
-  return sort === "oldest"
-    ? dateA - dateB || a.title.localeCompare(b.title)
-    : dateB - dateA || a.title.localeCompare(b.title);
+  const dateOrder = sort === "oldest" ? dateA - dateB : dateB - dateA;
+  return dateOrder || a.title.localeCompare(b.title) || slugOrder;
 }
 
 export function projectYear(project: ProjectSummary) {
-  const value = project.endDate || project.startDate;
+  const value = project.startDate || project.endDate;
   return value?.slice(0, 4) || null;
 }
 

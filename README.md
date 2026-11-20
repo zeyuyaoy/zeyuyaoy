@@ -1,7 +1,6 @@
 ### Hi, I'm Peter!
 
-Growing up in Singapore, I've always cared deeply about making science and tech more accessible and inclusive, and I'm
-always looking for new ways to connect ideas across disciplines.
+Growing up in Singapore, I've always cared deeply about making science and tech more accessible and inclusive, and I'm always looking for new ways to connect ideas across disciplines.
 
 Above all, I try to stay curious, collaborative, and grounded. Per aspera ad astra.
 

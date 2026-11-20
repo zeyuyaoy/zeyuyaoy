@@ -6,6 +6,7 @@ import ConferenceCarousel from "./ConferenceCarousel";
 import ProjectCard from "./ProjectCard";
 
 const project: PublicProject = {
+  highlight: false,
   slug: "safe-project",
   target: "https://example.org",
   targetType: "website",
