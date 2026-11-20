@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,4 +36,20 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run check
       - run: bun x playwright install --with-deps chromium
+      - name: Report portfolio performance
+        if: github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        shell: bash
+        run: |
+          PORT=3118 node scripts/research-test-server.mjs &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          curl --fail --silent --retry 15 --retry-connrefused --retry-delay 1 http://127.0.0.1:3118/ --output /dev/null
+          node scripts/benchmark-portfolio.mjs http://127.0.0.1:3118 | tee /tmp/portfolio-perf.jsonl
+          {
+            printf '### Portfolio performance (%s)\n\n' "$GITHUB_SHA"
+            printf '\x60\x60\x60json\n'
+            cat /tmp/portfolio-perf.jsonl
+            printf '\x60\x60\x60\n'
+          } >> "$GITHUB_STEP_SUMMARY"
       - run: bun run test:e2e --project=chromium
