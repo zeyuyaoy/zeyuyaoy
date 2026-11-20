@@ -686,22 +686,27 @@ test("appearance and photo speed persist across pop-ups", async ({ page }) => {
     .toBeLessThan(before);
   await track.evaluate((element) => {
     const animation = element.getAnimations()[0];
-    animation.currentTime = Number(animation.effect?.getComputedTiming().duration) + 1;
+    const { duration, delay } = animation.effect!.getComputedTiming();
+    const copyWidth = element.firstElementChild!.getBoundingClientRect().width;
+    const viewportWidth = element.closest("[data-marquee-root]")!.getBoundingClientRect().width;
+    animation.pause();
+    animation.currentTime = (delay ?? 0) + Number(duration) * (1 - viewportWidth / (2 * copyWidth));
   });
   await expect
     .poll(() =>
-      home.locator("img").evaluateAll((images) => {
-        const visible = images.filter((image) => {
-          const box = image.getBoundingClientRect();
-          return box.left < innerWidth && box.right > 0;
+      track.evaluate((element) => {
+        return Array.from(element.children, (group) => {
+          const visible = Array.from(group.querySelectorAll("img")).filter((image) => {
+            const box = image.getBoundingClientRect();
+            return box.left < innerWidth && box.right > 0;
+          });
+          return (
+            visible.length > 0 && visible.every((image) => image.complete && image.naturalWidth > 0)
+          );
         });
-        return (
-          visible.length > 0 &&
-          visible.every((image) => image instanceof HTMLImageElement && image.naturalWidth > 0)
-        );
       }),
     )
-    .toBe(true);
+    .toEqual([true, true]);
   await page
     .getByRole("navigation", { name: "Profile sections" })
     .getByRole("button", { name: "Experience", exact: true })
@@ -720,6 +725,28 @@ test("appearance and photo speed persist across pop-ups", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.getByRole("button", { name: "Appearance settings", exact: true }).click();
   await expect(page.getByLabel("Photo scroll speed")).toHaveValue("50");
+});
+
+test("desktop marquee uses the rendered frame width on a short viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 320 });
+  await page.goto("/");
+  const photo = page.locator('[data-photo-section="about"] img').first();
+  await expect(photo).toHaveAttribute("loading", "eager");
+  await expect
+    .poll(() =>
+      photo.evaluate((image: HTMLImageElement) => {
+        const width = image.getBoundingClientRect().width;
+        const sourceWidth = Number(new URL(image.currentSrc || image.src).searchParams.get("w"));
+        return (
+          width > innerHeight * 0.6 &&
+          image.sizes === `${Math.ceil(width)}px` &&
+          image.complete &&
+          image.naturalWidth > 0 &&
+          sourceWidth >= Math.min(960, Math.ceil(width * devicePixelRatio))
+        );
+      }),
+    )
+    .toBe(true);
 });
 
 test("research pop-up preserves mobile controls and large text", async ({ page }) => {

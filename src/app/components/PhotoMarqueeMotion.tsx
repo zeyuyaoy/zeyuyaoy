@@ -50,11 +50,21 @@ export default function PhotoMarqueeMotion({
         animation.currentTime = 0;
       }
       if (visible && active) {
-        const count =
-          Math.ceil(element.clientWidth / Math.max(1, (element.clientHeight * 16) / 9)) + 1;
+        const frame = track.firstElementChild!.firstElementChild!;
+        const frameWidth = frame.getBoundingClientRect().width;
+        const count = Math.ceil(element.clientWidth / Math.max(1, frameWidth)) + 1;
+        const sizes = `${Math.ceil(frameWidth)}px`;
         for (const group of track.children) {
-          [...group.querySelectorAll("img")].slice(0, count).forEach((image) => {
-            image.loading = "eager";
+          group.querySelectorAll("img").forEach((image, index) => {
+            if (index >= count && image.loading !== "eager") {
+              return;
+            }
+            if (image.srcset && image.sizes !== sizes) {
+              image.sizes = sizes;
+            }
+            if (image.loading !== "eager") {
+              image.loading = "eager";
+            }
           });
         }
       }

@@ -149,7 +149,7 @@ for (const path of [
         .split(", ")
         .map((candidate) => new URL(candidate.split(" ")[0], base));
       assert.ok(candidates.some((candidate) => candidate.searchParams.get("w") === "640"));
-      assert.equal(image.sizes, "60svh");
+      assert.equal(image.sizes, "auto, 960px");
       assert.equal(image.loading, "lazy");
     }
     const photoPaths = [
