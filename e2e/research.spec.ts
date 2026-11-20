@@ -65,6 +65,33 @@ test("Research starts its data request while the popup code is still loading", a
   await expect(page.getByRole("searchbox")).toBeVisible();
 });
 
+test("the decorative Research mascot loads when the archive can show it", async ({ page }) => {
+  const mascotRequests: string[] = [];
+  page.on("request", (request) => {
+    const url = new URL(request.url());
+    if (url.searchParams.get("url") === "/research/pet.png") {
+      mascotRequests.push(url.href);
+    }
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/?panel=research");
+  await expect(page.getByRole("searchbox")).toBeVisible();
+  const mascot = page.locator(".search-pet");
+  await expect(mascot).toBeHidden();
+  expect(mascotRequests).toHaveLength(0);
+
+  await page.keyboard.press("Escape");
+  await expect(mascot).toHaveCount(0);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/?panel=research&project=migration-rich-project");
+  await expect(page.locator("[data-project-title]")).toBeVisible();
+  await expect(mascot).toBeHidden();
+  expect(mascotRequests).toHaveLength(0);
+  await page.getByRole("link", { name: "All research", exact: true }).click();
+  await expect(mascot).toBeVisible();
+  await expect.poll(() => mascotRequests.length).toBe(1);
+});
+
 test("every preserved project opens directly inside Research", async ({ page }) => {
   for (const slug of [...slugs, "migration-rich-project"]) {
     const response = await page.goto(`/?panel=research&project=${slug}`);

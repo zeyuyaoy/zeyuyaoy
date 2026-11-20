@@ -225,7 +225,6 @@ export default function SearchableProjects({
             aria-hidden
             width={58}
             height={58}
-            priority
             className="search-pet"
           />
         </section>
