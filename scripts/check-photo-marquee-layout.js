@@ -21,8 +21,10 @@
     assert(JSON.stringify(sources[0]) === JSON.stringify(sources[1]), "loop copies differ");
     assert(new Set(sources[0]).size === expected, "photos repeat within the sequence");
     assert(
-      [...root.querySelectorAll("img")].every((image) => !image.hasAttribute("srcset")),
-      "photos must bypass transformations",
+      [...root.querySelectorAll("img")].every(
+        (image) => image.hasAttribute("srcset") === (section === "about"),
+      ),
+      "only the desktop background should use responsive transformations",
     );
     if (section === "about" && innerWidth <= 800) {
       assert(root.getClientRects().length === 0, "mobile homepage background must remain hidden");

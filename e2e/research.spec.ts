@@ -664,6 +664,24 @@ test("appearance and photo speed persist across pop-ups", async ({ page }) => {
       track.evaluate((element) => parseFloat(getComputedStyle(element).animationDuration)),
     )
     .toBeLessThan(before);
+  await track.evaluate((element) => {
+    const animation = element.getAnimations()[0];
+    animation.currentTime = Number(animation.effect?.getComputedTiming().duration) + 1;
+  });
+  await expect
+    .poll(() =>
+      home.locator("img").evaluateAll((images) => {
+        const visible = images.filter((image) => {
+          const box = image.getBoundingClientRect();
+          return box.left < innerWidth && box.right > 0;
+        });
+        return (
+          visible.length > 0 &&
+          visible.every((image) => image instanceof HTMLImageElement && image.naturalWidth > 0)
+        );
+      }),
+    )
+    .toBe(true);
   await page
     .getByRole("navigation", { name: "Profile sections" })
     .getByRole("button", { name: "Experience", exact: true })

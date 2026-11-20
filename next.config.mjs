@@ -23,6 +23,7 @@ const nextConfig = {
     localPatterns: [
       { pathname: "/research/biorsp/**", search: "" },
       { pathname: "/research/pet.png", search: "" },
+      { pathname: "/marquee/photo-*.webp", search: "" },
       { pathname: "/_next/static/media/**", search: "" },
       { pathname: "/_next/static/immutable/media/**", search: "" },
     ],

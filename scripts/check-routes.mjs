@@ -141,15 +141,19 @@ for (const path of [
     assert.deepEqual(structuredData, [personJsonLd, websiteJsonLd], "Complete JSON-LD metadata");
     const images = tags(text, "img");
     const marquee = images.filter((image) =>
-      new URL(image.src, base).pathname.startsWith("/marquee/"),
+      new URL(image.src, base).searchParams.get("url")?.startsWith("/marquee/"),
     );
-    assert.equal(marquee.length, 56, "All mounted marquee images bypass optimization");
+    assert.equal(marquee.length, 56, "Two responsive copies of the desktop marquee");
     for (const image of marquee) {
-      assert.equal(image.srcSet ?? image.srcset, undefined, "No marquee transformation candidates");
-      assert.equal(image.sizes, undefined, "No marquee responsive sizing hint");
+      const candidates = (image.srcSet ?? image.srcset)
+        .split(", ")
+        .map((candidate) => new URL(candidate.split(" ")[0], base));
+      assert.ok(candidates.some((candidate) => candidate.searchParams.get("w") === "640"));
+      assert.equal(image.sizes, "60svh");
+      assert.equal(image.loading, "lazy");
     }
     const photoPaths = [
-      ...new Set(marquee.map((image) => new URL(image.src, base).pathname)),
+      ...new Set(marquee.map((image) => new URL(image.src, base).searchParams.get("url"))),
     ].sort();
     assert.deepEqual(
       photoPaths,
@@ -169,10 +173,22 @@ for (const path of [
       assert.equal(metadata.width, 960, photoPath);
       assert.equal(metadata.height, 540, photoPath);
     }
-    const optimized = images.filter(
-      (image) => new URL(image.src, base).pathname === "/_next/image",
+    const marqueeSample = await fetch(
+      new URL(
+        `/_next/image?${new URLSearchParams({ url: photoPaths[0], w: "640", q: "75" })}`,
+        base,
+      ),
+      { headers: { Accept: "image/webp" }, signal: AbortSignal.timeout(10_000) },
     );
-    assert.equal(optimized.length, 2, "Only the two profile images are initially optimized");
+    assert.equal(marqueeSample.status, 200);
+    const marqueeMetadata = await sharp(Buffer.from(await marqueeSample.arrayBuffer())).metadata();
+    assert.equal(marqueeMetadata.format, "webp");
+    assert.equal(marqueeMetadata.width, 640);
+    assert.equal(marqueeMetadata.height, 360);
+    const optimized = images.filter(
+      (image) => new URL(image.src, base).pathname === "/_next/image" && !marquee.includes(image),
+    );
+    assert.equal(optimized.length, 2, "Two optimized profile images");
     for (const image of optimized) {
       const candidates = (image.srcSet ?? image.srcset)
         .split(", ")
@@ -200,7 +216,7 @@ for (const path of [
     }
     const profileSource = new URL(optimized[0].src, base).searchParams.get("url");
     for (const query of [
-      { url: "/marquee/photo-001.webp", w: "640", q: "75" },
+      { url: "/marquee/photo-001.webp?v=1", w: "640", q: "75" },
       { url: "/profile.jpg", w: "640", q: "90" },
       { url: "/og-image.jpg", w: "640", q: "75" },
       { url: "/bucket-webring.png", w: "64", q: "75" },

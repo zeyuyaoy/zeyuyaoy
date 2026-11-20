@@ -37,7 +37,8 @@ export default function PhotoMarqueeBackground({
                       alt=""
                       width={960}
                       height={540}
-                      unoptimized
+                      sizes={inline ? undefined : "60svh"}
+                      unoptimized={inline}
                       loading="lazy"
                       fetchPriority="low"
                       decoding="async"
