@@ -327,6 +327,26 @@ test("outside arrows cycle section pop-ups without moving the homepage", async (
   }
 });
 
+test("homepage reserves section height only at the desktop breakpoint", async ({ page }) => {
+  await page.setViewportSize({ width: 960, height: 900 });
+  await page.goto("/");
+  const intro = page.locator('[data-home-section="intro"]');
+  const reservation = () =>
+    intro.evaluate((section) =>
+      section.parentElement!.style.getPropertyValue("--home-intro-height"),
+    );
+
+  await page.evaluate(() => document.fonts.ready);
+  expect(await reservation()).toBe("");
+
+  await page.setViewportSize({ width: 961, height: 900 });
+  await expect.poll(reservation).toMatch(/^\d+px$/);
+  await expect(intro).toHaveCSS("min-height", await reservation());
+
+  await page.setViewportSize({ width: 960, height: 900 });
+  await expect(intro).toHaveCSS("min-height", "auto");
+});
+
 test("photo strips remain partitioned and independent of timeline scrolling", async ({ page }) => {
   const marqueeScript = await readFile(
     path.join(process.cwd(), "scripts/check-photo-marquee-layout.js"),

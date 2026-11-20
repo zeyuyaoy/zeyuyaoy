@@ -73,15 +73,18 @@ export default function StableHomeLayout({
 
     let disposed = false;
     let scheduledFrame: number | null = null;
-    let lastWidth = root.getBoundingClientRect().width;
+    // Match the breakpoint where the stylesheet reserves space for these sections.
+    const reserveSpace = window.matchMedia("(min-width: 961px)");
+    let lastWidth = 0;
 
     const measure = () => {
       scheduledFrame = null;
-      if (disposed || !root.isConnected) {
+      if (disposed || !root.isConnected || !reserveSpace.matches) {
         return;
       }
 
       const width = root.getBoundingClientRect().width;
+      lastWidth = width;
       if (width <= 0) {
         return;
       }
@@ -131,7 +134,7 @@ export default function StableHomeLayout({
     };
 
     const schedule = () => {
-      if (!disposed && scheduledFrame === null) {
+      if (!disposed && reserveSpace.matches && scheduledFrame === null) {
         scheduledFrame = requestAnimationFrame(measure);
       }
     };
