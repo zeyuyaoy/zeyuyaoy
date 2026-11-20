@@ -257,7 +257,7 @@ test("outside arrows cycle section pop-ups without moving the homepage", async (
   ]) {
     await page.setViewportSize({ width, height });
     await page.emulateMedia({ reducedMotion: width === 390 ? "reduce" : "no-preference" });
-    await page.goto("/");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
     const opener = page
       .getByRole("navigation", { name: "Profile sections" })
       .getByRole("button", { name: "Experience", exact: true });
@@ -329,7 +329,7 @@ test("outside arrows cycle section pop-ups without moving the homepage", async (
 
 test("homepage reserves section height only at the desktop breakpoint", async ({ page }) => {
   await page.setViewportSize({ width: 960, height: 900 });
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   const intro = page.locator('[data-home-section="intro"]');
   const reservation = () =>
     intro.evaluate((section) =>
@@ -430,8 +430,7 @@ test("complete profile timelines preserve content and scroll naturally at every 
     [1440, 900, false],
   ] as const) {
     await page.setViewportSize({ width, height });
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.evaluate((large) => {
       localStorage.setItem(
         "portfolio-appearance",
@@ -449,8 +448,7 @@ test("complete profile timelines preserve content and scroll naturally at every 
       ["experience", "Experience timeline", experience],
       ["education", education.title, education.entries],
     ] as const) {
-      await page.goto(`/?panel=${section}`);
-      await page.waitForLoadState("networkidle");
+      await page.goto(`/?panel=${section}`, { waitUntil: "domcontentloaded" });
       const title = section === "experience" ? "Experience" : "Education";
       const dialog = page.getByRole("dialog", { name: title, exact: true });
       const body = dialog.getByRole("region", { name: `${title} content`, exact: true });
@@ -479,6 +477,7 @@ test("complete profile timelines preserve content and scroll naturally at every 
           await expect(row.getByText(entry.subtitle, { exact: true })).toBeVisible();
         }
       }
+      await page.evaluate(() => document.fonts.ready);
       const layout = await timeline.evaluate((element) => {
         const row = element.firstElementChild!;
         const date = row.firstElementChild!.getBoundingClientRect();
@@ -570,7 +569,7 @@ test("music cassette fits viewports and only fetches while visible", async ({ pa
     [844, 390],
   ]) {
     await page.setViewportSize({ width, height });
-    await page.goto("/");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
     const before = requests;
     const note = page.getByRole("button", { name: "Music", exact: true });
     await expect(note).not.toHaveAttribute("aria-haspopup", "dialog");
@@ -765,7 +764,7 @@ test("research pop-up preserves mobile controls and large text", async ({ page }
   );
   for (const width of [320, 390, 768, 960, 980, 1440]) {
     await page.setViewportSize({ width, height: 844 });
-    await page.goto("/?panel=research");
+    await page.goto("/?panel=research", { waitUntil: "domcontentloaded" });
     const dialog = page.getByRole("dialog", { name: "Research", exact: true });
     await expect(dialog.getByRole("searchbox")).toBeVisible();
     const body = dialog.locator("[data-notebook-body]");
@@ -851,7 +850,7 @@ test("all notebook dialogs share the same dimensions, margins and padding", asyn
       bodyHeight: number;
     }[] = [];
     for (const section of ["experience", "education", "research"]) {
-      await page.goto(`/?panel=${section}`);
+      await page.goto(`/?panel=${section}`, { waitUntil: "domcontentloaded" });
       const name = section[0].toUpperCase() + section.slice(1);
       const dialog = page.getByRole("dialog", { name, exact: true });
       await expect(dialog).toBeVisible();
