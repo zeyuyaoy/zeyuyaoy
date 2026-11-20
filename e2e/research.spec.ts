@@ -35,6 +35,36 @@ test.afterEach(() => {
   expect(browserErrors).toEqual([]);
 });
 
+test("Research starts its data request while the popup code is still loading", async ({ page }) => {
+  const requests: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname === "/api/research/presentation") {
+      requests.push(request.url());
+    }
+  });
+  await page.goto("/");
+  expect(requests).toHaveLength(0);
+
+  const chunkRequested = Promise.withResolvers<void>();
+  const releaseChunks = Promise.withResolvers<void>();
+  await page.route("**/_next/static/**/*.js", async (route) => {
+    chunkRequested.resolve();
+    await releaseChunks.promise;
+    await route.continue();
+  });
+  try {
+    const response = page.waitForResponse("**/api/research/presentation", { timeout: 10_000 });
+    await page.getByRole("button", { name: "Research", exact: true }).click();
+    const [result] = await Promise.all([response, chunkRequested.promise]);
+    expect(result.ok()).toBe(true);
+    await expect(page.getByRole("searchbox")).toHaveCount(0);
+    expect(requests).toHaveLength(1);
+  } finally {
+    releaseChunks.resolve();
+  }
+  await expect(page.getByRole("searchbox")).toBeVisible();
+});
+
 test("every preserved project opens directly inside Research", async ({ page }) => {
   for (const slug of [...slugs, "migration-rich-project"]) {
     const response = await page.goto(`/?panel=research&project=${slug}`);

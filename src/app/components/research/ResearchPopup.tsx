@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { parseArchiveState } from "@/lib/research/archive";
 import type { ResearchPresentation } from "@/lib/research/presentation";
 import useHomeLocation from "../useHomeLocation";
@@ -8,38 +8,23 @@ import ResearchProjectDetail from "./ResearchProjectDetail";
 import SearchableProjects from "./SearchableProjects";
 import "../../research/research.css";
 
-export default function ResearchPopup() {
+export default function ResearchPopup({
+  data,
+  failed,
+  onRetry,
+}: {
+  data: ResearchPresentation | null;
+  failed: boolean;
+  onRetry: () => void;
+}) {
   const current = useHomeLocation();
   const url = new URL(current, "https://zeyuyaoy.com");
   const slug = url.searchParams.get("project");
   const hash = url.hash;
   url.searchParams.delete("project");
   const archiveUrl = `${url.pathname}${url.search}${url.hash}`;
-  const [data, setData] = useState<ResearchPresentation | null>(null);
-  const [failed, setFailed] = useState(false);
-  const [attempt, setAttempt] = useState(0);
   const root = useRef<HTMLDivElement>(null);
   const archiveScroll = useRef(0);
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("/api/research/presentation", { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error("Research unavailable");
-        }
-        return response.json() as Promise<ResearchPresentation>;
-      })
-      .then((payload) => {
-        setData(payload);
-        setFailed(false);
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setFailed(true);
-        }
-      });
-    return () => controller.abort();
-  }, [attempt]);
   useLayoutEffect(() => {
     const viewport = root.current?.closest<HTMLElement>("[data-notebook-body]");
     if (!viewport) {
@@ -73,15 +58,7 @@ export default function ResearchPopup() {
         <div className="empty-state" role="status">
           <h3>Research is unavailable right now.</h3>
           <p>Please try again in a moment.</p>
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={() => {
-              setFailed(false);
-              setData(null);
-              setAttempt((value) => value + 1);
-            }}
-          >
+          <button type="button" className="secondary-button" onClick={onRetry}>
             Retry research
           </button>
         </div>

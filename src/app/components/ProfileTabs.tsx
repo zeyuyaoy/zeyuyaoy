@@ -1,16 +1,13 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { type MouseEvent, type ReactNode, useRef, useState } from "react";
 import { panelUrl, parseHomePanel } from "@/lib/home-panels";
 import MusicOverlay from "./MusicOverlay";
 import NotebookDialog from "./NotebookDialog";
+import ResearchPanel from "./research/ResearchPanel";
 import useHomeLocation, { navigateHome } from "./useHomeLocation";
 import styles from "./Profile.module.css";
 
-const ResearchPopup = dynamic(() => import("./research/ResearchPopup"), {
-  loading: () => <p role="status">Loading research…</p>,
-});
 const sections = [
   { id: "about", label: "About Me" },
   { id: "research", label: "Research" },
@@ -176,7 +173,7 @@ export default function ProfileTabs({
             navigateHome(panelUrl(location.href, section.id));
           }}
         >
-          {selected === "research" ? <ResearchPopup /> : panels[selected]}
+          {selected === "research" ? <ResearchPanel /> : panels[selected]}
         </NotebookDialog>
       ) : null}
     </section>
